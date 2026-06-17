@@ -105,7 +105,7 @@ fill="none" stroke="#1a1a1a" stroke-width="3.5"/>
 </svg>`;
 
 /* ============================================================
-   👤 玩家資料（不改邏輯）
+   👤 玩家資料
    ============================================================ */
 
 let player = {
@@ -130,9 +130,20 @@ let player = {
 
 let monster = {
   level: 1,
-  maxHp: 50,      // 初始血量
-  currentHp: 50
+  maxHp: 50,
+  currentHp: 50,
+  colorIndex: 0 // 紀錄當前史萊姆顏色的索引
 };
+
+// 史萊姆多色漸層清單 (日系輕糖果調)
+const SLIME_COLORS = [
+  "radial-gradient(circle at 35% 35%, #8cb9e6, #568ec9)", // 經典藍
+  "radial-gradient(circle at 35% 35%, #a5d6a7, #66bb6a)", // 翡翠綠
+  "radial-gradient(circle at 35% 35%, #ff8a80, #e53935)", // 火焰紅
+  "radial-gradient(circle at 35% 35%, #ffb74d, #f57c00)", // 活力橘
+  "radial-gradient(circle at 35% 35%, #b39ddb, #5e35b1)", // 神祕紫
+  "radial-gradient(circle at 35% 35%, #f8bbd0, #c2185b)"  // 甜心粉
+];
 
 /* ============================================================
    🎮 遊戲狀態
@@ -142,9 +153,10 @@ let currentNote = "";
 let currentMode = "treble";
 let score = 0;
 let combo = 0;
+let lastClickTime = 0; // 紀錄上一次點擊的時間戳記
 
 /* ============================================================
-   🎯 音符資料（完整保留）
+   🎯 音符資料
    ============================================================ */
 
 const notePositions = {
@@ -171,46 +183,53 @@ const notePositions = {
 };
 
 /* ============================================================
-   ⚔️ 核心戰鬥計算函式
+   ⚔️ 核心戰鬥與機制控制
    ============================================================ */
 
-// 計算實際總攻擊力（人物面板 ATK + 武器庫額外加成加總）
 function getWeaponAtk() {
   let bonus = player.weapon && player.weapon.atkBonus ? player.weapon.atkBonus : 0;
   return player.atk + bonus;
 }
 
-// 核心扣血機制與轉生控制
+// 核心扣血
 function damageMonster(amount) {
   monster.currentHp -= amount;
   
-  // 觸發抖動與受擊動畫
+  // 觸發隨機表情受擊動畫
   triggerMonsterHit();
   
-  // 當史萊姆血量歸零，啟動重生結算機制
   if (monster.currentHp <= 0) {
     spawnNextSlime();
   }
   
-  // 自動即時儲存進度並同步所有 UI
   updateUI();
   updateExpUI();
   saveGameData();
 }
 
-// 史萊姆重生、動態增幅與擊殺獎勵分配
+// 史萊姆轉生與多色變換
 function spawnNextSlime() {
   monster.level++;
-  // 下一隻史萊姆的血量隨階級呈 1.25 倍指數量級成長
   monster.maxHp = Math.floor(50 * Math.pow(1.25, monster.level - 1));
   monster.currentHp = monster.maxHp;
   
-  // 擊退獎勵：自動注入金幣與角色基礎經驗值
+  // 隨機切換下一隻史萊姆的顏色索引
+  monster.colorIndex = Math.floor(Math.random() * SLIME_COLORS.length);
+  
   player.gold += monster.level * 3;
   player.exp += 15;
   
-  // 驗證是否符合升級資格
   levelUp();
+  applySlimeColor(); // 渲染新顏色
+}
+
+// 將顏色渲染到 DOM
+function applySlimeColor() {
+  const color = SLIME_COLORS[monster.colorIndex] || SLIME_COLORS[0];
+  const homeMonster = document.getElementById('homeMonster');
+  const gameMonster = document.getElementById('gameMonster');
+  if(homeMonster) homeMonster.style.background = color;
+  if(gameMonster) gameMonster.style.background = color;
 }
 
 /* ============================================================
@@ -228,12 +247,14 @@ function loadGameData(){
     score = data.score || 0;
     if(data.monster) monster = data.monster;
   }
-  // 安全閥：防呆確保目前血量不漏接
   if(monster.currentHp === undefined || monster.currentHp <= 0) {
     monster.currentHp = monster.maxHp;
   }
+  if(monster.colorIndex === undefined) monster.colorIndex = 0;
+
   updateUI();
   updateExpUI();
+  applySlimeColor(); // 讀檔時同步膚色
 }
 
 /* ============================================================
@@ -244,6 +265,7 @@ function switchPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   if(id==="characterPage") updateCharacter();
+  if(id==="homePage") applySlimeColor(); // 返回首頁確保色彩正常
 }
 
 /* ============================================================
@@ -254,6 +276,7 @@ function startGame(mode){
   currentMode = mode;
   switchPage("gamePage");
   nextNote();
+  setTimeout(applySlimeColor, 50); // 確保戰鬥頁史萊姆顏色同步
 }
 
 function nextNote(){
@@ -262,16 +285,17 @@ function nextNote(){
   currentNote = q.note;
 
   const noteEl = document.getElementById("noteNote");
-  noteEl.innerHTML = WHOLE_NOTE_SVG;
-  noteEl.style.top = q.top + "px";
+  if(noteEl) {
+    noteEl.innerHTML = WHOLE_NOTE_SVG;
+    noteEl.style.top = q.top + "px";
+  }
 
   const clef = document.getElementById("staffClef");
-  clef.innerHTML = currentMode==="treble" ? TREBLE_SVG : BASS_SVG;
+  if(clef) clef.innerHTML = currentMode==="treble" ? TREBLE_SVG : BASS_SVG;
 }
 
 function answer(n){
   if(n === currentNote){
-    // 音符正確時，直接對怪物造成大幅度傷害
     const baseAtk = getWeaponAtk();
     score += baseAtk;
     combo++;
@@ -306,7 +330,6 @@ function updateUI(){
   if(document.getElementById("combo")) document.getElementById("combo").innerText = "Combo: " + combo;
   if(document.getElementById("goldDisplay")) document.getElementById("goldDisplay").innerText = "💰 " + player.gold;
   
-  // 核心對接：精準更新 HTML 的史萊姆狀態欄
   const mName = document.getElementById("monsterName");
   const mHpText = document.getElementById("monsterHpText");
   const mHpFill = document.getElementById("monsterHpFill");
@@ -334,7 +357,7 @@ function updateExpUI(){
 }
 
 /* ============================================================
-   🧍 角色頁（🔥Clash Royale卡片）
+   🧍 角色頁
    ============================================================ */
 
 function card(item, icon){
@@ -364,21 +387,25 @@ function updateCharacter(){
   document.getElementById("shield").innerHTML = card(player.shield, ICON_SHIELD);
 }
 
-// 觸發打擊怪物動畫的函式
+// 觸發打擊怪物動畫（隨機注入生氣、哭哭五官樣式）
 function triggerMonsterHit() {
   const homeMonster = document.getElementById('homeMonster');
   const gameMonster = document.getElementById('gameMonster');
   const homeHit = document.getElementById('homeHitEffect');
   const gameHit = document.getElementById('gameHitEffect');
 
-  if(homeMonster) homeMonster.classList.add('damaged');
-  if(gameMonster) gameMonster.classList.add('damaged');
+  // 隨機決定這次受擊要顯示生氣 (angry) 還是哭哭 (crying)
+  const faceMood = Math.random() > 0.5 ? 'angry' : 'crying';
+
+  if(homeMonster) homeMonster.classList.add('damaged', faceMood);
+  if(gameMonster) gameMonster.classList.add('damaged', faceMood);
   if(homeHit) homeHit.classList.add('animate');
   if(gameHit) gameHit.classList.add('animate');
 
+  // 0.3 秒後拆除狀態，還原成普通萌臉
   setTimeout(() => {
-    if(homeMonster) homeMonster.classList.remove('damaged');
-    if(gameMonster) gameMonster.classList.remove('damaged');
+    if(homeMonster) homeMonster.classList.remove('damaged', 'angry', 'crying');
+    if(gameMonster) gameMonster.classList.remove('damaged', 'angry', 'crying');
     if(homeHit) homeHit.classList.remove('animate');
     if(gameHit) gameHit.classList.remove('animate');
   }, 300);
@@ -389,13 +416,20 @@ function backHome() {
 }
 
 /* ============================================================
-   🕹️ 自動監聽器與掛機心跳 (Ticker)
+   🕹️ 自動監聽器與掛機心跳
    ============================================================ */
 
-// 機制一：滑鼠點擊史萊姆特區，造成武器總攻擊力 2 倍傷害
+// 機制一：點擊史萊姆特區，2倍傷害（內建 1 秒最多點 5 次限速防作弊）
 document.getElementById("monsterBattleBox")?.addEventListener("click", (e) => {
-  // 阻止冒泡避免重複計算
   e.stopPropagation(); 
+  
+  const now = Date.now();
+  // 1000 毫秒 / 5 次 = 200 毫秒。如果兩次點擊小於 200 毫秒，直接擋掉。
+  if (now - lastClickTime < 200) {
+    return; 
+  }
+  lastClickTime = now;
+
   const clickDmg = getWeaponAtk() * 2;
   damageMonster(clickDmg);
 });
