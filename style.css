@@ -1,385 +1,452 @@
 /* ============================================================
-   🎨 1. 全域重設與清爽背景 (移除大面積刺眼色塊)
+   🎨 全域樣式與皇室戰爭風色彩定義
    ============================================================ */
-* { 
-    box-sizing: border-box; 
-    border: none; /* 防禦性清除任何微小雜線 */
-    outline: none;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial Rounded MT Bold', 'Helvetica', sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-html, body {
-    margin: 0; 
-    padding: 0;
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, 'Microsoft JhengHei', sans-serif;
-    /* 改為柔和、具層次感的輕量漸層背景 */
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%) !important;
-    height: 100svh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    user-select: none;
-    -webkit-user-select: none;
+body {
+  background: #1e2530;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
-/* 遊戲主容器：精緻留白與霧面質感 */
-.app {
-    width: 100vw;       
-    height: 100svh;
-    display: flex;
-    flex-direction: column;
-    background: #ffffff !important;
-    border: 2px solid #e2e8f0 !important;
-    position: relative;
-    overflow: hidden;
-}
-
-/* ============================================================
-   📊 2. 頂部玩家狀態欄 (HUD)
-   ============================================================ */
-.topHUD {
-    padding: 14px 18px;
-    background: #f8fafc !important;
-    border-bottom: 2px solid #edf2f7 !important;
-    flex-shrink: 0;
-}
-
-.nameRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #1e293b; 
-    font-weight: 800;
-    font-size: 16px;
-}
-
-.level {
-    color: #ffffff !important; 
-    background: #ff2a6d;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.expBar {
-    height: 8px;
-    background: #e2e8f0;
-    border-radius: 4px;
-    margin-top: 10px;
-    overflow: hidden;
-}
-
-.expFill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #3b82f6, #60a5fa) !important;
-    transition: width 0.3s ease;
-}
-
-/* ============================================================
-   🕹️ 3. 核心主排版區域與分頁設定
-   ============================================================ */
-#content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px 16px; 
-    padding-bottom: 110px !important; 
-    -webkit-overflow-scrolling: touch;
-}
-
+/* 限制最大遊玩視窗，確保手機與PC體驗一致 */
 .page {
-    display: none;
-    flex-direction: column;
-    height: auto !important;     
-    min-height: 100%;
-    gap: 16px !important;        
-    justify-content: flex-start; 
+  display: none;
+  width: 100%;
+  max-width: 440px;
+  height: 100vh;
+  max-height: 850px;
+  background: linear-gradient(180deg, #2b394a 0%, #151c26 100%);
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 4px solid #3a4b61;
+  border-radius: 16px;
+  overflow-y: auto;
 }
-.page.active { 
-    display: flex; 
+
+.page.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 頂部共用金幣列 */
+.global-header {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  z-index: 999;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.lv-badge {
+  background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%);
+  border: 2px solid #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 900;
+  color: #331a00;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+.gold-badge {
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #ffcc00;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: #ffcc00;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* ============================================================
+   ⚔️ 戰鬥盒子與史萊姆完美置中（絕不重疊）
+   ============================================================ */
+.battle-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 15px 0;
+  margin-top: 40px;
+  gap: 12px; /* 完美拉開名字、血條、怪物的間距 */
+}
+
+.monster-name {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 10px #ff477e;
+}
+
+/* 血條外殼 */
+.hp-bar-container {
+  width: 70%;
+  height: 20px;
+  background: #401015;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+}
+.hp-bar-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #ff4d4d 0%, #cc0000 100%);
+  transition: width 0.2s ease-out;
+}
+.hp-bar-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0; left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+
+/* 史萊姆外包圍（提供打擊特效定位） */
+.monster-wrapper {
+  position: relative;
+  width: 120px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================
+   💧 史萊姆超萌 CSS 五官與受擊表情系統
+   ============================================================ */
+.monster-slime {
+  width: 105px;
+  height: 88px;
+  border-radius: 50% 50% 43% 43%;
+  position: relative;
+  box-shadow: inset -8px -10px 12px rgba(0,0,0,0.25), 0 8px 12px rgba(0,0,0,0.3), 0 0 12px rgba(255,255,255,0.2);
+  border: 3px solid rgba(255,255,255,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+  cursor: pointer;
+}
+
+/* 基礎五官容器 */
+.slime-face {
+  position: relative;
+  width: 60px;
+  height: 35px;
+  top: 4px;
+}
+.slime-eye {
+  width: 9px;
+  height: 9px;
+  background: #1c2633;
+  border-radius: 50%;
+  position: absolute;
+  top: 6px;
+  transition: all 0.1s ease;
+}
+.slime-eye.left { left: 12px; }
+.slime-eye.right { right: 12px; }
+
+.slime-mouth {
+  width: 14px;
+  height: 7px;
+  border-bottom: 3px solid #1c2633;
+  border-radius: 0 0 14px 14px;
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 0.1s ease;
+}
+
+/* 💢 受擊動畫與生氣/哭哭臉切換 */
+.monster-slime.damaged {
+  animation: slimeShake 0.25s linear;
+}
+@keyframes slimeShake {
+  0% { transform: scale(0.9, 1.1) translateX(-5px); }
+  25% { transform: scale(1.1, 0.8) translateX(5px); }
+  50% { transform: scale(0.95, 1.05) translateX(-3px); }
+  75% { transform: scale(1.05, 0.95) translateX(3px); }
+  100% { transform: scale(1, 1) translateX(0); }
+}
+
+/* 💢 生氣表情樣式 */
+.monster-slime.angry .slime-eye {
+  height: 4px;
+  border-radius: 2px;
+  background: #000;
+}
+.monster-slime.angry .slime-eye.left { transform: rotate(25deg); top: 8px; }
+.monster-slime.angry .slime-eye.right { transform: rotate(-25deg); top: 8px; }
+.monster-slime.angry .slime-mouth {
+  border-bottom: none;
+  border-top: 3px solid #000;
+  border-radius: 8px 8px 0 0;
+  height: 4px;
+}
+
+/* 😭 哭哭表情樣式 */
+.monster-slime.crying .slime-eye {
+  width: 10px;
+  height: 3px;
+  border-radius: 0;
+  background: #254b7c;
+  top: 9px;
+}
+.monster-slime.crying .slime-mouth {
+  width: 12px;
+  height: 12px;
+  border: 3px solid #254b7c;
+  border-radius: 50%;
+  background: transparent;
+}
+
+/* 💥 打擊特效文字 */
+.hit-effect {
+  position: absolute;
+  font-size: 32px;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.4);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 10;
+}
+.hit-effect.animate {
+  opacity: 1;
+  transform: scale(1.2) translateY(-25px);
+}
+
+/* ============================================================
+   🎵 五線譜與鍵盤區域
+   ============================================================ */
+.staff-wrapper {
+  background: #fff6e6;
+  border: 4px solid #ffcc66;
+  border-radius: 12px;
+  height: 190px;
+  margin: 15px;
+  position: relative;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.1), 0 6px 12px rgba(0,0,0,0.2);
+}
+.staff-lines {
+  position: absolute;
+  width: 100%;
+  top: 40px;
+}
+.staff-lines div {
+  height: 2px;
+  background-color: #555;
+  margin-bottom: 18px;
+}
+#noteNote {
+  position: absolute;
+  left: 140px;
+  transition: top 0.15s ease-out;
+}
+
+.answer-keyboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 15px;
+}
+.key-btn {
+  touch-action: manipulation;
+  background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%);
+  border: 2px solid #999;
+  border-bottom: 5px solid #777;
+  border-radius: 10px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 900;
+  padding: 14px 0;
+  cursor: pointer;
+}
+.key-btn:active {
+  border-bottom-width: 2px;
+  transform: translateY(3px);
+}
+
+/* ============================================================
+   👑 按鈕、分頁與英雄卡片設計
+   ============================================================ */
+.lobby-container, .character-container, .game-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
 }
 
 h2 {
-    font-size: 20px;
-    font-weight: 800;
-    color: #1e293b;
-    margin-top: 4px;
-    margin-bottom: 4px;
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 15px;
+  color: #ffcc00;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-h3 {
-    font-size: 15px;
-    color: #475569;
-    margin: 10px 0 5px 0;
-}
-
-/* 全域文字防隱形設定 */
-.page *:not(button):not(button *):not(svg):not(path):not(.expFill):not(#monsterHpFill):not(#gameMonsterHpFill) {
-    color: #334155 !important;
-}
-
-/* ============================================================
-   🎼 樂譜五線譜容器
-   ============================================================ */
-.note-container {
-    width: 100%;
-    height: 180px;
-    background: #f8fafc;
-    border: 2px solid #cbd5e1;
-    border-radius: 12px;
-    margin: 10px 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.staff-line {
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    background: #64748b;
-    z-index: 10;
-    left: 0;
-}
-
-/* ============================================================
-   👾 4. 戰鬥核心：【全面置中】垂直結構排版 (完美移除了四周黑線)
-   ============================================================ */
-.monster-vertical-container {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;  /* 確保內部所有組件水平置中 */
-    justify-content: center !important;
-    width: 100% !important;
-    padding: 10px 0 !important;
-    background: none !important;     /* 避免背景色塊干擾 */
-    border: none !important;         /* 徹底拔除多餘黑線邊框 */
-}
-
-/* 名字置中 */
-#monsterName, #gameMonsterName {
-    font-size: 18px !important;
-    font-weight: 800 !important;
-    color: #1e293b !important;
-    text-align: center !important;
-    margin: 0 0 8px 0 !important;
-}
-
-/* 血條置中且厚度充足（防切邊） */
-.monster-hp-bar {
-    width: 180px !important;
-    height: 22px !important;
-    background-color: #e2e8f0 !important; 
-    border-radius: 11px !important;
-    overflow: hidden !important;
-    position: relative !important;
-    display: flex !important;             
-    align-items: center !important;       
-    justify-content: center !important;   
-    margin: 0 auto 15px auto !important;
-    border: none !important;
-}
-
-#monsterHpFill, #gameMonsterHpFill {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    height: 100% !important;
-    background: linear-gradient(90deg, #ef4444 0%, #f87171 100%) !important;
-    z-index: 1 !important;
-    transition: width 0.2s ease !important;
-}
-
-#monsterHpText, #gameMonsterHpText {
-    color: #ffffff !important;            
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    line-height: 1 !important;            
-    z-index: 10 !important;               
-    position: relative !important;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5) !important; 
-    white-space: nowrap !important;       
-}
-
-/* 史萊姆外殼 */
-.monster-wrapper {
-    position: relative !important;
-    width: 160px !important;
-    height: 120px !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin: 0 auto !important;
-    border: none !important; /* 確保消滅史萊姆周圍黑線 */
-}
-
-/* 史萊姆本體 */
-.monster-slime {
-    position: absolute !important;
-    width: 130px !important;
-    height: 100px !important;
-    background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%) !important;
-    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
-    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2) !important;
-    z-index: 5;
-    animation: monsterFloat 2s ease-in-out infinite;
-    border: none !important;
-}
-
-.monster-eye {
-    width: 10px !important;
-    height: 10px !important;
-    background-color: #ffffff !important;
-    border-radius: 50% !important;
-    position: absolute !important;
-    top: 38% !important;
-}
-.monster-eye.left { left: 30% !important; }
-.monster-eye.right { right: 30% !important; }
-
-.monster-mouth {
-    width: 16px !important;
-    height: 8px !important;
-    border-bottom: 3px solid #ffffff !important;
-    border-radius: 0 0 8px 8px !important;
-    position: absolute !important;
-    top: 55% !important;
-    left: 44% !important;
-}
-
-/* ============================================================
-   🥊 5. 裝備卡片與升級排版 (人物欄位優化)
-   ============================================================ */
-.stat-container {
-    background: #f8fafc;
-    padding: 14px;
-    border-radius: 12px;
-    border-left: 4px solid #3b82f6;
-    margin-bottom: 10px;
-}
-.stat-line {
-    font-size: 15px;
-    margin: 4px 0;
-}
-
-.item-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #ffffff;
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-.gear-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-.gear-title {
-    font-weight: 700;
-    font-size: 15px;
-}
-.gear-desc {
-    font-size: 12px;
-    color: #64748b !important;
-}
-
-/* 升級專用小按鈕 */
-.upgrade-btn {
-    width: auto !important;
-    padding: 6px 12px !important;
-    font-size: 13px !important;
-    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
-    color: #ffffff !important;
-    border-radius: 6px !important;
-    border: none !important;
-    margin: 0 !important;
-    box-shadow: 0 2px 4px rgba(37,99,235,0.2) !important;
-}
-
-/* ============================================================
-   🕹️ 6. 通用基本按鈕與功能盒
-   ============================================================ */
 .menu-box {
-    background: #ffffff;
-    padding: 16px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+.menu-box h3 {
+  font-size: 14px;
+  color: #a2b4cd;
+  margin-top: 5px;
 }
 
-button {
-    width: 100%;
-    padding: 14px;
-    margin: 6px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1e293b;
-    background: #f1f5f9;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
+.btn {
+  touch-action: manipulation;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px; /* 防止 iOS 縮放的安全大小 */
+  font-weight: 900;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-shadow: 0 2px 2px rgba(0,0,0,0.4);
 }
-button:active {
-    background: #e2e8f0;
+.btn-blue {
+  background: linear-gradient(180deg, #54b2ff 0%, #0066cc 100%);
+  border-bottom: 4px solid #004488;
 }
-
-.btnGrid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-top: 5px;
+.btn-purple {
+  background: linear-gradient(180deg, #b366ff 0%, #6600cc 100%);
+  border-bottom: 4px solid #440088;
 }
-.btnGrid button {
-    padding: 14px 0;
-    margin: 0;
-    background: #334155;
-    color: #ffffff;
-    font-size: 16px;
+.btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
 }
 
-/* ============================================================
-   📱 7. 底部固定導覽列 (高對比白字配深色底)
-   ============================================================ */
-.bottomNav {
-    position: fixed !important; 
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    height: 64px !important;
-    z-index: 99999 !important; 
-    display: flex !important;
-    background: #1e293b !important; /* 改為深藍灰色底，非常沉穩且不刺眼 */
+/* 裝備卡片樣式 */
+.equipment-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+.item-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #f2f6fa 100%);
+  border: 3px solid #cbd7e3;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+.card-title {
+  font-weight: 800; 
+  color: #2c3e50;
+  font-size: 15px;
+}
+.card-lv {
+  color: #ff2a6d; 
+  font-size: 13px; 
+  margin-left: 4px;
+  font-weight: bold;
+}
+.card-props {
+  font-size: 12px;
+  color: #667c99;
+  margin-top: 4px;
+  font-weight: bold;
 }
 
-.bottomNav button {
-    flex: 1 !important;
-    margin: 0 !important;
-    background: none !important;
-    border-radius: 0 !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    color: #94a3b8 !important; /* 未選中為淡灰 */
+/* 升級按鈕防抖動設計 */
+.up-btn {
+  touch-action: manipulation;
+  color: #fff;
+  font-size: 14px; /* 穩定字體 */
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 75px;
+  height: 45px;
+  justify-content: center;
+  border: none;
+}
+.up-btn-weapon {
+  background: linear-gradient(180deg, #ff477e 0%, #ff2a6d 100%);
+  border-bottom: 3px solid #b30036;
+}
+.up-btn-shield {
+  background: linear-gradient(180deg, #4da3ff 0%, #0066ff 100%);
+  border-bottom: 3px solid #0036b3;
+}
+.up-btn:active {
+  border-bottom-width: 1px;
+  transform: translateY(2px);
 }
 
-.bottomNav button:active {
-    background: #334155 !important;
-    color: #ffffff !important;
+/* 底欄導覽 */
+.nav-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.nav-btn {
+  touch-action: manipulation;
+  flex: 1;
+  padding: 12px;
+  background: #253344;
+  border: 2px solid #3d526d;
+  color: #8fa4be;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.nav-btn.active {
+  background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%);
+  color: #331a00;
+  border-color: #fff;
 }
 
-/* 動態漂浮 */
-@keyframes monsterFloat {
-    0%, 100% { transform: translate(-50%, -50%) scaleX(1) translateY(0); }
-    50% { transform: translate(-50%, -50%) scaleX(1.03) scaleY(0.97) translateY(-4px); }
+/* 經驗值與頂部返回 */
+.exp-bar-container {
+  width: 100%; height: 18px; background: #222; border-radius: 9px; position: relative; overflow: hidden; margin-bottom: 10px;
 }
-.hit-effect {
-    position: absolute;
-    font-size: 40px;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 15;
+.exp-bar-fill {
+  width: 0%; height: 100%; background: linear-gradient(90deg, #00ffcc, #0099ff); transition: width 0.3s;
 }
+.exp-bar-text {
+  position: absolute; width:100%; height:100%; top:0; left:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#fff;
+}
+.game-header { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: bold; color: #ffcc00; }
+.btn-back { touch-action: manipulation; background: #e74c3c; border: none; color: white; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: bold;}
