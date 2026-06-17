@@ -11,50 +11,90 @@
 
 <div class="app">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div id="playerName">👤 Steven</div>
-    <div id="playerStats">Lv.1 HP 100</div>
+  <!-- TOP INFO -->
+  <div class="top">
+    <div id="name">👤 Steven</div>
+    <div id="level">Lv.1</div>
+    <div id="exp">EXP 0 / 100</div>
   </div>
 
-  <!-- MENU -->
-  <div id="menu">
+  <!-- CONTENT -->
+  <div id="content">
 
-    <button onclick="startGame('treble')">🎼 高音譜號 (C4–C6)</button>
-    <button onclick="startGame('bass')">🎼 低音譜號 (C2–C4)</button>
-    <button onclick="startGame('mix')">🎼 混合模式</button>
+    <!-- 首頁 -->
+    <div id="homePage" class="page active">
+      <h2>🏠 首頁</h2>
+      <p>歡迎來到 NoteHunter</p>
+    </div>
 
-    <hr>
+    <!-- 人物 -->
+    <div id="characterPage" class="page">
+      <h2>👤 人物</h2>
 
-    <button onclick="alert('人物系統開發中')">👤 人物</button>
-    <button onclick="alert('排行榜開發中')">🏆 排行榜</button>
-    <button onclick="alert('設定開發中')">⚙️ 設定</button>
+      <div id="stats"></div>
 
-  </div>
+      <h3>⚔️ 武器</h3>
+      <div id="weapon"></div>
 
-  <!-- GAME -->
-  <div id="game" style="display:none;">
+      <h3>🥋 衣服</h3>
+      <div id="armor"></div>
 
-    <div class="noteBox">
+      <h3>🛡️ 盾牌</h3>
+      <div id="shield"></div>
+    </div>
+
+    <!-- 遊玩 -->
+    <div id="playPage" class="page">
+      <h2>🎮 遊玩模式</h2>
+
+      <button onclick="startGame('treble')">高音譜號</button>
+      <button onclick="startGame('bass')">低音譜號</button>
+      <button onclick="startGame('mix')">混合模式</button>
+    </div>
+
+    <!-- 排行榜 -->
+    <div id="rankPage" class="page">
+      <h2>🏆 排行榜</h2>
+      <p>（未來開發）</p>
+    </div>
+
+    <!-- 設定 -->
+    <div id="settingPage" class="page">
+      <h2>⚙️ 設定</h2>
+      <p>（未來開發）</p>
+    </div>
+
+    <!-- GAME -->
+    <div id="gamePage" class="page">
+
       <div id="note">C4</div>
+
+      <div class="btnGrid">
+        <button onclick="answer('C')">C</button>
+        <button onclick="answer('D')">D</button>
+        <button onclick="answer('E')">E</button>
+        <button onclick="answer('F')">F</button>
+        <button onclick="answer('G')">G</button>
+        <button onclick="answer('A')">A</button>
+        <button onclick="answer('B')">B</button>
+      </div>
+
+      <div id="score">Score 0</div>
+      <div id="combo">Combo 0</div>
+
+      <button onclick="backHome()">返回</button>
+
     </div>
 
-    <div class="buttons">
-      <button onclick="answer('C')">C</button>
-      <button onclick="answer('D')">D</button>
-      <button onclick="answer('E')">E</button>
-      <button onclick="answer('F')">F</button>
-      <button onclick="answer('G')">G</button>
-      <button onclick="answer('A')">A</button>
-      <button onclick="answer('B')">B</button>
-    </div>
+  </div>
 
-    <div class="info">
-      <div id="score">Score: 0</div>
-      <div id="combo">Combo: 0</div>
-    </div>
+  <!-- BOTTOM NAV -->
+  <div class="bottomNav">
 
-    <button onclick="backMenu()">← 返回</button>
+    <button onclick="switchPage('characterPage')">人物</button>
+    <button onclick="switchPage('playPage')">遊玩</button>
+    <button onclick="switchPage('rankPage')">排行</button>
+    <button onclick="switchPage('settingPage')">設定</button>
 
   </div>
 
