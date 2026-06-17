@@ -89,6 +89,10 @@ html, body {
     transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
+#expText {
+    color: #52526e !important; /* 💡 修正：確保 HUD 經驗值文字清晰 */
+}
+
 /* ============================================================
    🕹️ 3. 核心主排版區域與分頁設定
    ============================================================ */
@@ -115,15 +119,19 @@ html, body {
 h2 {
     font-size: 20px;
     font-weight: 900;
-    color: #ff2a6d;
+    color: #ff2a6d !important; /* 💡 修正：強制維持原本亮麗的粉色標題 */
     margin-top: 4px;
     margin-bottom: 8px;
     letter-spacing: 1px;
     text-shadow: 1px 1px 0px #fff;
 }
 
-/* 🔥【核心修正】終極全面顯形雷達：強制讓其他介面的文字與選項 100% 現形（精準排除按鈕與血條） */
-.page *:not(button):not(button *):not(svg):not(path):not(.expFill):not(#monsterHpFill):not(.hp-fill) {
+h3 {
+    color: #ff477e !important; /* 💡 修正：強制維持次標題顏色 */
+}
+
+/* 🔥【核心修正】修正顯形選取器：排除標題與血條文字，避免顏色被覆蓋 */
+.page *:not(button):not(button *):not(svg):not(path):not(.expFill):not(#monsterHpFill):not(.hp-fill):not(#monsterHpText):not(h2):not(h3) {
     color: #2c3e50 !important;
 }
 
@@ -179,53 +187,44 @@ h2 {
 }
 
 /* ============================================================
-   👾 4. 戰鬥核心：【大重構】名字與血條並排 ➔ 史萊姆在下方
+   👾 4. 戰鬥核心：名字與血條並排 ➔ 史萊姆在下方
    ============================================================ */
-#monsterBattleBox, .game-battle-zone {
+/* 頂部名稱與血條橫置容器 */
+.monster-header {
     display: flex !important;
-    flex-direction: row !important;       /* 💡 修正：改為橫向排列 */
-    flex-wrap: wrap !important;           /* 💡 修正：允許折行，讓史萊姆掉到下方 */
-    align-items: center !important;       /* 💡 修正：上下對齊置中 */
-    justify-content: space-between !important; /* 💡 修正：名字靠左，血條靠右 */
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
     width: 100% !important;
-    padding: 12px 6px !important;
-    margin: 0 auto !important;
-    height: auto !important;
-    border: none !important;              /* 💡 修正：防禦性刪除任何莫名雜線 */
+    margin-bottom: 12px !important;
 }
 
-/* 🟢 左側：史萊姆名字與等級（不換行，靠左對齊） */
-#monsterName, .monster-name, #monsterLevel, .monster-level {
-    order: 1 !important;
-    flex: 1 !important;                   /* 自動伸展佔據左側空間 */
-    text-align: left !important;          /* 強制靠左 */
-    font-size: 20px !important;           /* 微調字型大小完美配合並排 */
+/* 左側：史萊姆名字（不換行，靠左對齊） */
+#monsterName {
+    font-size: 18px !important;
     font-weight: 900 !important;
-    margin: 0 !important;
-    padding-right: 10px !important;
+    color: #2c3e50 !important;
     text-shadow: 1px 1px 0px #fff;
-    white-space: nowrap !important;       /* 防止名字自己折行 */
+    white-space: nowrap !important;
 }
 
-/* 🟡 右側：【重大修正】血條容器（高對比、不換行、加厚防止數字被切） */
-[id*="monsterHp"], .monster-hp, .hp-bar-container {
-    order: 2 !important;
-    flex: 0 0 160px !important;           /* 💡 修正：固定寬度 160px 鎖死在右側不換行 */
-    height: 26px !important;              /* 💡 修正：加厚至 26px，給數字充足的容納空間 */
+/* 右側：全新加厚血條外殼（防切邊、置中、不換行） */
+.monster-hp-bar {
+    flex: 0 0 160px !important; /* 固定血條寬度 160px 鎖死在右側 */
+    height: 24px !important;     /* 給予足夠高度空間 */
     background-color: #e2e8f0 !important; 
     border: 2px solid #cbd5e1 !important;
-    border-radius: 13px !important;
-    margin: 0 !important; 
+    border-radius: 12px !important;
     overflow: hidden !important;
     position: relative !important;
-    display: flex !important;             /* 💡 修正：改用 flex 讓內部數字精準置中 */
-    align-items: center !important;       /* 💡 修正：垂直絕對置中 */
-    justify-content: center !important;   /* 💡 修正：水平絕對置中 */
+    display: flex !important;             
+    align-items: center !important;       /* 垂直絕對置中 */
+    justify-content: center !important;   /* 水平絕對置中 */
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
 }
 
-/* 💡 血條桃紅漸層填色 */
-#monsterHpFill, .hp-fill {
+/* 血條桃紅漸層填色 */
+#monsterHpFill {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
@@ -233,28 +232,27 @@ h2 {
     background: linear-gradient(90deg, #ff0055 0%, #ff5a79 100%) !important;
     box-shadow: inset 0 2px 4px rgba(255,255,255,0.3) !important;
     z-index: 1 !important;
+    transition: width 0.2s ease !important;
 }
 
-/* 💡 【重大修正】血條內的文字/數字（強制顯形、防切邊、置頂於填色層之上） */
-[id*="monsterHp"] *, .monster-hp *, .hp-bar-container * {
-    color: #ffffff !important;            /* 💡 修正：高對比雪白字體 */
+/* 💡 血條內的數字（完美壓在填色層之上、強制不切邊） */
+#monsterHpText {
+    color: #ffffff !important;            /* 高對比雪白字體 */
     font-size: 12px !important;
     font-weight: 900 !important;
-    line-height: 1 !important;            /* 💡 修正：消除任何預設行高擠壓 */
-    z-index: 10 !important;               /* 💡 修正：確保數字壓在血量條最上方 */
+    line-height: 20px !important;         /* 配合高度置中，防止切邊 */
+    z-index: 10 !important;               /* 確保數字在最上層 */
     position: relative !important;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.7) !important; /* 加深陰影，極其清晰 */
-    white-space: nowrap !important;       /* 💡 修正：強制數字絕對不折行、不被切掉 */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important; /* 深陰影，極其清晰 */
+    white-space: nowrap !important;       
 }
 
-/* 🔴 下方：史萊姆外框（100% 寬度強制換行落到最下方） */
+/* 下方：史萊姆外框 */
 .monster-wrapper {
-    order: 3 !important; 
-    width: 100% !important;               /* 💡 修正：寬度 100% 強制將自己推到下一行 */
     position: relative !important;
     width: 240px !important;
     height: 170px !important;
-    margin: 20px auto 0 auto !important;  /* 💡 修正：與上方的名字血條拉開和諧間距 */
+    margin: 10px auto 0 auto !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
@@ -489,7 +487,8 @@ button:active {
     box-shadow: none !important;
     font-size: 15px !important;
     font-weight: 900 !important;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+    color: #ffffff !important; /* 💡 修正：將底欄字體改為高對比白字，完美防止文字融進背景不見 */
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6) !important;
 }
 
 .bottomNav button:active {
