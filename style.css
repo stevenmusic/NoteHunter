@@ -76,9 +76,6 @@ body {
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ==========================================
-   3. 中間獨立內容滾動區
-   ========================================== */
 #content {
   flex: 1; 
   overflow-y: auto; 
@@ -106,12 +103,12 @@ h2 {
 }
 
 /* ==========================================
-   4. 互動式五線譜 (黑線在上層)
+   4. 專業級古典五線譜（高度放寬至 180px，防止溢出）
    ========================================== */
 .note-container {
   width: 100%;
-  height: 160px;
-  background: #ffffff; 
+  height: 180px; /* 放高空間，完美容納上加二線與下加二線 */
+  background: #fdfaf2; /* 改用優雅的古典樂譜象牙白紙底 */
   border: 3px solid #52526e; 
   border-radius: 12px;
   margin: 10px 0 20px 0;
@@ -120,61 +117,57 @@ h2 {
   overflow: hidden;
 }
 
-/* 核心修正：五線譜實線與動態加線的 z-index 拉高到 10 */
+/* 譜線置頂：確保所有五線譜與加線 100% 壓在音符正上方 */
 .staff-line {
   position: absolute;
   width: 100%;
   height: 2px;
-  background: #222222 !important; 
+  background: #1a1a1a !important; 
   z-index: 10; 
 }
 
+/* 譜號定位 (由 JS 提供完美 Leland 印刷字型比例) */
 #staffClef {
   position: absolute;
-  left: 15px;
-  color: #222222;
+  left: 12px;
+  color: #1a1a1a;
   z-index: 1;
-  font-family: 'Times New Roman', Times, Georgia, serif;
-  line-height: 1;
+  font-family: "Bravura Text", serif;
+  user-select: none;
 }
 
-/* 音符外殼 z-index 壓低在下層 */
+/* 古典音符本體定位（利用 line-height 讓傳統字型圓心完美對齊座標點） */
 #noteNote {
   position: absolute;
   left: 60%; 
-  width: 32px;
-  height: 20px;
+  color: #1a1a1a;
+  font-family: "Bravura Text", serif;
+  font-size: 46px; /* 傳統全音符標準比例大小 */
   transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2; 
+  z-index: 2; /* 在線條下方，達到穿透效果 */
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
   animation: pop 0.15s ease-out;
 }
 
-/* 核心修正：背景改為 transparent，且主體絕不能有白色底 */
-.note-head {
-  width: 27px;
-  height: 18px;
-  border: 4.5px solid #111111 !important; 
-  background: transparent !important; 
-  border-radius: 50%;
-  transform: rotate(-20deg); 
-}
-
-/* 加線同步移到最上層 */
+/* 動態短加線樣式（置頂並完美對齊傳統音符寬度） */
 .dynamic-ledger {
   position: absolute;
   left: 60%;
-  width: 44px; 
+  width: 46px; 
   height: 2px;
-  background: #111111 !important; 
+  background: #1a1a1a !important; 
   transform: translateX(-50%); 
   z-index: 10; 
 }
 
 /* ==========================================
-   5. TT2 風格按鈕
+   5. TT2 風格按鈕與其餘版面
    ========================================== */
 button {
   width: 100%;
@@ -264,6 +257,6 @@ button:active {
 
 @keyframes pop {
   0% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.18); }
+  50% { transform: translate(-50%, -50%) scale(1.15); }
   100% { transform: translate(-50%, -50%) scale(1); }
 }
