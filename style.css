@@ -15,15 +15,14 @@ body {
 }
 
 .app {
-  width: 100%;
-  max-width: 430px; /* 手機版維持精緻的窄版設計 */
+  width: 100vw;       /* 💡 改成 100vw，確保 100% 強制填滿螢幕寬度 */
   height: 100svh;
   display: flex;
   flex-direction: column;
   background: radial-gradient(circle at center, #161626 0%, #060609 100%);
   position: relative;
   overflow: hidden;
-  transition: max-width 0.2s ease;
+  /* ❌ 移除了原本的 max-width: 430px，讓平板與手機一律直接滿版 */
 }
 
 .topHUD {
