@@ -3,8 +3,8 @@ const player = {
   level: 1,
   exp: 0,
 
-  atk: 10,
   hp: 100,
+  atk: 10,
   def: 5,
 
   weapon: { name: "木劍", atk: 1 },
