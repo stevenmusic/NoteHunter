@@ -87,8 +87,6 @@ C9,18 11,20 14,20
 C17,20 19,18 19,15
 C19,13 17,11 15,12
 C14,12 13,13 14,14
-C15,15 16,14 16,13
-C15,12 14,13 14,14
 Z"/>
 <circle cx="38" cy="9" r="4"/>
 <circle cx="38" cy="21" r="4"/>
@@ -119,7 +117,8 @@ let player = {
   critChance: 0.12,
   critMultiplier: 1.5,
 
-  weapon: { name:"新手木劍", atkBonus:2, rarity:"common" },
+  // 為武器新增初始等級欄位 level
+  weapon: { name:"新手木劍", atkBonus:2, rarity:"common", level: 1 }, 
   armor:  { name:"布質外衣", hpBonus:10, rarity:"rare" },
   shield: { name:"破舊木盾", defBonus:1, rarity:"common" }
 };
@@ -132,17 +131,16 @@ let monster = {
   level: 1,
   maxHp: 50,
   currentHp: 50,
-  colorIndex: 0 // 紀錄當前史萊姆顏色的索引
+  colorIndex: 0 
 };
 
-// 史萊姆多色漸層清單 (日系輕糖果調)
 const SLIME_COLORS = [
-  "radial-gradient(circle at 35% 35%, #8cb9e6, #568ec9)", // 經典藍
-  "radial-gradient(circle at 35% 35%, #a5d6a7, #66bb6a)", // 翡翠綠
-  "radial-gradient(circle at 35% 35%, #ff8a80, #e53935)", // 火焰紅
-  "radial-gradient(circle at 35% 35%, #ffb74d, #f57c00)", // 活力橘
-  "radial-gradient(circle at 35% 35%, #b39ddb, #5e35b1)", // 神祕紫
-  "radial-gradient(circle at 35% 35%, #f8bbd0, #c2185b)"  // 甜心粉
+  "radial-gradient(circle at 35% 35%, #8cb9e6, #568ec9)", 
+  "radial-gradient(circle at 35% 35%, #a5d6a7, #66bb6a)", 
+  "radial-gradient(circle at 35% 35%, #ff8a80, #e53935)", 
+  "radial-gradient(circle at 35% 35%, #ffb74d, #f57c00)", 
+  "radial-gradient(circle at 35% 35%, #b39ddb, #5e35b1)", 
+  "radial-gradient(circle at 35% 35%, #f8bbd0, #c2185b)"  
 ];
 
 /* ============================================================
@@ -153,7 +151,7 @@ let currentNote = "";
 let currentMode = "treble";
 let score = 0;
 let combo = 0;
-let lastClickTime = 0; // 紀錄上一次點擊的時間戳記
+let lastClickTime = 0; 
 
 /* ============================================================
    🎯 音符資料
@@ -191,11 +189,8 @@ function getWeaponAtk() {
   return player.atk + bonus;
 }
 
-// 核心扣血
 function damageMonster(amount) {
   monster.currentHp -= amount;
-  
-  // 觸發隨機表情受擊動畫
   triggerMonsterHit();
   
   if (monster.currentHp <= 0) {
@@ -207,29 +202,53 @@ function damageMonster(amount) {
   saveGameData();
 }
 
-// 史萊姆轉生與多色變換
 function spawnNextSlime() {
   monster.level++;
   monster.maxHp = Math.floor(50 * Math.pow(1.25, monster.level - 1));
   monster.currentHp = monster.maxHp;
   
-  // 隨機切換下一隻史萊姆的顏色索引
   monster.colorIndex = Math.floor(Math.random() * SLIME_COLORS.length);
   
+  // 來源一：斬殺史萊姆獲得金幣
   player.gold += monster.level * 3;
   player.exp += 15;
   
   levelUp();
-  applySlimeColor(); // 渲染新顏色
+  applySlimeColor(); 
 }
 
-// 將顏色渲染到 DOM
 function applySlimeColor() {
   const color = SLIME_COLORS[monster.colorIndex] || SLIME_COLORS[0];
   const homeMonster = document.getElementById('homeMonster');
   const gameMonster = document.getElementById('gameMonster');
   if(homeMonster) homeMonster.style.background = color;
   if(gameMonster) gameMonster.style.background = color;
+}
+
+/* ============================================================
+   💰 武器升級系統邏輯
+   ============================================================ */
+
+function upgradeWeapon() {
+  // 確保武器內有等級與加成欄位
+  if (!player.weapon.level) player.weapon.level = 1;
+  
+  // 動態公式：升級花費 = 當前等級 * 20 金幣
+  let cost = player.weapon.level * 20;
+  
+  if (player.gold >= cost) {
+    player.gold -= cost;          // 扣除金幣
+    player.weapon.level++;        // 武器等級提升
+    player.weapon.atkBonus += 4;  // 每次升級永久 +4 武器攻擊力 bonus
+    
+    // 即時重繪與儲存
+    updateCharacter();
+    updateUI();
+    saveGameData();
+  } else {
+    // 金幣不足時的防呆提示效果（可自由替換成網頁震動等）
+    console.log("金幣不夠唷！");
+  }
 }
 
 /* ============================================================
@@ -251,10 +270,11 @@ function loadGameData(){
     monster.currentHp = monster.maxHp;
   }
   if(monster.colorIndex === undefined) monster.colorIndex = 0;
+  if(!player.weapon.level) player.weapon.level = 1; // 舊存檔相容性確保
 
   updateUI();
   updateExpUI();
-  applySlimeColor(); // 讀檔時同步膚色
+  applySlimeColor(); 
 }
 
 /* ============================================================
@@ -265,7 +285,7 @@ function switchPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   if(id==="characterPage") updateCharacter();
-  if(id==="homePage") applySlimeColor(); // 返回首頁確保色彩正常
+  if(id==="homePage") applySlimeColor(); 
 }
 
 /* ============================================================
@@ -276,7 +296,7 @@ function startGame(mode){
   currentMode = mode;
   switchPage("gamePage");
   nextNote();
-  setTimeout(applySlimeColor, 50); // 確保戰鬥頁史萊姆顏色同步
+  setTimeout(applySlimeColor, 50); 
 }
 
 function nextNote(){
@@ -299,6 +319,10 @@ function answer(n){
     const baseAtk = getWeaponAtk();
     score += baseAtk;
     combo++;
+    
+    // 來源二：答對題目也直接獲得 5 金幣！
+    player.gold += 5; 
+    
     damageMonster(baseAtk); 
   } else {
     combo = 0;
@@ -357,44 +381,65 @@ function updateExpUI(){
 }
 
 /* ============================================================
-   🧍 角色頁
+   🧍 角色頁（支援動態武器卡片升級按鈕）
    ============================================================ */
 
-function card(item, icon){
+function card(item, icon, isWeapon = false){
+  let actionHtml = `<div style="color:#ffcc00;font-weight:bold">★★★</div>`;
+  
+  // 如果是武器卡，注入 Clash Royale 風格的升級綠色按鈕
+  if (isWeapon) {
+    let currentLv = item.level || 1;
+    let cost = currentLv * 20;
+    
+    actionHtml = `
+      <button onclick="upgradeWeapon()" style="background: linear-gradient(180deg, #66bb6a 0%, #43a047 100%); border: 1px solid #2e7d32; border-bottom: 3px solid #1b5e20; color: #fff; font-size: 11px; padding: 6px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; min-width: 65px;">
+        <span>升級</span>
+        <span style="font-size: 10px; opacity: 0.9;">💰${cost}</span>
+      </button>
+    `;
+  }
+
   return `
-  <div class="item-card" style="display:flex;align-items:center;gap:10px;">
+  <div class="item-card" style="display:flex;align-items:center;gap:10px;background: #fff;border: 1px solid #eeebe3;border-radius: 12px;padding: 12px;margin-bottom: 10px;box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
     <div>${icon}</div>
     <div style="flex:1">
-      <div style="font-weight:800">${item.name}</div>
-      <div style="font-size:12px;color:#aaa">
-        ${item.atkBonus ? "ATK+"+item.atkBonus:""}
-        ${item.hpBonus ? "HP+"+item.hpBonus:""}
-        ${item.defBonus ? "DEF+"+item.defBonus:""}
+      <div style="font-weight:800; color:#2c3e50;">
+        ${item.name} 
+        ${isWeapon ? `<span style="color:#43a047; font-size:13px; margin-left:4px;">Lv.${item.level || 1}</span>` : ''}
+      </div>
+      <div style="font-size:12px;color:#8a8a9e;margin-top:3px;">
+        ${item.atkBonus ? "ATK + "+item.atkBonus:""}
+        ${item.hpBonus ? "HP + "+item.hpBonus:""}
+        ${item.defBonus ? "DEF + "+item.defBonus:""}
       </div>
     </div>
-    <div style="color:#ffcc00;font-weight:bold">
-      ★★★
+    <div>
+      ${actionHtml}
     </div>
   </div>`;
 }
 
-function updateCharacter(){
+function updateCharacter() {
+  const currentTotalAtk = getWeaponAtk();
   document.getElementById("stats").innerHTML =
-  `ATK ${player.atk} | HP ${player.hp} | DEF ${player.def}`;
+  `<div style="background:#faf9f6; padding:10px; border-radius:8px; border:1px solid #eeebe3; font-weight:bold; color:#5c8a6a; text-align:center;">
+    ⚔️ 總攻擊力: ${currentTotalAtk} (基礎 ${player.atk} + 武器 ${player.weapon.atkBonus}) | 💖 HP: ${player.hp} | 🛡️ DEF: ${player.def}
+  </div>`;
 
-  document.getElementById("weapon").innerHTML = card(player.weapon, ICON_WEAPON);
-  document.getElementById("armor").innerHTML = card(player.armor, ICON_ARMOR);
-  document.getElementById("shield").innerHTML = card(player.shield, ICON_SHIELD);
+  // 傳入 true 標記，代表此卡片需要產生升級按鈕
+  document.getElementById("weapon").innerHTML = card(player.weapon, ICON_WEAPON, true);
+  document.getElementById("armor").innerHTML = card(player.armor, ICON_ARMOR, false);
+  document.getElementById("shield").innerHTML = card(player.shield, ICON_SHIELD, false);
 }
 
-// 觸發打擊怪物動畫（隨機注入生氣、哭哭五官樣式）
+// 觸發打擊怪物動畫的函式
 function triggerMonsterHit() {
   const homeMonster = document.getElementById('homeMonster');
   const gameMonster = document.getElementById('gameMonster');
   const homeHit = document.getElementById('homeHitEffect');
   const gameHit = document.getElementById('gameHitEffect');
 
-  // 隨機決定這次受擊要顯示生氣 (angry) 還是哭哭 (crying)
   const faceMood = Math.random() > 0.5 ? 'angry' : 'crying';
 
   if(homeMonster) homeMonster.classList.add('damaged', faceMood);
@@ -402,7 +447,6 @@ function triggerMonsterHit() {
   if(homeHit) homeHit.classList.add('animate');
   if(gameHit) gameHit.classList.add('animate');
 
-  // 0.3 秒後拆除狀態，還原成普通萌臉
   setTimeout(() => {
     if(homeMonster) homeMonster.classList.remove('damaged', 'angry', 'crying');
     if(gameMonster) gameMonster.classList.remove('damaged', 'angry', 'crying');
@@ -416,15 +460,13 @@ function backHome() {
 }
 
 /* ============================================================
-   🕹️ 自動監聽器與掛機心跳
+   🕹️ 自動監聽器與掛機心跳 (Ticker)
    ============================================================ */
 
-// 機制一：點擊史萊姆特區，2倍傷害（內建 1 秒最多點 5 次限速防作弊）
 document.getElementById("monsterBattleBox")?.addEventListener("click", (e) => {
   e.stopPropagation(); 
   
   const now = Date.now();
-  // 1000 毫秒 / 5 次 = 200 毫秒。如果兩次點擊小於 200 毫秒，直接擋掉。
   if (now - lastClickTime < 200) {
     return; 
   }
@@ -434,7 +476,6 @@ document.getElementById("monsterBattleBox")?.addEventListener("click", (e) => {
   damageMonster(clickDmg);
 });
 
-// 機制二：每秒自動扣除怪物的血量（限定僅於首頁基地生效）
 setInterval(() => {
   const homePage = document.getElementById("homePage");
   if(homePage && homePage.classList.contains("active")) {
