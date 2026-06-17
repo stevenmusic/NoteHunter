@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NoteHunter</title>
+  <title>NoteHunter - 樂譜冒險</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -20,7 +20,7 @@
     </div>
     <div class="infoRow" style="display:flex;justify-content:space-between;margin-top:5px;font-size:13px;">
       <span id="expText">EXP 0 / 100</span>
-      <span id="goldDisplay" style="color:#ffcc00;font-weight:bold;">💰 0</span>
+      <span id="goldDisplay" style="color:#ffb300;font-weight:bold;">💰 0</span>
     </div>
   </div>
 
@@ -30,43 +30,72 @@
       <h2>🏠 首頁基地</h2>
       
       <div class="menu-box" id="monsterBattleBox">
-        <div class="monster-header">
-          <span id="monsterName" style="font-weight:bold;">Lv.1 史萊姆</span>
+        <div class="monster-vertical-container">
+          <div id="monsterName">Lv.1 史萊姆</div>
+          
           <div class="monster-hp-bar">
             <div id="monsterHpFill" style="width:100%;"></div>
             <span id="monsterHpText">HP: 50 / 50</span>
           </div>
-        </div>
-        
-        <div class="monster-wrapper">
-          <div id="homeMonster" class="monster-slime">
-            <div class="monster-eye left"></div>
-            <div class="monster-eye right"></div>
-            <div class="monster-mouth"></div>
+          
+          <div class="monster-wrapper">
+            <div id="homeMonster" class="monster-slime">
+              <div class="monster-eye left"></div>
+              <div class="monster-eye right"></div>
+              <div class="monster-mouth"></div>
+            </div>
+            <div id="homeHitEffect" class="hit-effect">💥</div>
           </div>
-          <div id="homeHitEffect" class="hit-effect">💥</div>
         </div>
       </div>
     </div>
 
     <div id="characterPage" class="page">
       <h2>👤 英雄狀態</h2>
-      <div id="stats" class="stat-container"></div>
+      
+      <div class="stat-container">
+        <div class="stat-line">⚔️ 攻擊力 (ATK): <span id="statAtk" style="font-weight:bold;color:#ff2a6d;">10</span></div>
+        <div class="stat-line">⚡ 爆擊率 (Crit): <span id="statCrit" style="font-weight:bold;color:#00b4db;">5%</span></div>
+      </div>
+      
       <div class="gear-section">
         <h3>⚔️ 武器庫</h3>
-        <div id="weapon" class="item-card"></div>
-        <h3>🥋 戰甲</h3>
-        <div id="armor" class="item-card"></div>
+        <div id="weapon" class="item-card rarity-common">
+          <div class="gear-info">
+            <div class="gear-title">新手長劍 <span id="weaponLevelText" style="color:#ffaa00;">(Lv.1)</span></div>
+            <div class="gear-desc">每級提升 5 點攻擊力</div>
+          </div>
+          <button class="upgrade-btn" onclick="upgradeGear('weapon')">升級 (<span id="weaponCost">30</span> 金幣)</button>
+        </div>
+        
         <h3>🛡️ 神盾</h3>
-        <div id="shield" class="item-card"></div>
+        <div id="shield" class="item-card rarity-common">
+          <div class="gear-info">
+            <div class="gear-title">木製圓盾 <span id="shieldLevelText" style="color:#ffaa00;">(Lv.1)</span></div>
+            <div class="gear-desc">每級提升 3% 爆擊率</div>
+          </div>
+          <button class="upgrade-btn" onclick="upgradeGear('shield')">升級 (<span id="shieldCost">30</span> 金幣)</button>
+        </div>
       </div>
     </div>
 
     <div id="playPage" class="page">
       <h2>🎮 選擇戰役模式</h2>
-      <button onclick="startGame('treble')">高音譜號模式 (C4 - C6)</button>
-      <button onclick="startGame('bass')">低音譜號模式 (C2 - C4)</button>
-      <button onclick="startGame('mix')">混合譜號模式 (全範圍)</button>
+      
+      <div class="mode-section">
+        <h4 style="margin: 5px 0; color: #52526e;">🎵 讀音基礎練習</h4>
+        <button onclick="startGame('treble_practice')">高音譜號練習 (C4 - C6)</button>
+        <button onclick="startGame('bass_practice')">低音譜號練習 (C2 - C4)</button>
+      </div>
+      
+      <hr style="border: 0; border-top: 1px dashed #ccc; margin: 15px 0;">
+      
+      <div class="mode-section">
+        <h4 style="margin: 5px 0; color: #52526e;">⚔️ 討伐挑戰模式</h4>
+        <button onclick="startGame('treble')">高音譜號戰役 (C4 - C6)</button>
+        <button onclick="startGame('bass')">低音譜號戰役 (C2 - C4)</button>
+        <button onclick="startGame('mix')">混合譜號戰役 (全範圍)</button>
+      </div>
     </div>
 
     <div id="rankPage" class="page">
@@ -80,13 +109,21 @@
     </div>
 
     <div id="gamePage" class="page">
-      <div class="monster-wrapper game-battle-zone">
-        <div id="gameMonster" class="monster-slime">
-          <div class="monster-eye left"></div>
-          <div class="monster-eye right"></div>
-          <div class="monster-mouth"></div>
+      
+      <div class="monster-vertical-container game-battle-zone">
+        <div id="gameMonsterName" style="font-weight:bold; font-size:16px;">Lv.1 史萊姆</div>
+        <div class="monster-hp-bar">
+          <div id="gameMonsterHpFill" style="width:100%; background:linear-gradient(90deg, #ff416c, #ff4b2b);"></div>
+          <span id="gameMonsterHpText">HP: 50 / 50</span>
         </div>
-        <div id="gameHitEffect" class="hit-effect">💥</div>
+        <div class="monster-wrapper">
+          <div id="gameMonster" class="monster-slime">
+            <div class="monster-eye left"></div>
+            <div class="monster-eye right"></div>
+            <div class="monster-mouth"></div>
+          </div>
+          <div id="gameHitEffect" class="hit-effect">💥</div>
+        </div>
       </div>
 
       <div class="note-container">
