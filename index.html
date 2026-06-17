@@ -10,7 +10,7 @@
 <body>
 <div class="app">
 
-  <!-- 頂部HUD -->
+  <!-- HUD -->
   <div class="topHUD">
     <div class="nameRow">
       <span>⚔️ Steven</span>
@@ -24,33 +24,24 @@
 
     <div class="infoRow">
       <span id="expText">EXP 0 / 100</span>
-      <span id="goldDisplay" style="color:#ffcc00;font-weight:bold;">💰 0</span>
+      <span id="goldDisplay">💰 0</span>
     </div>
   </div>
 
-  <!-- 主內容 -->
+  <!-- CONTENT -->
   <div id="content">
 
-    <!-- HOME -->
     <div id="homePage" class="page active">
       <h2>🏠 首頁基地</h2>
-
-      <div class="menu-box">
-        <p>歡迎來到 NoteHunter</p>
-        <p style="color:#8a8a9e;font-size:14px;margin-top:5px;">
-          點擊下方「遊玩」選擇譜號模式，開啟你的音符斬殺冒險！
-        </p>
-      </div>
+      <div class="menu-box">歡迎來到 NoteHunter</div>
     </div>
 
-    <!-- CHARACTER -->
     <div id="characterPage" class="page">
       <h2>👤 英雄狀態</h2>
-
       <div id="stats" class="stat-container"></div>
 
       <div class="gear-section">
-        <h3>⚔️ 武器庫</h3>
+        <h3>⚔️ 武器</h3>
         <div id="weapon" class="item-card"></div>
 
         <h3>🥋 戰甲</h3>
@@ -61,57 +52,40 @@
       </div>
     </div>
 
-    <!-- PLAY -->
     <div id="playPage" class="page">
-      <h2>🎮 選擇戰役模式</h2>
+      <h2>🎮 選擇模式</h2>
 
-      <button onclick="startGame('treble')">
-        高音譜號模式 (C4 - C6)
-      </button>
-
-      <button onclick="startGame('bass')">
-        低音譜號模式 (C2 - C4)
-      </button>
-
-      <button onclick="startGame('mix')">
-        混合譜號模式 (全範圍)
-      </button>
+      <button onclick="startGame('treble')">高音模式</button>
+      <button onclick="startGame('bass')">低音模式</button>
+      <button onclick="startGame('mix')">混合模式</button>
     </div>
 
-    <!-- RANK -->
     <div id="rankPage" class="page">
-      <h2>🏆 諸神排行榜</h2>
-      <p class="menu-box" style="text-align:center;color:#8a8a9e;">
-        全球聯賽計算中，請先提升戰力...
-      </p>
+      <h2>🏆 排行榜</h2>
+      <div class="menu-box">開發中</div>
     </div>
 
-    <!-- SHOP -->
     <div id="shopPage" class="page">
-      <h2>🛒 裝備商店</h2>
+      <h2>🛒 商店</h2>
       <div class="shop-grid" id="shopGrid"></div>
     </div>
 
-    <!-- SETTING -->
     <div id="settingPage" class="page">
-      <h2>⚙️ 冒險設定</h2>
-      <p class="menu-box" style="text-align:center;color:#8a8a9e;">
-        打擊音效與畫面粒子特效優化中
-      </p>
+      <h2>⚙️ 設定</h2>
+      <div class="menu-box">系統設定</div>
     </div>
 
     <!-- GAME -->
     <div id="gamePage" class="page game-page">
 
-      <!-- 五線譜舞台 -->
       <div class="note-container">
 
         <div class="staff">
           <div class="staff-line" style="top:130px;"></div>
           <div class="staff-line" style="top:110px;"></div>
-          <div class="staff-line" style="top: 90px;"></div>
-          <div class="staff-line" style="top: 70px;"></div>
-          <div class="staff-line" style="top: 50px;"></div>
+          <div class="staff-line" style="top:90px;"></div>
+          <div class="staff-line" style="top:70px;"></div>
+          <div class="staff-line" style="top:50px;"></div>
         </div>
 
         <div id="staffClef"></div>
@@ -119,7 +93,6 @@
 
       </div>
 
-      <!-- 按鈕 -->
       <div class="btnGrid">
         <button onclick="answer('C')">C</button>
         <button onclick="answer('D')">D</button>
@@ -130,26 +103,23 @@
         <button onclick="answer('B')">B</button>
       </div>
 
-      <!-- 分數 -->
       <div class="info">
         <div id="score">Score: 0</div>
         <div id="combo">Combo: 0</div>
       </div>
 
-      <button onclick="backHome()" class="exit-btn">
-        撤退回基地
-      </button>
+      <button onclick="backHome()" class="exit-btn">回基地</button>
 
     </div>
 
   </div>
 
-  <!-- Bottom Nav -->
+  <!-- NAV -->
   <div class="bottomNav">
-    <button onclick="switchPage('characterPage')">👤 人物</button>
-    <button onclick="switchPage('playPage')">🎮 遊玩</button>
-    <button onclick="switchPage('rankPage')">🏆 排行</button>
-    <button onclick="switchPage('shopPage')">🛒 商店</button>
+    <button onclick="switchPage('characterPage')">👤</button>
+    <button onclick="switchPage('playPage')">🎮</button>
+    <button onclick="switchPage('rankPage')">🏆</button>
+    <button onclick="switchPage('shopPage')">🛒</button>
   </div>
 
 </div>
