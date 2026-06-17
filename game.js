@@ -1,6 +1,5 @@
-/* game.js - 核心戰力計算全面修復版 */
+/* game.js - 古典字體與精準物理定位版 */
 
-// 1. 玩家英雄資料庫
 let player = {
   level: 1,
   exp: 0,
@@ -16,7 +15,6 @@ let player = {
   shield: { name: "破舊木盾", defBonus: 1 }
 };
 
-// 🌟 核心修正：補回被漏掉的戰力加成計算函式，讓人物面板與答題傷害計算恢復正常！
 function getPlayerTotalAtk() { 
   if (!player.weapon || typeof player.weapon.atkBonus === 'undefined') return player.atk;
   return player.atk + player.weapon.atkBonus; 
@@ -32,51 +30,49 @@ let currentMode = "treble";
 let score = 0;
 let combo = 0;
 
-// 音符資料庫
+// 精準校正後的音樂字體 Y 軸像素對應表 (每一度音程精確距離為 10px)
 const notePositions = {
   treble: [
-    { name: "C4", note: "C", top: 130, ledgerLines: [110] }, 
-    { name: "D4", note: "D", top: 120, ledgerLines: [] }, 
-    { name: "E4", note: "E", top: 110, ledgerLines: [] }, 
-    { name: "F4", note: "F", top: 100, ledgerLines: [] }, 
-    { name: "G4", note: "G", top: 90,  ledgerLines: [] }, 
-    { name: "A4", note: "A", top: 80,  ledgerLines: [] }, 
-    { name: "B4", note: "B", top: 70,  ledgerLines: [] }, 
-    { name: "C5", note: "C", top: 60,  ledgerLines: [] }, 
-    { name: "D5", note: "D", top: 50,  ledgerLines: [] }, 
-    { name: "E5", note: "E", top: 40,  ledgerLines: [] }, 
-    { name: "F5", note: "F", top: 30,  ledgerLines: [] }, 
-    { name: "G5", note: "G", top: 20,  ledgerLines: [] }, 
-    { name: "A5", note: "A", top: 10,  ledgerLines: [10] },  
-    { name: "B5", note: "B", top: 0,   ledgerLines: [10] },  
-    { name: "C6", note: "C", top: -10, ledgerLines: [10, -10] } 
+    { name: "C4", note: "C", top: 150, ledgerLines: [150] }, // 下加一線 (中央C)
+    { name: "D4", note: "D", top: 140, ledgerLines: [] }, 
+    { name: "E4", note: "E", top: 130, ledgerLines: [] }, // 第一線
+    { name: "F4", note: "F", top: 120, ledgerLines: [] }, 
+    { name: "G4", note: "G", top: 110, ledgerLines: [] }, // 第二線
+    { name: "A4", note: "A", top: 100, ledgerLines: [] }, 
+    { name: "B4", note: "B", top: 90,  ledgerLines: [] }, // 第三線
+    { name: "C5", note: "C", top: 80,  ledgerLines: [] }, 
+    { name: "D5", note: "D", top: 70,  ledgerLines: [] }, // 第四線
+    { name: "E5", note: "E", top: 60,  ledgerLines: [] }, 
+    { name: "F5", note: "F", top: 50,  ledgerLines: [] }, // 第五線
+    { name: "G5", note: "G", top: 40,  ledgerLines: [] }, 
+    { name: "A5", note: "A", top: 30,  ledgerLines: [30] },  // 上加一線
+    { name: "B5", note: "B", top: 20,  ledgerLines: [30] },  
+    { name: "C6", note: "C", top: 10,  ledgerLines: [30, 10] } // 上加二線 (穩穩留在容器內 10px 處，絕不超出)
   ],
   bass: [
-    { name: "C2", note: "C", top: 150, ledgerLines: [130, 150] }, 
-    { name: "D2", note: "D", top: 140, ledgerLines: [130] }, 
-    { name: "E2", note: "E", top: 130, ledgerLines: [130] }, 
-    { name: "F2", note: "F", top: 120, ledgerLines: [] }, 
-    { name: "G2", note: "G", top: 110, ledgerLines: [] }, 
-    { name: "A2", note: "A", top: 100, ledgerLines: [] }, 
-    { name: "B2", note: "B", top: 90,  ledgerLines: [] }, 
-    { name: "C3", note: "C", top: 80,  ledgerLines: [] }, 
-    { name: "D3", note: "D", top: 70,  ledgerLines: [] }, 
-    { name: "E3", note: "E", top: 60,  ledgerLines: [] }, 
-    { name: "F3", note: "F", top: 50,  ledgerLines: [] }, 
-    { name: "G3", note: "G", top: 40,  ledgerLines: [] }, 
-    { name: "A3", note: "A", top: 30,  ledgerLines: [] }, 
-    { name: "B3", note: "B", top: 20,  ledgerLines: [] }, 
-    { name: "C4", note: "C", top: 10,  ledgerLines: [10] }   
+    { name: "C2", note: "C", top: 170, ledgerLines: [150, 170] }, // 下加二線 (留在安全範圍 170px，絕不切掉)
+    { name: "D2", note: "D", top: 160, ledgerLines: [150] }, 
+    { name: "E2", note: "E", top: 150, ledgerLines: [150] }, // 下加一線
+    { name: "F2", note: "F", top: 140, ledgerLines: [] }, 
+    { name: "G2", note: "G", top: 130, ledgerLines: [] }, // 第一線
+    { name: "A2", note: "A", top: 120, ledgerLines: [] }, 
+    { name: "B2", note: "B", top: 110, ledgerLines: [] }, // 第二線
+    { name: "C3", note: "C", top: 100, ledgerLines: [] }, 
+    { name: "D3", note: "D", top: 90,  ledgerLines: [] }, // 第三線
+    { name: "E3", note: "E", top: 80,  ledgerLines: [] }, 
+    { name: "F3", note: "F", top: 70,  ledgerLines: [] }, // 第四線
+    { name: "G3", note: "G", top: 60,  ledgerLines: [] }, 
+    { name: "A3", note: "A", top: 50,  ledgerLines: [] }, // 第五線
+    { name: "B3", note: "B", top: 40,  ledgerLines: [] }, 
+    { name: "C4", note: "C", top: 30,  ledgerLines: [30] }   // 上加一線
   ]
 };
 
-// 儲存機制
 function saveGameData() {
   const saveData = { score: score, player: player };
   localStorage.setItem("noteHunter_save", JSON.stringify(saveData));
 }
 
-// 讀取機制
 function loadGameData() {
   const savedString = localStorage.getItem("noteHunter_save");
   if (savedString) {
@@ -84,9 +80,9 @@ function loadGameData() {
       const savedData = JSON.parse(savedString);
       score = savedData.score || 0;
       if (savedData.player) player = savedData.player; 
-      console.log("🎮 存檔讀取成功！");
+      console.log("🎮 正常模式存檔成功載入！");
     } catch (e) {
-      console.error("存檔解析失敗", e);
+      console.error(e);
     }
   }
   updateUI();
@@ -114,16 +110,17 @@ function nextNote() {
     activeMode = Math.random() < 0.5 ? "treble" : "bass";
   }
 
+  // 使用 Leland 字型編碼與標準交響樂譜比例對齊
   if (activeMode === "treble") {
     pool = notePositions.treble;
     clefEl.innerText = "𝄞"; 
-    clefEl.style.fontSize = "80px";
-    clefEl.style.top = "10px";  
+    clefEl.style.fontSize = "75px";
+    clefEl.style.top = "16px";  // 讓高音譜號最漂亮的下圓肚剛好鎖在 G4 線上
   } else {
     pool = notePositions.bass;
     clefEl.innerText = "𝄢"; 
     clefEl.style.fontSize = "52px";
-    clefEl.style.top = "33px";  
+    clefEl.style.top = "48px";  // 讓低音譜的大頭與核心雙點精確夾住 F3 線
   }
 
   const randomQuiz = pool[Math.floor(Math.random() * pool.length)];
@@ -248,5 +245,4 @@ function backHome() {
   switchPage("homePage");
 }
 
-// 初始化讀取存檔
 loadGameData();
