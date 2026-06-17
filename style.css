@@ -517,5 +517,48 @@ button:active {
 }
 
 
+/* ============================================================
+   🎨 1. 強制所有裝置（手機/平板）背景同步繽紛（無視深色模式）
+   ============================================================ */
+html, body {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%) !important;
+    background-size: 300% 300% !important;
+    animation: gradientBG 15s ease infinite !important;
+}
+
+/* ============================================================
+   👾 2. 史萊姆與點擊感應區「絕對置中」優化
+   ============================================================ */
+#monsterBattleBox {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    touch-action: manipulation;
+}
+
+.monster-wrapper {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 25px auto !important;
+    position: relative !important;
+    float: none !important; /* 防禦舊排版干擾 */
+}
+
+.monster-slime {
+    position: relative !important; /* 改為相對定位，靠 flex 完美置中 */
+    left: 0 !important;            /* 清除之前的左邊距偏移 */
+    margin: 0 auto !important;
+}
+
+/* ============================================================
+   ❌ 3. 隱藏歡迎字樣（防禦性 CSS 方案）
+   ============================================================ */
+/* 如果你懶得動 HTML，這行會直接在畫面上把包含歡迎標題的區域隱藏 */
+#homePage h1, .welcome-title {
+    display: none !important;
+}
 
 
