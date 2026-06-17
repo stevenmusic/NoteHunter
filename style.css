@@ -1,5 +1,5 @@
 /* ==========================================
-   1. 全域初始化與手機防爆版修正 (解決工具列阻擋)
+   1. 全域初始化與手機防爆版修正
    ========================================== */
 * {
   box-sizing: border-box;
@@ -11,7 +11,7 @@ body {
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
   background: #060609;
   color: #fff;
-  /* 使用 svh 鎖定手機視窗高度，防止網址列伸縮推擠底部導航 */
+  /* 使用 svh 鎖定手機視窗高度，防止網址列伸縮推擠 layout */
   height: 100svh; 
   display: flex;
   justify-content: center;
@@ -21,26 +21,26 @@ body {
   -webkit-user-select: none;
 }
 
-/* 遊戲獨立視窗主容器 */
+/* 遊戲主容器 */
 .app {
   width: 100%;
   max-width: 430px; /* 緊貼 iPhone Pro Max 完美握持比例 */
-  height: 100svh;   /* 扣除動態網址列後的完美全螢幕高度 */
+  height: 100svh;   
   display: flex;
-  flex-direction: column; /* 讓 HUD、內容、底部導航依序垂直排列 */
+  flex-direction: column; 
   background: radial-gradient(circle at center, #161626 0%, #060609 100%);
   position: relative;
   overflow: hidden;
 }
 
 /* ==========================================
-   2. 頂部 HUD 區塊 (固定於頂部不亂跑)
+   2. 頂部 HUD 區塊
    ========================================== */
 .topHUD {
   padding: 12px 16px;
   background: linear-gradient(180deg, #222230 0%, #10101a 100%);
   border-bottom: 2px solid #36364a;
-  flex-shrink: 0; /* 強制不允許被中間內容擠壓變形 */
+  flex-shrink: 0; 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
@@ -75,30 +75,28 @@ body {
 
 .expFill {
   height: 100%;
-  width: 0%; /* 由 game.js 動態調控 */
+  width: 0%; 
   background: linear-gradient(90deg, #00e5ff, #00ff88);
   box-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ==========================================
-   3. 中間獨立內容滾動區 (完美鎖定各個頁面)
+   3. 中間獨立內容滾動區
    ========================================== */
 #content {
-  flex: 1; /* 自動填滿中間的所有空缺空間 */
-  overflow-y: auto; /* 若內容過長，只允許在此區間內滾動，絕不撐開網頁 */
+  flex: 1; 
+  overflow-y: auto; 
   padding: 16px;
-  -webkit-overflow-scrolling: touch; /* 優化 iOS 滑動手感 */
+  -webkit-overflow-scrolling: touch; 
 }
 
-/* 核心：預設沒有 active 的頁面一律切斷渲染，不佔空間 */
 .page {
   display: none; 
   flex-direction: column;
   height: 100%;
 }
 
-/* 當被點擊切換時，賦予 active 標籤並展開 */
 .page.active {
   display: flex;
 }
@@ -113,84 +111,101 @@ h2 {
 }
 
 /* ==========================================
-   4. CSS 科技五線譜發光容器 (完美平替圖片方案)
+   4. 互動式物理五線譜容器 (高還原標準白底五線譜)
    ========================================== */
 .note-container {
   width: 100%;
   height: 160px;
-  background: #0c0c12; /* TT2 深黑底色 */
-  border: 2px solid #00e5ff; /* 賽博霓虹發光邊框 */
+  background: #ffffff; /* 還原真實樂譜白底 */
+  border: 3px solid #52526e; 
   border-radius: 12px;
   margin: 10px 0 20px 0;
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.35);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
   overflow: hidden;
 }
 
-/* 五線譜虛擬線條 */
-.staff-lines {
+/* 五線譜的黑色實線 */
+.staff-line {
   position: absolute;
-  width: 90%;
+  width: 100%;
   height: 2px;
-  background: rgba(255, 255, 255, 0.15); /* 微弱的白光線條 */
+  background: #222222; 
 }
-/* 平均拉開五條線的間距 */
-.staff-lines:nth-child(1) { top: 40px; }
-.staff-lines:nth-child(2) { top: 60px; }
-.staff-lines:nth-child(3) { top: 80px; }
-.staff-lines:nth-child(4) { top: 100px; }
-.staff-lines:nth-child(5) { top: 120px; }
 
-/* 左側譜號 (𝄞 或 𝄢) */
+/* 左側譜號圖示 (𝄞 / 𝄢) */
 #staffClef {
   position: absolute;
-  left: 25px;
-  font-size: 48px;
-  color: #00e5ff;
-  text-shadow: 0 0 12px #00e5ff;
+  left: 20px;
+  top: 15px;
+  font-size: 64px;
+  color: #222222;
   z-index: 1;
+  font-family: Georgia, serif;
 }
 
-/* 中央音符大字 (C4, D2...) */
-#noteDisplay {
-  font-size: 68px;
-  font-weight: 900;
-  color: #ffffff;
-  text-shadow: 0 0 15px #ffe600, 0 0 30px #ff5500; /* TT2 暴擊火焰色調 */
-  z-index: 2;
+/* 音符定位外容器 (由 JS 動態調整 top 座標) */
+#noteNote {
+  position: absolute;
+  left: 55%; /* 居中偏右，與譜號錯開 */
+  width: 32px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  animation: pop 0.15s ease-out;
+}
+
+/* 經典全音符：帶有傾斜度的空心橢圓 */
+.note-head {
+  width: 26px;
+  height: 18px;
+  border: 4.5px solid #111111; 
+  background: #ffffff; /* 白底填充，穿過線條時才能完美遮擋 */
+  border-radius: 50%;
+  transform: rotate(-20deg); /* 樂譜印刷微傾角 */
+}
+
+/* 核心優化：由 JS 動態產生的專屬短加線樣式 */
+.dynamic-ledger {
+  position: absolute;
+  left: 55%;
+  width: 42px; /* 略寬於音符的標準短線 */
+  height: 2px;
+  background: #111111;
+  transform: translateX(-50%); /* 水平完美居中對齊音符 */
+  z-index: 3; /* 位於音符下層，營造穿心視覺效果 */
 }
 
 /* ==========================================
    5. TT2 風格：厚底立體按鈕與 GRID 佈局
    ========================================== */
-/* 標準功能與選單按鈕 */
+/* 功能性按鈕 */
 button {
   width: 100%;
   padding: 15px;
   margin: 8px 0;
   font-size: 15px;
   font-weight: bold;
-  color: #ffcc00; /* TT2 招牌亮金色文字 */
+  color: #ffcc00; /* TT2 金色文字 */
   background: linear-gradient(180deg, #37374d 0%, #1c1c28 100%);
   border: 2px solid #52526e;
-  border-bottom: 5px solid #0c0c14; /* 按鈕立體厚度邊緣 */
+  border-bottom: 5px solid #0c0c14; /* 做出按鈕厚度 */
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0,0,0,0.4);
   transition: all 0.05s ease;
 }
 
-/* 按鈕點擊下壓動態 */
 button:active {
   transform: translateY(3px); 
-  border-bottom-width: 2px; /* 厚度被壓扁 */
+  border-bottom-width: 2px; /* 按鈕壓實 */
   box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
-/* 遊戲內部的 C D E F G A B 鍵盤 (4縱列) */
+/* 4縱列答題 Grid 鍵盤 */
 .btnGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -198,7 +213,7 @@ button:active {
   margin-top: 5px;
 }
 
-/* 遊戲按鈕特製成 TT2 戰鬥橘色系 */
+/* 答題按鈕特製成 TT2 戰鬥橘色系 */
 .btnGrid button {
   padding: 16px 0;
   margin: 0;
@@ -220,13 +235,8 @@ button:active {
   margin-bottom: 12px;
 }
 
-.stat-container {
-  border-left: 4px solid #00e5ff; /* 人物屬性卡藍邊 */
-}
-
-.item-card {
-  border-left: 4px solid #ffe600; /* 裝備卡金邊 */
-}
+.stat-container { border-left: 4px solid #00e5ff; }
+.item-card { border-left: 4px solid #ffe600; }
 
 .info {
   display: flex;
@@ -238,17 +248,16 @@ button:active {
 }
 
 /* ==========================================
-   7. 底部導航欄 (死死固定、全面均分)
+   7. 底部導航欄 (死卡底部、精準均分)
    ========================================== */
 .bottomNav {
   display: flex;
   background: #09090e;
   border-top: 2px solid #2a2a3a;
-  padding-bottom: env(safe-area-inset-bottom); /* 自動留白，完美避開全面屏手機底部白條 */
-  flex-shrink: 0; /* 確保絕對不會被網頁內容往下推出螢幕外 */
+  padding-bottom: env(safe-area-inset-bottom); /* 避開全面屏手機底部手勢白條 */
+  flex-shrink: 0; 
 }
 
-/* 4個主分頁按鈕精確均分各 25% */
 .bottomNav button {
   flex: 1; 
   margin: 0;
@@ -262,18 +271,17 @@ button:active {
   font-weight: 500;
 }
 
-/* 底部功能切換不套用按鈕下壓效果，改為亮起藍色 */
 .bottomNav button:active {
   background: #141420;
   color: #00e5ff;
-  transform: none;
+  transform: none; /* 導航不套用立體縮放 */
 }
 
 /* ==========================================
-   8. TT2 特效動畫
+   8. TT2 動畫
    ========================================== */
 @keyframes pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.18); }
+  100% { transform: translate(-50%, -50%) scale(1); }
 }
