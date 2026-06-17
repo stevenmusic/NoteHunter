@@ -222,3 +222,59 @@ button:active {
   50%  { transform: translate(-50%,-50%) scale(1.18); }
   100% { transform: translate(-50%,-50%) scale(1); }
 }
+/* ============================================================
+   裝備 SVG 卡片優化（新增）
+   ============================================================ */
+
+.item-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+/* SVG 圖示統一大小 */
+.item-card svg {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
+}
+
+/* 武器 */
+#weapon {
+  border-left: 4px solid #ffcc00;
+}
+
+/* 盔甲 */
+#armor {
+  border-left: 4px solid #00e5ff;
+}
+
+/* 盾牌 */
+#shield {
+  border-left: 4px solid #00ff88;
+}
+
+/* 稀有度未來擴充用（先留好） */
+.rarity-common {
+  box-shadow: none;
+}
+
+.rarity-rare {
+  box-shadow: 0 0 10px rgba(0,229,255,0.3);
+}
+
+.rarity-legendary {
+  box-shadow: 0 0 14px rgba(255,204,0,0.5);
+}
+
+.rarity-mythic {
+  box-shadow: 0 0 18px rgba(255,0,120,0.6);
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+  from { filter: brightness(1); }
+  to   { filter: brightness(1.3); }
+}
