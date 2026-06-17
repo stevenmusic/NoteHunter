@@ -10,10 +10,12 @@
 <body>
 <div class="app">
 
+  <!-- 頂部HUD - 設定按鈕移到右上角 -->
   <div class="topHUD">
     <div class="nameRow">
       <span>⚔️ Steven</span>
       <span class="level" id="levelText">Lv.1</span>
+      <button onclick="switchPage('settingPage')" class="setting-btn">⚙️</button>
     </div>
     <div class="expBar">
       <div class="expFill" id="expFill"></div>
@@ -21,7 +23,6 @@
     <div class="infoRow">
       <span id="expText">EXP 0 / 100</span>
       <span id="goldDisplay" style="color:#ffcc00;font-weight:bold;">💰 0</span>
-      <button onclick="switchPage('settingPage')" class="setting-btn">⚙️</button>
     </div>
   </div>
 
@@ -100,6 +101,7 @@
 
   </div>
 
+  <!-- 固定底部導航 -->
   <div class="bottomNav">
     <button onclick="switchPage('characterPage')">👤 人物</button>
     <button onclick="switchPage('playPage')">🎮 遊玩</button>
