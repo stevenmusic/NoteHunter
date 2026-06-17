@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NoteHunter</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoteHunter - Tap Titans Style</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="app">
 
-  <!-- HUD -->
+  <!-- HUD：TT2 風格的金屬質感頂部 -->
   <div class="topHUD">
     <div class="nameRow">
-      👤 Steven
+      <span>⚔️ Steven</span>
       <span class="level" id="levelText">Lv.1</span>
     </div>
 
@@ -22,58 +22,63 @@
       <div class="expFill" id="expFill"></div>
     </div>
 
-    <div class="expText" id="expText">EXP 0 / 100</div>
+    <div class="infoRow" style="display: flex; justify-content: space-between; margin-top: 5px;">
+      <span class="expText" id="expText">EXP 0 / 100</span>
+      <span id="goldDisplay" style="color: #ffcc00; font-weight: bold;">💰 0</span>
+    </div>
   </div>
 
-  <!-- CONTENT -->
+  <!-- CONTENT：遊戲內容頁面 -->
   <div id="content">
 
     <!-- HOME -->
     <div id="homePage" class="page active">
       <h2>🏠 首頁</h2>
       <p>歡迎來到 NoteHunter</p>
+      <div class="menu-box">
+        <p>準備好迎接你的冒險了嗎？</p>
+      </div>
     </div>
 
     <!-- CHARACTER -->
     <div id="characterPage" class="page">
-      <h2>👤 人物</h2>
+      <h2>👤 人物狀態</h2>
+      <div id="stats" class="stat-container"></div>
 
-      <div id="stats"></div>
+      <div class="gear-section">
+        <h3>⚔️ 武器</h3>
+        <div id="weapon" class="item-card"></div>
 
-      <h3>⚔️ 武器</h3>
-      <div id="weapon"></div>
+        <h3>🥋 衣服</h3>
+        <div id="armor" class="item-card"></div>
 
-      <h3>🥋 衣服</h3>
-      <div id="armor"></div>
-
-      <h3>🛡️ 盾牌</h3>
-      <div id="shield"></div>
+        <h3>🛡️ 盾牌</h3>
+        <div id="shield" class="item-card"></div>
+      </div>
     </div>
 
     <!-- PLAY -->
     <div id="playPage" class="page">
-      <h2>🎮 遊玩</h2>
-
-      <button onclick="startGame()">高音譜號</button>
-      <button onclick="startGame()">低音譜號</button>
+      <h2>🎮 挑戰</h2>
+      <button onclick="startGame()">高音譜號模式</button>
+      <button onclick="startGame()">低音譜號模式</button>
       <button onclick="startGame()">混合模式</button>
     </div>
 
     <!-- RANK -->
     <div id="rankPage" class="page">
       <h2>🏆 排行榜</h2>
-      <p>尚未開放</p>
+      <p>全球英雄數據同步中...</p>
     </div>
 
     <!-- SETTINGS -->
     <div id="settingPage" class="page">
       <h2>⚙️ 設定</h2>
-      <p>尚未開放</p>
+      <p>音效設定、畫質調整</p>
     </div>
 
-    <!-- GAME -->
+    <!-- GAMEPLAY AREA -->
     <div id="gamePage" class="page">
-
       <div id="note">C4</div>
 
       <div class="btnGrid">
@@ -87,17 +92,16 @@
       </div>
 
       <div class="info">
-        <div id="score">Score 0</div>
-        <div id="combo">Combo 0</div>
+        <div id="score">Score: 0</div>
+        <div id="combo">Combo: 0</div>
       </div>
 
-      <button onclick="backHome()">返回</button>
-
+      <button onclick="backHome()" style="margin-top: 20px; background: #555;">返回基地</button>
     </div>
 
   </div>
 
-  <!-- BOTTOM NAV -->
+  <!-- BOTTOM NAV：底部導航 -->
   <div class="bottomNav">
     <button onclick="switchPage('characterPage')">人物</button>
     <button onclick="switchPage('playPage')">遊玩</button>
@@ -107,6 +111,7 @@
 
 </div>
 
+<!-- 腳本載入 -->
 <script src="data.js"></script>
 <script src="game.js"></script>
 
