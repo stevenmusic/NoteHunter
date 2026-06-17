@@ -386,3 +386,50 @@ button:active {
     margin: 20px 0;
   }
 }
+
+/* ============================================================
+   💢 史萊姆受擊特殊表情（生氣 / 哭哭）
+   ============================================================ */
+
+/* 【共通受擊效果】：閃紅燈 + 微壓扁 */
+.monster-slime.damaged {
+    filter: brightness(1.2) sepia(0.6) hue-rotate(-50deg) saturate(3);
+    transform: scale(0.92) translateY(3px);
+}
+
+/* --- 生氣表情 (Angry) --- */
+/* 眉毛倒豎（利用旋轉五官） */
+.monster-slime.angry .monster-eye.left {
+    transform: rotate(20deg);
+    border-radius: 2px;
+    height: 4px; /* 眼睛瞇起來 */
+}
+.monster-slime.angry .monster-eye.right {
+    transform: rotate(-20deg);
+    border-radius: 2px;
+    height: 4px;
+}
+/* 倒過來的傲嬌生氣嘴 */
+.monster-slime.angry .monster-mouth {
+    border-bottom: none;
+    border-top: 3px solid #2c3e50;
+    border-radius: 6px 6px 0 0;
+    top: 58%;
+}
+
+/* --- 哭哭表情 (Crying) --- */
+/* 眼睛變寬向下掉 */
+.monster-slime.crying .monster-eye {
+    height: 4px;
+    transform: translateY(2px);
+}
+/* 嚎啕大哭的大嘴巴 */
+.monster-slime.crying .monster-mouth {
+    width: 14px;
+    height: 10px;
+    border: 3px solid #2c3e50;
+    background-color: #742323; /* 嘴巴張大的深色內部 */
+    border-radius: 50%;
+    top: 52%;
+    left: 42%;
+}
