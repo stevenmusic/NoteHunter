@@ -103,12 +103,12 @@ h2 {
 }
 
 /* ==========================================
-   4. 專業級古典五線譜（高度放寬至 180px，防止溢出）
+   4. 傳統古典五線譜 (依據參考圖精確修正)
    ========================================== */
 .note-container {
   width: 100%;
-  height: 180px; /* 放高空間，完美容納上加二線與下加二線 */
-  background: #fdfaf2; /* 改用優雅的古典樂譜象牙白紙底 */
+  height: 180px; 
+  background: #fdfaf2; /* 古典優雅象牙白紙底 */
   border: 3px solid #52526e; 
   border-radius: 12px;
   margin: 10px 0 20px 0;
@@ -117,7 +117,7 @@ h2 {
   overflow: hidden;
 }
 
-/* 譜線置頂：確保所有五線譜與加線 100% 壓在音符正上方 */
+/* 譜線強制置頂：壓在音符上方 */
 .staff-line {
   position: absolute;
   width: 100%;
@@ -126,7 +126,7 @@ h2 {
   z-index: 10; 
 }
 
-/* 譜號定位 (由 JS 提供完美 Leland 印刷字型比例) */
+/* 譜號定位 (依據圖片微調，使其高大優雅) */
 #staffClef {
   position: absolute;
   left: 12px;
@@ -134,32 +134,33 @@ h2 {
   z-index: 1;
   font-family: "Bravura Text", serif;
   user-select: none;
+  line-height: 1;
 }
 
-/* 古典音符本體定位（利用 line-height 讓傳統字型圓心完美對齊座標點） */
+/* 傳統全音符定位（依據圖片：略帶傾斜的優美空心圓） */
 #noteNote {
   position: absolute;
   left: 60%; 
   color: #1a1a1a;
   font-family: "Bravura Text", serif;
-  font-size: 46px; /* 傳統全音符標準比例大小 */
+  font-size: 54px; /* 放大字體，使其符合圖片中音符跨越線條的比例 */
   transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2; /* 在線條下方，達到穿透效果 */
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
+  z-index: 2; /* 位於譜線下方，達成黑線穿心的物理效果 */
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
   text-align: center;
   animation: pop 0.15s ease-out;
 }
 
-/* 動態短加線樣式（置頂並完美對齊傳統音符寬度） */
+/* 動態加線樣式（寬度與圖片一致，完美置頂穿心） */
 .dynamic-ledger {
   position: absolute;
   left: 60%;
-  width: 46px; 
+  width: 54px; 
   height: 2px;
   background: #1a1a1a !important; 
   transform: translateX(-50%); 
@@ -257,6 +258,6 @@ button:active {
 
 @keyframes pop {
   0% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.15); }
+  50% { transform: translate(-50%, -50%) scale(1.12); }
   100% { transform: translate(-50%, -50%) scale(1); }
 }
