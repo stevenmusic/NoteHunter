@@ -2,113 +2,101 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NoteHunter - Real Note Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音符獵人：譜畫神兵</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-<div class="app">
 
-  <div class="topHUD">
-    <div class="nameRow">
-      <span>⚔️ Steven</span>
-      <span class="level" id="levelText">Lv.1</span>
+  <div id="gameApp">
+    <div class="global-header">
+      <div id="levelText">Lv.1</div>
+      <div id="goldDisplay">💰 50</div>
     </div>
-    <div class="expBar">
-      <div class="expFill" id="expFill"></div>
+
+    <div class="exp-container">
+      <div id="expFill" class="exp-fill"></div>
+      <div id="expText" class="exp-text">EXP 0 / 100</div>
     </div>
-    <div class="infoRow" style="display:flex;justify-content:space-between;margin-top:5px;font-size:13px;">
-      <span id="expText">EXP 0 / 100</span>
-      <span id="goldDisplay" style="color:#ffcc00;font-weight:bold;">💰 0</span>
+
+    <div id="content">
+      
+      <div id="homePage" class="page active">
+        <h1>🎵 音符獵人</h1>
+        <p class="subtitle">擊碎音符，鍛造傳奇裝備</p>
+        <div class="menu-box">
+          <button onclick="startGame('treble')">🎼 高音譜號模式</button>
+          <button onclick="startGame('bass')">𝄢 低音譜號模式</button>
+          <button onclick="startGame('mix')">⚡ 混合雙譜號挑戰</button>
+        </div>
+      </div>
+
+      <div id="gamePage" class="page">
+        <div class="game-status">
+          <span id="score">Score: 0</span>
+          <span id="combo">Combo: 0</span>
+        </div>
+
+        <div class="note-container">
+          <div class="staff-line" style="top: 50px;"></div>
+          <div class="staff-line" style="top: 70px;"></div>
+          <div class="staff-line" style="top: 90px;"></div>
+          <div class="staff-line" style="top: 110px;"></div>
+          <div class="staff-line" style="top: 130px;"></div>
+          
+          <div id="staffClef"></div>
+          <div id="noteNote" class="note-target"></div>
+        </div>
+
+        <div class="keyboard">
+          <button onclick="answer('C')">C</button>
+          <button onclick="answer('D')">D</button>
+          <button onclick="answer('E')">E</button>
+          <button onclick="answer('F')">F</button>
+          <button onclick="answer('G')">G</button>
+          <button onclick="answer('A')">A</button>
+          <button onclick="answer('B')">B</button>
+        </div>
+
+        <button class="exit-btn" onclick="backHome()">放棄撤退</button>
+      </div>
+
+      <div id="characterPage" class="page">
+        <h2>⚔️ 冒險者面板</h2>
+        
+        <div id="stats" class="stats-box"></div>
+        
+        <h3>🛡️ 當前穿戴裝備</h3>
+        <div class="equip-slots">
+          <div id="weapon" class="item-card"></div>
+          <div id="armor" class="item-card"></div>
+          <div id="shield" class="item-card"></div>
+        </div>
+
+        <button onclick="backHome()">返回主畫面</button>
+      </div>
+
+      <div id="shopPage" class="page">
+        <h2>🛒 皇家裝備商店</h2>
+        <div class="shop-header">
+          <span>資產：</span>
+          <span id="shopGoldDisplay" style="color:#ffcc00; font-weight:bold; font-size:18px;">💰 50</span>
+        </div>
+        
+        <div id="shopContent" class="shop-grid"></div>
+
+        <button onclick="backHome()">返回主畫面</button>
+      </div>
+
+    </div>
+
+    <div class="bottomNav">
+      <button onclick="switchPage('homePage')">🏠 首頁</button>
+      <button onclick="switchPage('characterPage')">⚔️ 人物</button>
+      <button onclick="switchPage('shopPage')">🛒 商店</button>
     </div>
   </div>
 
-  <div id="content">
-
-    <div id="homePage" class="page active">
-      <h2>🏠 首頁基地</h2>
-      <div class="menu-box">
-        <p>歡迎來到 NoteHunter</p>
-        <p style="color:#8a8a9e;font-size:14px;margin-top:5px;">點擊下方「遊玩」選擇譜號模式，開啟你的音符斬殺冒險！</p>
-      </div>
-    </div>
-
-    <div id="characterPage" class="page">
-      <h2>👤 英雄狀態</h2>
-      <div id="stats" class="stat-container"></div>
-      <div class="gear-section">
-        <h3>⚔️ 武器庫</h3>
-        <div id="weapon" class="item-card"></div>
-        <h3>🥋 戰甲</h3>
-        <div id="armor" class="item-card"></div>
-        <h3>🛡️ 神盾</h3>
-        <div id="shield" class="item-card"></div>
-      </div>
-    </div>
-
-    <div id="playPage" class="page">
-      <h2>🎮 選擇戰役模式</h2>
-      <button onclick="startGame('treble')">高音譜號模式 (C4 - C6)</button>
-      <button onclick="startGame('bass')">低音譜號模式 (C2 - C4)</button>
-      <button onclick="startGame('mix')">混合譜號模式 (全範圍)</button>
-    </div>
-
-    <div id="rankPage" class="page">
-      <h2>🏆 諸神排行榜</h2>
-      <p class="menu-box" style="text-align:center;color:#8a8a9e;">全球聯賽計算中，請先提升戰力...</p>
-    </div>
-
-    <div id="settingPage" class="page">
-      <h2>⚙️ 冒險設定</h2>
-      <p class="menu-box" style="text-align:center;color:#8a8a9e;">打擊音效與畫面粒子特效優化中</p>
-    </div>
-
-    <div id="gamePage" class="page">
-      <div class="note-container">
-
-        <!-- 五條固定譜線：由下到上，間距20px，範圍 50–130px -->
-        <div class="staff-line" style="top:130px;"></div>
-        <div class="staff-line" style="top:110px;"></div>
-        <div class="staff-line" style="top: 90px;"></div>
-        <div class="staff-line" style="top: 70px;"></div>
-        <div class="staff-line" style="top: 50px;"></div>
-
-        <!-- 譜號（JS 動態替換內容） -->
-        <div id="staffClef"></div>
-
-        <!-- 全音符（JS 動態設定 top） -->
-        <div id="noteNote"></div>
-
-      </div>
-
-      <div class="btnGrid">
-        <button onclick="answer('C')">C</button>
-        <button onclick="answer('D')">D</button>
-        <button onclick="answer('E')">E</button>
-        <button onclick="answer('F')">F</button>
-        <button onclick="answer('G')">G</button>
-        <button onclick="answer('A')">A</button>
-        <button onclick="answer('B')">B</button>
-      </div>
-
-      <div class="info">
-        <div id="score">Score: 0</div>
-        <div id="combo">Combo: 0</div>
-      </div>
-      <button onclick="backHome()" style="margin-top:25px;background:linear-gradient(180deg,#555 0%,#333 100%);border-color:#666;border-bottom-color:#111;color:#ddd;">撤退回基地</button>
-    </div>
-
-  </div>
-
-  <div class="bottomNav">
-    <button onclick="switchPage('characterPage')">👤 人物</button>
-    <button onclick="switchPage('playPage')">🎮 遊玩</button>
-    <button onclick="switchPage('rankPage')">🏆 排行</button>
-    <button onclick="switchPage('settingPage')">⚙️ 設定</button>
-  </div>
-
-</div>
-<script src="game.js"></script>
+  <script src="game.js"></script>
 </body>
 </html>
