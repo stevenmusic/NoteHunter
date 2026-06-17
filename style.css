@@ -1,201 +1,139 @@
 /* ============================================================
-   🎨 全域樣式與滿版優化
+   👤 核心資料結構與初始化
    ============================================================ */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Noto Serif TC', 'PingFang TC', 'Microsoft JhengHei', serif;
-  user-select: none;
-  -webkit-user-select: none;
+let player = {
+  name: "雷恩", level: 1, exp: 0, expToNextLevel: 100, gold: 0,
+  hp: 100, atk: 10, def: 5, critChance: 0.12, critMultiplier: 1.5,
+  weapon: { name:"武者打刀", atkBonus:2, level: 1 }, 
+  shield: { name:"御神木盾", defBonus:1, critBonus: 0, level: 1 }
+};
+
+let monster = { level: 1, maxHp: 50, currentHp: 50, typeIndex: 0 };
+
+const YOKAI_DATABASE = [
+  { name: "糰子暮泥", icon: "💧", bg: "radial-gradient(circle at 35% 35%, #9ae5f3, #4eaec5)" }, 
+  { name: "古剎提燈", icon: "🏮", bg: "radial-gradient(circle at 35% 35%, #ffb366, #d96600)" },
+  { name: "唐傘小僧", icon: "🌂", bg: "radial-gradient(circle at 35% 35%, #ff99aa, #cc3355)" },
+  { name: "川流河童", icon: "🥒", bg: "radial-gradient(circle at 35% 35%, #b3ff66, #559900)" },
+  { name: "隱世化狸", icon: "🍃", bg: "radial-gradient(circle at 35% 35%, #d9b38c, #80552b)" },
+  { name: "裂風鐮鼬", icon: "🌪️", bg: "radial-gradient(circle at 35% 35%, #e6ccff, #8033cc)" },
+  { name: "迷霧雪女", icon: "❄️", bg: "radial-gradient(circle at 35% 35%, #ffffff, #99ccff)" },
+  { name: "鞍馬鴉天狗", icon: "👺", bg: "radial-gradient(circle at 35% 35%, #ff6666, #990000)" },
+  { name: "大江山赤鬼", icon: "👹", bg: "radial-gradient(circle at 35% 35%, #ff3333, #660000)" },
+  { name: "遠古八岐大蛇", icon: "🐉", bg: "radial-gradient(circle at 35% 35%, #ffd700, #b8860b)" }
+];
+
+// 題目圖庫 (請確保圖片路徑正確)
+const QUIZ_IMAGES = ["quiz1.png", "quiz2.png", "quiz3.png"];
+
+let currentMode = "treble";
+let score = 0, combo = 0, lastClickTime = 0, lastHeartbeat = Date.now();
+
+/* ============================================================
+   🕹️ 遊戲核心邏輯
+   ============================================================ */
+function damageMonster(amount, skipVisuals = false) {
+  monster.currentHp -= amount;
+  if (!skipVisuals) triggerMonsterHit();
+  while (monster.currentHp <= 0) {
+    monster.level++;
+    monster.maxHp = Math.floor(50 * Math.pow(1.25, monster.level - 1));
+    monster.currentHp += monster.maxHp;
+    monster.typeIndex = (monster.level - 1) % YOKAI_DATABASE.length;
+    player.gold += 10; player.exp += 15;
+    levelUp();
+  }
+  updateUI(); updateExpUI(); saveGameData();
 }
 
-body {
-  background: #121110; 
-  color: #fff;
-  width: 100vw;
-  height: 100dvh;
-  overflow: hidden;
+function triggerMonsterHit() {
+  // 史萊姆表情變換
+  const faces = document.querySelectorAll('.monster-slime');
+  faces.forEach(f => {
+    f.classList.add('damaged');
+    setTimeout(() => f.classList.remove('damaged'), 250);
+  });
+
+  // 隨機角度砍痕
+  const effectContainer = document.createElement('div');
+  effectContainer.className = `slash-line slash-${Math.floor(Math.random() * 5) + 1}`;
+  document.body.appendChild(effectContainer);
+  setTimeout(() => effectContainer.remove(), 250);
 }
 
-/* 📱 滿版核心：移除 max-width、邊框、圓角與陰影，全螢幕無縫撐滿 */
-.game-window {
-  width: 100%;
-  height: 100dvh; 
-  background: linear-gradient(180deg, #241f1c 0%, #161311 100%);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
+function nextNote() {
+  const q = QUIZ_IMAGES[Math.floor(Math.random() * QUIZ_IMAGES.length)];
+  document.getElementById("quizDisplay").innerHTML = `<img src="${q}" style="max-height:100%;">`;
+}
+
+function answer(n) {
+  // 這裡假設您的邏輯：答對則造成基礎傷害
+  const dmg = Math.floor(player.atk + (player.weapon.atkBonus || 0));
+  damageMonster(dmg);
+  score += dmg;
+  combo++;
+  updateUI();
+  nextNote();
 }
 
 /* ============================================================
-   👑 永久置頂頂欄面板 (滿版橫向延展)
+   📂 系統初始化與分頁
    ============================================================ */
-.global-header {
-  background: #1c1a17;
-  border-bottom: 3px solid #d4af37; /* 加粗金邊，滿版更有儀式感 */
-  padding: 12px 24px; /* 稍微加寬左右留白 */
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 1100;
-}
-.header-top-row { display: flex; justify-content: space-between; align-items: center; }
-.player-name-badge { font-size: 14px; font-weight: bold; color: #f5f2eb; background: #332b24; padding: 4px 12px; border-left: 4px solid #bc002d; border-radius: 2px; }
-.lv-badge { background: linear-gradient(180deg, #bc002d 0%, #8a0022 100%); border: 1px solid #d4af37; padding: 3px 12px; border-radius: 3px; font-weight: bold; font-size: 12px; }
-.gold-badge { background: #111; border: 1px solid #d4af37; padding: 3px 12px; border-radius: 3px; font-weight: bold; color: #d4af37; font-size: 12px; }
-.exp-bar-container { width: 100%; height: 16px; background: #111; border-radius: 2px; position: relative; overflow: hidden; border: 1px solid #443a30; }
-.exp-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #d4af37, #bc002d); transition: width 0.3s; }
-.exp-bar-text { position: absolute; width:100%; height:100%; top:0; left:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#fff; text-shadow: 0 1px 2px #000; }
-
-/* ============================================================
-   ⚔️ 中央核心主舞台 (滿版置中)
-   ============================================================ */
-.arena-layer {
-  flex: 1.2; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 15px 0;
-  background: rgba(0, 0, 0, 0.2);
-  border-bottom: 1px dashed #4a3f35;
-}
-.battle-box { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 12px; }
-.monster-name { font-size: 20px; font-weight: bold; text-shadow: 0 2px 4px #000, 0 0 8px #bc002d; }
-.hp-bar-container { width: 60%; max-width: 500px; height: 16px; background: #2b0c10; border: 1.5px solid #d4af37; border-radius: 2px; position: relative; overflow: hidden; }
-.hp-bar-fill { width: 100%; height: 100%; background: linear-gradient(180deg, #bc002d 0%, #7e001c 100%); transition: width 0.12s ease-out; }
-.hp-bar-text { position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; text-shadow: 0 1px 3px #000; }
-
-.monster-wrapper {
-  touch-action: manipulation;
-  position: relative;
-  width: 160px;
-  height: 130px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.monster-slime {
-  width: 120px; height: 100px; border-radius: 50% 50% 45% 45%;
-  box-shadow: inset -6px -8px 10px rgba(0,0,0,0.4), 0 8px 15px rgba(0,0,0,0.5);
-  border: 2.5px solid rgba(255, 255, 255, 0.7); transition: background 0.4s ease;
-  cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.monster-yokai-icon { font-size: 32px; z-index: 2; margin-top: -5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-.slime-face { position: relative; width: 60px; height: 25px; top: 2px; z-index: 3; }
-.slime-eye { width: 8px; height: 8px; background: #111; border-radius: 50%; position: absolute; top: 2px; }
-.slime-eye.left { left: 12px; }
-.slime-eye.right { right: 12px; }
-.slime-mouth { width: 14px; height: 7px; border-bottom: 2px solid #111; border-radius: 0 0 12px 12px; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); }
-
-/* 妖怪受擊動態搖晃 */
-.monster-slime.damaged { animation: yokaiShake 0.2s linear; }
-@keyframes yokaiShake {
-  0% { transform: scale(0.9, 1.1) rotate(-3deg); }
-  50% { transform: scale(1.1, 0.8) rotate(3deg); }
-  100% { transform: scale(1, 1) rotate(0); }
+function switchPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  // 更新導覽按鈕狀態
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  if (id === 'homePage') document.getElementById("navHomeBtn").classList.add("active");
+  else if (id === 'characterPage') document.getElementById("navCharBtn").classList.add("active");
 }
 
-/* ============================================================
-   ⚡ 特效升級：手動斬擊與自動火花
-   ============================================================ */
-.slash-line {
-  position: absolute;
-  width: 180px;
-  height: 6px;
-  background: #ffffff;
-  box-shadow: 0 0 6px #ffffff, 0 0 14px #ff1a1a;
-  border-radius: 50%;
-  transform: rotate(-35deg) scaleX(0);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 50;
-}
-.slash-line.animate { animation: realSlash 0.22s cubic-bezier(0.1, 0.8, 0.2, 1) forwards; }
-@keyframes realSlash {
-  0% { transform: rotate(-35deg) scaleX(0); opacity: 1; }
-  40% { transform: rotate(-35deg) scaleX(1.3); opacity: 1; filter: brightness(1.5); }
-  100% { transform: rotate(-32deg) scaleX(1); opacity: 0; }
+function backHome() { switchPage('homePage'); }
+
+function startGame(mode) {
+  currentMode = mode;
+  switchPage('gamePage');
+  nextNote();
 }
 
-.auto-spark {
-  position: absolute;
-  font-size: 36px;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 40;
-  filter: drop-shadow(0 0 6px #ffcc00);
-}
-.auto-spark.animate { animation: sparkPop 0.28s ease-out forwards; }
-@keyframes sparkPop {
-  0% { transform: scale(0.3) rotate(0deg); opacity: 0; }
-  25% { transform: scale(1.4) rotate(15deg); opacity: 1; }
-  100% { transform: scale(1) rotate(45deg); opacity: 0; }
+function updateUI() {
+  document.getElementById("score").innerText = `戰功: ${score}`;
+  document.getElementById("combo").innerText = `連擊: ${combo}`;
+  document.getElementById("monsterName").innerText = `Lv.${monster.level} ${YOKAI_DATABASE[monster.typeIndex].name}`;
+  const hpPercent = (monster.currentHp / monster.maxHp) * 100;
+  document.getElementById("monsterHpFill").style.width = `${hpPercent}%`;
+  document.getElementById("monsterHpText").innerText = `體力: ${Math.ceil(monster.currentHp)} / ${monster.maxHp}`;
 }
 
-/* ============================================================
-   📂 下方動態抽屜排版 (滿版橫向自適應)
-   ============================================================ */
-.drawer-layer {
-  height: 260px; 
-  background: rgba(20, 18, 16, 0.92); /* 稍微加深避免背景干擾 */
-  border-top: 2px solid #4a3f35;
-  padding: 15px 24px;
-  overflow: hidden;
+function updateExpUI() {
+  const currentMax = player.level * player.expToNextLevel;
+  document.getElementById("expFill").style.width = `${(player.exp / currentMax) * 100}%`;
+  document.getElementById("expText").innerText = `魂魄 ${player.exp} / ${currentMax}`;
+  document.getElementById("levelText").innerText = `段位.${player.level}`;
 }
-.drawer-content { display: none; height: 100%; flex-direction: column; }
-.drawer-content.active-content { display: flex; }
 
-.default-tip-box { justify-content: center; align-items: center; color: #9c8f84; font-size: 14px; font-weight: bold; text-align: center; line-height: 1.8; }
-.menu-box { gap: 12px; max-width: 600px; margin: 0 auto; width: 100%; } /* 限制內容最大寬度防止在大螢幕上拉得太醜 */
-.menu-box h3 { font-size: 14px; color: #9c8f84; border-left: 3px solid #bc002d; padding-left: 6px; margin-bottom: 5px;}
-
-.btn { touch-action: manipulation; width: 100%; padding: 12px; font-size: 15px; font-weight: bold; color: white; border: none; border-radius: 4px; cursor: pointer; }
-.btn-blue { background: linear-gradient(180deg, #44596e 0%, #223140 100%); border: 1px solid #d4af37; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-.btn:active { transform: translateY(2px); }
-
-/* 裝備列表滿版自適應優化 */
-.character-container { overflow: hidden; max-width: 600px; margin: 0 auto; width: 100%; }
-.equipment-list { flex: 1; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 8px; }
-.item-card { display: flex; align-items: center; gap: 12px; background: linear-gradient(135deg, #fcfaf5 0%, #f5eedf 100%); border: 2px solid #d4af37; border-radius: 6px; padding: 8px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); position: relative; }
-.card-title { font-weight: bold; color: #1c1b1a; font-size: 14px; }
-.card-lv { color: #bc002d; font-size: 12px; margin-left: 4px; font-weight: bold; }
-.card-props { font-size: 11px; color: #5c5549; margin-top: 2px; font-weight: bold; }
-.up-btn { touch-action: manipulation; color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 80px; height: 38px; justify-content: center; border: none; }
-.up-btn-weapon { background: linear-gradient(180deg, #bc002d 0%, #80001c 100%); border-bottom: 2px solid #520010; }
-.up-btn-shield { background: linear-gradient(180deg, #3d6350 0%, #203b2e 100%); border-bottom: 2px solid #102118; }
-
-/* ============================================================
-   🎵 答題專用全景層 (無縫滿版覆蓋)
-   ============================================================ */
-.game-play-layer {
-  display: none;
-  position: absolute;
-  top: 79px; /* 緊貼滿版頂欄下方 */
-  bottom: 60px; /* 緊貼底導覽列上方 */
-  left: 0; right: 0;
-  background: #161311;
-  z-index: 1000;
+function levelUp() {
+  if (player.exp >= player.level * player.expToNextLevel) {
+    player.exp -= player.level * player.expToNextLevel;
+    player.level++; player.atk += 2;
+  }
 }
-.game-play-layer.active-play { display: flex; flex-direction: column; }
-.game-container { display: flex; flex-direction: column; height: 100%; padding: 15px 24px; justify-content: space-between; max-width: 700px; margin: 0 auto; width: 100%; }
 
-.staff-wrapper { background: #fdfaf2; border: 3px solid #cbd1b3; border-radius: 6px; height: 160px; position: relative; box-shadow: inset 0 4px 10px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.4); }
-.staff-lines { position: absolute; width: 100%; top: 25px; }
-.staff-lines div { height: 1.5px; background-color: #3a3530; margin-bottom: 16px; }
-#noteNote { position: absolute; left: 45%; /* 在寬螢幕下置中偏左一點 */ transition: top 0.1s ease-out; }
+function saveGameData() {
+  localStorage.setItem("noteHunter", JSON.stringify({ player, score, monster }));
+}
 
-.answer-keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; padding-bottom: 5px; } /* 滿版下把按鈕一字排開(7欄)更像鍵盤！ */
-.key-btn { touch-action: manipulation; background: linear-gradient(180deg, #f5f2eb 0%, #dfdacf 100%); border: 2px solid #5a5245; border-bottom: 4px solid #3a352d; border-radius: 4px; color: #2c251e; font-size: 18px; font-weight: bold; padding: 12px 0; cursor: pointer; }
-.key-btn:active { border-bottom-width: 1px; transform: translateY(2px); }
+function loadGameData() {
+  const data = localStorage.getItem("noteHunter");
+  if (data) {
+    const parsed = JSON.parse(data);
+    player = parsed.player; monster = parsed.monster; score = parsed.score;
+  }
+  updateUI(); updateExpUI();
+}
 
-.game-header { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: bold; color: #d4af37; }
-.btn-back { touch-action: manipulation; background: #6e251d; border: 1px solid #9c3327; color: white; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-size: 13px;}
-
-/* ============================================================
-   🗺️ 底部控制導覽列 (滿版延展)
-   ============================================================ */
-.nav-bar { display: flex; gap: 15px; padding: 10px 24px; background: #1c1a17; border-top: 3px solid #d4af37; height: 60px; z-index: 1100; }
-.nav-btn { touch-action: manipulation; flex: 1; padding: 10px; background: #211c19; border: 1px solid #4a3f35; color: #9c8f84; font-weight: bold; border-radius: 4px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
-.nav-btn.active { background: linear-gradient(180deg, #d4af37 0%, #aa851c 100%); color: #1c1b1a; border-color: #fff; }
+window.addEventListener("DOMContentLoaded", () => {
+  loadGameData();
+  // 點擊怪獸處理
+  document.getElementById("monsterBattleBox").addEventListener("click", () => damageMonster(player.atk * 2));
+});
