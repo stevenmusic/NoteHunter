@@ -287,6 +287,30 @@ function updateCharacter(){
   document.getElementById("shield").innerHTML = card(player.shield, ICON_SHIELD);
 }
 
+// 觸發打擊怪物動畫的函式
+function triggerMonsterHit() {
+  // 取得首頁與遊戲頁面的怪物跟特效元素
+  const homeMonster = document.getElementById('homeMonster');
+  const gameMonster = document.getElementById('gameMonster');
+  const homeHit = document.getElementById('homeHitEffect');
+  const gameHit = document.getElementById('gameHitEffect');
+
+  // 注入受擊 class (閃紅、抖動)
+  if(homeMonster) homeMonster.classList.add('damaged');
+  if(gameMonster) gameMonster.classList.add('damaged');
+  
+  // 注入爆炸特效 class
+  if(homeHit) homeHit.classList.add('animate');
+  if(gameHit) gameHit.classList.add('animate');
+
+  // 動畫結束後 (0.3秒) 自動移除 Class，以便下次能重複觸發
+  setTimeout(() => {
+    if(homeMonster) homeMonster.classList.remove('damaged');
+    if(gameMonster) gameMonster.classList.remove('damaged');
+    if(homeHit) homeHit.classList.remove('animate');
+    if(gameHit) gameHit.classList.remove('animate');
+  }, 300);
+}
 /* ============================================================
    🚀 初始化
    ============================================================ */
