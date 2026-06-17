@@ -1,22 +1,22 @@
-# NoteHunter
-
 # 🎮 NoteHunter
 
-Mobile-first sight-reading RPG game.
+Mobile sight-reading RPG game.
 
 ## Features
-- Sight reading training (C–B notes)
+- Mobile bottom navigation UI
+- Sight reading (C–B notes)
 - Combo system
-- Score system
-- Mobile vertical UI
+- RPG character system
+- Equipment system (weapon / armor / shield)
 
-## Modes
+## Pages
+- Home (level / exp)
+- Character (stats + equipment)
+- Play (modes)
+- Rank (coming soon)
+- Settings (coming soon)
+
+## Game Modes
 - Treble Clef
-- Bass Clef (coming soon)
-- Mixed Mode (coming soon)
-
-## Future
-- RPG equipment system
-- Monsters & battles
-- Leaderboard
-- Online PvP
+- Bass Clef
+- Mixed Mode
