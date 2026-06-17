@@ -26,7 +26,7 @@
 
   <div id="content">
 
-        <div id="homePage" class="page active">
+    <div id="homePage" class="page active">
       <h2>🏠 首頁基地</h2>
       
       <div class="menu-box" id="monsterBattleBox">
@@ -34,7 +34,17 @@
           <span id="monsterName" style="font-weight:bold;">Lv.1 史萊姆</span>
           <span id="monsterHpText">HP: 50 / 50</span>
         </div>
-        <div class="expBar" style="height:15px; background:#1c1c24; border:1px solid #555;">
+        
+        <div class="monster-wrapper">
+          <div id="homeMonster" class="monster-slime">
+            <div class="monster-eye left"></div>
+            <div class="monster-eye right"></div>
+            <div class="monster-mouth"></div>
+          </div>
+          <div id="homeHitEffect" class="hit-effect">💥</div>
+        </div>
+
+        <div class="expBar" style="height:15px; background:#1c1c24; border:1px solid #555; margin-top: 10px;">
           <div id="monsterHpFill" class="expFill" style="width:100%; background:linear-gradient(90deg, #ff416c, #ff4b2b);"></div>
         </div>
       </div>
@@ -77,21 +87,26 @@
     </div>
 
     <div id="gamePage" class="page">
-      <div class="note-container">
+      
+      <div class="monster-wrapper game-battle-zone">
+        <div id="gameMonster" class="monster-slime">
+          <div class="monster-eye left"></div>
+          <div class="monster-eye right"></div>
+          <div class="monster-mouth"></div>
+        </div>
+        <div id="gameHitEffect" class="hit-effect">💥</div>
+      </div>
 
-        <!-- 五條固定譜線：由下到上，間距20px，範圍 50–130px -->
+      <div class="note-container">
         <div class="staff-line" style="top:130px;"></div>
         <div class="staff-line" style="top:110px;"></div>
         <div class="staff-line" style="top: 90px;"></div>
         <div class="staff-line" style="top: 70px;"></div>
         <div class="staff-line" style="top: 50px;"></div>
 
-        <!-- 譜號（JS 動態替換內容） -->
         <div id="staffClef"></div>
 
-        <!-- 全音符（JS 動態設定 top） -->
         <div id="noteNote"></div>
-
       </div>
 
       <div class="btnGrid">
