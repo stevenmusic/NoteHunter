@@ -1,11 +1,38 @@
-/* game.js */
+/* game.js - 核心戰力計算全面修復版 */
+
+// 1. 玩家英雄資料庫
+let player = {
+  level: 1,
+  exp: 0,
+  expToNextLevel: 100,
+  gold: 0,
+  hp: 100,
+  atk: 10,
+  def: 5,
+  critChance: 0.12,
+  critMultiplier: 1.5,
+  weapon: { name: "新手木劍", atkBonus: 2 },
+  armor: { name: "布質外衣", hpBonus: 10 },
+  shield: { name: "破舊木盾", defBonus: 1 }
+};
+
+// 🌟 核心修正：補回被漏掉的戰力加成計算函式，讓人物面板與答題傷害計算恢復正常！
+function getPlayerTotalAtk() { 
+  if (!player.weapon || typeof player.weapon.atkBonus === 'undefined') return player.atk;
+  return player.atk + player.weapon.atkBonus; 
+}
+
+function getPlayerTotalDef() { 
+  if (!player.shield || typeof player.shield.defBonus === 'undefined') return player.def;
+  return player.def + player.shield.defBonus; 
+}
 
 let currentNote = "";
 let currentMode = "treble"; 
 let score = 0;
 let combo = 0;
 
-// 五線譜第三線高度固定在 70px。
+// 音符資料庫
 const notePositions = {
   treble: [
     { name: "C4", note: "C", top: 130, ledgerLines: [110] }, 
@@ -43,52 +70,28 @@ const notePositions = {
   ]
 };
 
-/* ==========================================
-   💾 核心新功能：存檔與讀檔機制
-   ========================================== */
-
-// 1. 自動存檔功能
+// 儲存機制
 function saveGameData() {
-  const saveData = {
-    score: score,
-    player: player // 會把 data.js 裡面的等級、經驗、裝備一起包進來保存
-  };
-  // 將物件轉換成字串，存入瀏覽器本地硬碟中
+  const saveData = { score: score, player: player };
   localStorage.setItem("noteHunter_save", JSON.stringify(saveData));
 }
 
-// 2. 自動讀檔功能
+// 讀取機制
 function loadGameData() {
   const savedString = localStorage.getItem("noteHunter_save");
-  
   if (savedString) {
     try {
       const savedData = JSON.parse(savedString);
-      
-      // 回填分數
       score = savedData.score || 0;
-      
-      // 回填玩家角色狀態（等級、金幣、裝備）
-      if (savedData.player) {
-        player = savedData.player;
-      }
-      
-      console.log("🎮 成功載入歷史存檔紀錄！");
+      if (savedData.player) player = savedData.player; 
+      console.log("🎮 存檔讀取成功！");
     } catch (e) {
-      console.error("讀取存檔時發生錯誤，改用全新冒險初始化", e);
+      console.error("存檔解析失敗", e);
     }
-  } else {
-    console.log("🆕 沒有找到任何歷史紀錄，開啟全新冒險！");
   }
-  
-  // 讀取完畢後，立刻重整一次 UI 畫面顯示正確數值
   updateUI();
   updateExpUI();
 }
-
-/* ==========================================
-   🎮 遊戲核心邏輯
-   ========================================== */
 
 function switchPage(pageId) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
@@ -127,7 +130,9 @@ function nextNote() {
   currentNote = randomQuiz.note; 
 
   const noteEl = document.getElementById("noteNote");
-  noteEl.style.top = randomQuiz.top + "px";
+  if (noteEl) {
+    noteEl.style.top = randomQuiz.top + "px";
+  }
 
   document.querySelectorAll(".dynamic-ledger").forEach(line => line.remove());
   const containerEl = document.querySelector(".note-container");
@@ -138,9 +143,11 @@ function nextNote() {
     containerEl.appendChild(line);
   });
 
-  noteEl.style.animation = "none";
-  void noteEl.offsetWidth; 
-  noteEl.style.animation = "pop 0.15s ease-out";
+  if (noteEl) {
+    noteEl.style.animation = "none";
+    void noteEl.offsetWidth; 
+    noteEl.style.animation = "pop 0.15s ease-out";
+  }
 }
 
 function answer(n) {
@@ -160,25 +167,31 @@ function answer(n) {
   
   updateUI();
   updateExpUI();
-  
-  // 🌟 核心修正：只要數值一變動（答題後），就自動在背景默默存檔！
-  saveGameData();
-  
+  saveGameData(); 
   nextNote();
 }
 
 function updateUI() {
-  document.getElementById("score").innerText = "Score: " + score;
-  document.getElementById("combo").innerText = "Combo: " + combo;
-  document.getElementById("goldDisplay").innerText = "💰 " + player.gold;
+  const scoreEl = document.getElementById("score");
+  const comboEl = document.getElementById("combo");
+  const goldEl = document.getElementById("goldDisplay");
+
+  if (scoreEl) scoreEl.innerText = "Score: " + score;
+  if (comboEl) comboEl.innerText = "Combo: " + combo;
+  if (goldEl) goldEl.innerText = "💰 " + player.gold;
 }
 
 function updateExpUI() {
   const currentLevelExp = player.exp % player.expToNextLevel;
   const percent = (currentLevelExp / player.expToNextLevel) * 100;
-  document.getElementById("expFill").style.width = percent + "%";
-  document.getElementById("expText").innerText = `EXP ${currentLevelExp} / ${player.expToNextLevel}`;
-  document.getElementById("levelText").innerText = "Lv." + player.level;
+  
+  const fillEl = document.getElementById("expFill");
+  const textEl = document.getElementById("expText");
+  const lvEl = document.getElementById("levelText");
+
+  if (fillEl) fillEl.style.width = percent + "%";
+  if (textEl) textEl.innerText = `EXP ${currentLevelExp} / ${player.expToNextLevel}`;
+  if (lvEl) lvEl.innerText = "Lv." + player.level;
 }
 
 function levelUpCheck() {
@@ -192,35 +205,48 @@ function levelUpCheck() {
 
 function updateCharacter() {
   const totalAtk = getPlayerTotalAtk();
-  const totalHp = player.hp + player.armor.hpBonus;
+  const totalHp = player.hp + (player.armor ? player.armor.hpBonus : 0);
   const totalDef = getPlayerTotalDef();
 
-  document.getElementById("stats").innerHTML = `
-    <div style="line-height: 1.6;">
-      <strong style="color: #ffcc00;">⚔️ 總攻擊力:</strong> ${totalAtk} <br>
-      <strong style="color: #ff4444;">❤️ 總生命值:</strong> ${totalHp} <br>
-      <strong style="color: #00e5ff;">🛡️ 總防禦力:</strong> ${totalDef} <br>
-      <strong style="color: #00ff88;">💥 爆擊機率:</strong> ${(player.critChance * 100).toFixed(0)}%
-    </div>
-  `;
+  const statsEl = document.getElementById("stats");
+  const weaponEl = document.getElementById("weapon");
+  const armorEl = document.getElementById("armor");
+  const shieldEl = document.getElementById("shield");
 
-  document.getElementById("weapon").innerHTML = `
-    <div style="font-weight: bold; color: #fff;">${player.weapon.name}</div>
-    <div style="font-size: 13px; color: #aaa;">加成：攻擊力 +${player.weapon.atkBonus}</div>
-  `;
-  document.getElementById("armor").innerHTML = `
-    <div style="font-weight: bold; color: #fff;">${player.armor.name}</div>
-    <div style="font-size: 13px; color: #aaa;">加成：生命值 +${player.armor.hpBonus}</div>
-  `;
-  document.getElementById("shield").innerHTML = `
-    <div style="font-weight: bold; color: #fff;">${player.shield.name}</div>
-    <div style="font-size: 13px; color: #aaa;">加成：防禦力 +${player.shield.defBonus}</div>
-  `;
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <div style="line-height: 1.6;">
+        <strong style="color: #ffcc00;">⚔️ 總攻擊力:</strong> ${totalAtk} <br>
+        <strong style="color: #ff4444;">❤️ 總生命值:</strong> ${totalHp} <br>
+        <strong style="color: #00e5ff;">🛡️ 總防禦力:</strong> ${totalDef} <br>
+        <strong style="color: #00ff88;">💥 爆擊機率:</strong> ${(player.critChance * 100).toFixed(0)}%
+      </div>
+    `;
+  }
+
+  if (weaponEl && player.weapon) {
+    weaponEl.innerHTML = `
+      <div style="font-weight: bold; color: #fff;">${player.weapon.name}</div>
+      <div style="font-size: 13px; color: #aaa;">加成：攻擊力 +${player.weapon.atkBonus}</div>
+    `;
+  }
+  if (armorEl && player.armor) {
+    armorEl.innerHTML = `
+      <div style="font-weight: bold; color: #fff;">${player.armor.name}</div>
+      <div style="font-size: 13px; color: #aaa;">加成：生命值 +${player.armor.hpBonus}</div>
+    `;
+  }
+  if (shieldEl && player.shield) {
+    shieldEl.innerHTML = `
+      <div style="font-weight: bold; color: #fff;">${player.shield.name}</div>
+      <div style="font-size: 13px; color: #aaa;">加成：防禦力 +${player.shield.defBonus}</div>
+    `;
+  }
 }
 
 function backHome() {
   switchPage("homePage");
 }
 
-// 🌟 核心修正：當這個 game.js 檔案被網頁載入時，第一時間自動執行「讀檔」！
+// 初始化讀取存檔
 loadGameData();
