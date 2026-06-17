@@ -1,448 +1,25 @@
-* { box-sizing: border-box; }
-
-body {
-  margin: 0; padding: 0;
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-  background: #060609;
-  color: #fff;
-  height: 100svh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.app {
-  width: 100vw;       /* 💡 改成 100vw，確保 100% 強制填滿螢幕寬度 */
-  height: 100svh;
-  display: flex;
-  flex-direction: column;
-  background: radial-gradient(circle at center, #161626 0%, #060609 100%);
-  position: relative;
-  overflow: hidden;
-  /* ❌ 移除了原本的 max-width: 430px，讓平板與手機一律直接滿版 */
-}
-
-.topHUD {
-  padding: 12px 16px;
-  background: linear-gradient(180deg, #222230 0%, #10101a 100%);
-  border-bottom: 2px solid #36364a;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-}
-.nameRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #ffe600;
-  font-weight: 800;
-  font-size: 15px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.7);
-}
-.level {
-  color: #00e5ff;
-  background: #000;
-  padding: 2px 7px;
-  border-radius: 4px;
-  font-size: 12px;
-  border: 1px solid #00e5ff;
-  font-weight: bold;
-}
-.expBar {
-  height: 8px;
-  background: #1c1c24;
-  border-radius: 4px;
-  margin-top: 8px;
-  overflow: hidden;
-  border: 1px solid #2a2a3a;
-}
-.expFill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #00e5ff, #00ff88);
-  box-shadow: 0 0 10px rgba(0,229,255,0.7);
-  transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-
-#content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  -webkit-overflow-scrolling: touch;
-}
-.page {
-  display: none;
-  flex-direction: column;
-  height: 100%;
-}
-.page.active { display: flex; }
-
-h2 {
-  font-size: 18px;
-  font-weight: 800;
-  margin-top: 4px;
-  margin-bottom: 16px;
-  letter-spacing: 1px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-}
-
-.note-container {
-  width: 100%;
-  height: 190px;
-  background: #fdfaf2;
-  border: 3px solid #52526e;
-  border-radius: 12px;
-  margin: 10px 0 20px 0;
-  position: relative;
-  box-shadow: 0 0 25px rgba(255,255,255,0.15);
-  overflow: hidden;
-}
-
-.staff-line {
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  background: #1a1a1a;
-  z-index: 10;
-  left: 0;
-}
-
-#staffClef {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 2;
-  line-height: 0;
-}
-
-#noteNote {
-  position: absolute;
-  left: 62%;
-  transform: translate(-50%, -50%);
-  z-index: 5;
-  line-height: 0;
-  animation: pop 0.15s ease-out;
-}
-
-.dynamic-ledger {
-  position: absolute;
-  left: 62%;
-  width: 54px;
-  height: 2px;
-  background: #1a1a1a;
-  transform: translateX(-50%);
-  z-index: 10;
-}
-
-button {
-  width: 100%;
-  padding: 15px;
-  margin: 8px 0;
-  font-size: 15px;
-  font-weight: bold;
-  color: #ffcc00;
-  background: linear-gradient(180deg, #37374d 0%, #1c1c28 100%);
-  border: 2px solid #52526e;
-  border-bottom: 5px solid #0c0c14;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.4);
-  transition: all 0.05s ease;
-}
-button:active {
-  transform: translateY(3px);
-  border-bottom-width: 2px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
-}
-
-.btnGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-top: 5px;
-}
-.btnGrid button {
-  padding: 16px 0;
-  margin: 0;
-  background: linear-gradient(180deg, #ff8c00 0%, #cc5200 100%);
-  border-color: #ffa333;
-  border-bottom-color: #5c2600;
-  color: #fff;
-  font-size: 18px;
-}
-
-.menu-box, .stat-container, .item-card {
-  background: rgba(22,22,34,0.8);
-  padding: 14px;
-  border-radius: 8px;
-  border: 1px solid #2d2d3f;
-  margin-bottom: 12px;
-}
-.stat-container { border-left: 4px solid #00e5ff; }
-.item-card      { border-left: 4px solid #ffe600; }
-
-.info {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-  font-weight: bold;
-  color: #8a8a9e;
-  font-size: 15px;
-}
-
-.bottomNav {
-  display: flex;
-  background: #09090e;
-  border-top: 2px solid #2a2a3a;
-  padding-bottom: env(safe-area-inset-bottom);
-  flex-shrink: 0;
-}
-.bottomNav button {
-  flex: 1;
-  margin: 0;
-  padding: 16px 0;
-  background: none;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  color: #8a8a9e;
-  font-size: 14px;
-  font-weight: 500;
-}
-.bottomNav button:active {
-  background: #141420;
-  color: #00e5ff;
-  transform: none;
-}
-
-@keyframes pop {
-  0%   { transform: translate(-50%,-50%) scale(1); }
-  50%  { transform: translate(-50%,-50%) scale(1.18); }
-  100% { transform: translate(-50%,-50%) scale(1); }
-}
-
 /* ============================================================
-   裝備 SVG 卡片優化
+   🎨 1. 全域重設與炫彩霓虹流動背景（解決顏色單調）
    ============================================================ */
-
-.item-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
+* { 
+    box-sizing: border-box; 
 }
 
-.item-card svg {
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
-  filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
-}
-
-#weapon { border-left: 4px solid #ffcc00; }
-#armor { border-left: 4px solid #00e5ff; }
-#shield { border-left: 4px solid #00ff88; }
-
-.rarity-common { box-shadow: none; }
-.rarity-rare { box-shadow: 0 0 10px rgba(0,229,255,0.3); }
-.rarity-legendary { box-shadow: 0 0 14px rgba(255,204,0,0.5); }
-.rarity-mythic {
-  box-shadow: 0 0 18px rgba(255,0,120,0.6);
-  animation: glow 1.5s infinite alternate;
-}
-
-@keyframes glow {
-  from { filter: brightness(1); }
-  to   { filter: brightness(1.3); }
-}
-
-/* ============================================================
-   怪物外觀與打擊動畫
-   ============================================================ */
-
-.monster-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 10px 0;
-}
-
-.game-battle-zone {
-  height: 120px;
-  margin-bottom: -10px;
-}
-
-.monster-slime {
-  width: 80px;
-  height: 65px;
-  background: linear-gradient(180deg, #00ffcc 0%, #00aa88 100%);
-  border-radius: 50% 50% 42% 42% / 60% 60% 40% 40%;
-  position: relative;
-  box-shadow: 0 6px 12px rgba(0, 255, 204, 0.3);
-  animation: monsterFloat 2s ease-in-out infinite;
-  transition: background 0.1s ease;
-}
-
-.monster-eye {
-  width: 8px;
-  height: 8px;
-  background-color: #1c1c24;
-  border-radius: 50%;
-  position: absolute;
-  top: 35%;
-}
-.monster-eye.left { left: 28%; }
-.monster-eye.right { right: 28%; }
-
-.monster-mouth {
-  width: 12px;
-  height: 6px;
-  border-bottom: 3px solid #1c1c24;
-  border-radius: 0 0 6px 6px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.hit-effect {
-  position: absolute;
-  font-size: 40px;
-  opacity: 0;
-  transform: scale(0.3);
-  pointer-events: none;
-  z-index: 10;
-}
-
-@keyframes monsterFloat {
-  0%, 100% { transform: translateY(0) scaleX(1); }
-  50% { transform: translateY(-6px) scaleX(1.05) scaleY(0.95); }
-}
-
-@keyframes monsterShake {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  10% { transform: translate(-2px, -1px) rotate(-2deg); }
-  20% { transform: translate(-3px, 0px) rotate(2deg); }
-  30% { transform: translate(0px, 2px) rotate(0deg); }
-  40% { transform: translate(2px, 1px) rotate(1deg); }
-  50% { transform: translate(-1px, -2px) rotate(-1deg); }
-  60% { transform: translate(-3px, 1px) rotate(0deg); }
-  70% { transform: translate(2px, 1px) rotate(-2deg); }
-  80% { transform: translate(-1px, -1px) rotate(2deg); }
-  90% { transform: translate(2px, -2px) rotate(0deg); }
-  100% { transform: translate(1px, 1px) rotate(0deg); }
-}
-
-.monster-slime.damaged {
-  background: linear-gradient(180deg, #ff3333 0%, #aa0000 100%) !important;
-  box-shadow: 0 0 20px #ff3333;
-  animation: monsterShake 0.2s linear !important;
-}
-
-.hit-effect.animate {
-  animation: explosionPop 0.3s ease-out forwards;
-}
-
-@keyframes explosionPop {
-  0% { opacity: 0; transform: scale(0.5) translateY(0); }
-  50% { opacity: 1; transform: scale(1.4) translateY(-10px); }
-  100% { opacity: 0; transform: scale(1) translateY(-20px); }
-}
-
-/* ============================================================
-   【新加入】平板與大螢幕響應式滿版與排版優化區
-   ============================================================ */
-@media (min-width: 768px) {
-  .app {
-    max-width: 100%; /* 平板以上解除 430px 限制，直接 100% 滿版 */
-    border-left: 1px solid #2a2a3a;
-    border-right: 1px solid #2a2a3a;
-  }
-
-  #content {
-    padding: 24px 40px; /* 大螢幕畫面兩側稍微留白，讓視覺更舒適 */
-  }
-
-  /* 💡 滿版時，讓音符按鈕從 4 欄自動擴展為 7 欄，C D E F G A B 一條橫排更像鋼琴鍵！ */
-  .btnGrid {
-    grid-template-columns: repeat(7, 1fr);
-    gap: 12px;
-    margin-top: 15px;
-  }
-  
-  .btnGrid button {
-    padding: 20px 0; /* 稍微增加高度，讓平板更容易用手指點擊 */
-    font-size: 22px;  /* 放大按鈕字體 */
-  }
-
-  /* 放大五線譜容器，避免在大螢幕上顯得太窄 */
-  .note-container {
-    height: 220px;
-    margin: 20px 0;
-  }
-}
-
-/* ============================================================
-   💢 史萊姆受擊特殊表情（生氣 / 哭哭）
-   ============================================================ */
-
-/* 【共通受擊效果】：閃紅燈 + 微壓扁 */
-.monster-slime.damaged {
-    filter: brightness(1.2) sepia(0.6) hue-rotate(-50deg) saturate(3);
-    transform: scale(0.92) translateY(3px);
-}
-
-/* --- 生氣表情 (Angry) --- */
-/* 眉毛倒豎（利用旋轉五官） */
-.monster-slime.angry .monster-eye.left {
-    transform: rotate(20deg);
-    border-radius: 2px;
-    height: 4px; /* 眼睛瞇起來 */
-}
-.monster-slime.angry .monster-eye.right {
-    transform: rotate(-20deg);
-    border-radius: 2px;
-    height: 4px;
-}
-/* 倒過來的傲嬌生氣嘴 */
-.monster-slime.angry .monster-mouth {
-    border-bottom: none;
-    border-top: 3px solid #2c3e50;
-    border-radius: 6px 6px 0 0;
-    top: 58%;
-}
-
-/* --- 哭哭表情 (Crying) --- */
-/* 眼睛變寬向下掉 */
-.monster-slime.crying .monster-eye {
-    height: 4px;
-    transform: translateY(2px);
-}
-/* 嚎啕大哭的大嘴巴 */
-.monster-slime.crying .monster-mouth {
-    width: 14px;
-    height: 10px;
-    border: 3px solid #2c3e50;
-    background-color: #742323; /* 嘴巴張大的深色內部 */
-    border-radius: 50%;
-    top: 52%;
-    left: 42%;
-}
-
-/* ============================================================
-   ⚡ 全新繽紛活力街機風格與史萊姆放大
-   ============================================================ */
-
-/* 修改主背景：改為極具生命力的高飽和日系漸層 */
-body {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
-    background-size: 300% 300%;
-    animation: gradientBG 15s ease infinite;
+html, body {
+    margin: 0; 
+    padding: 0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, 'Microsoft JhengHei', sans-serif;
+    background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 30%, #76daff 70%, #8ebdff 100%) !important;
+    background-size: 400% 400% !important;
+    animation: gradientBG 12s ease infinite !important;
+    color: #2c3e50;
+    height: 100svh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 @keyframes gradientBG {
@@ -451,114 +28,475 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* 遊戲主容器美化 */
+/* 💡 遊戲主容器：滿版全螢幕 + 輕透磨砂玻璃感 */
 .app {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    border: 3px solid #ffccd5;
-    box-shadow: 0 10px 30px rgba(255, 75, 110, 0.2);
+    width: 100vw;       
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 4px solid #ff2a6d !important;
+    box-shadow: 0 15px 35px rgba(255, 42, 109, 0.35), 
+                inset 0 0 20px rgba(255, 117, 140, 0.15) !important;
+    position: relative;
+    overflow: hidden;
 }
 
-/* 頂部 HUD 變繽紛 */
+/* ============================================================
+   📊 2. 繽紛活力頂部狀態欄 (HUD)
+   ============================================================ */
 .topHUD {
-    background: linear-gradient(180deg, #fff0f3 0%, rgba(255,255,255,0.9) 100%);
-    border-bottom: 2px solid #ffccd5;
+    padding: 14px 18px;
+    background: linear-gradient(180deg, #fff0f3 0%, #ffe3e8 100%) !important;
+    border-bottom: 3px solid #ff477e !important;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(255, 71, 126, 0.15);
 }
 
-/* 💡 史萊姆大升級：尺寸放大 1.6 倍，更巨、更有存在感！ */
+.nameRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #d60052; /* 提高對比文字識別度 */
+    font-weight: 900;
+    font-size: 16px;
+}
+
+.level {
+    color: #ffffff;
+    background: #ff2a6d;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    border: 1px solid #ffffff;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(255, 42, 109, 0.3);
+}
+
+.expBar {
+    height: 10px;
+    background: #fff0f3;
+    border-radius: 6px;
+    margin-top: 10px;
+    overflow: hidden;
+    border: 2px solid #ffccd5;
+}
+
+.expFill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00b4db, #00d2ff) !important;
+    box-shadow: 0 0 8px rgba(0, 210, 255, 0.6) !important;
+    transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ============================================================
+   🕹️ 3. 核心主排版與分頁（解決平板底欄鎖死與推擠問題）
+   ============================================================ */
+#content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    /* 💡 核心安全緩衝：確保主內容不被底下鎖死的固定選單遮擋 */
+    padding-bottom: 100px !important; 
+    -webkit-overflow-scrolling: touch;
+}
+
+.page {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+}
+.page.active { 
+    display: flex; 
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: 900;
+    color: #ff2a6d;
+    margin-top: 4px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0px #fff;
+}
+
+/* ============================================================
+   🎼 樂譜五線譜容器
+   ============================================================ */
+.note-container {
+    width: 100%;
+    height: 190px;
+    background: #fdfaf2;
+    border: 3px solid #52526e;
+    border-radius: 12px;
+    margin: 10px 0 20px 0;
+    position: relative;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+
+.staff-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: #1a1a1a;
+    z-index: 10;
+    left: 0;
+}
+
+#staffClef {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    line-height: 0;
+}
+
+#noteNote {
+    position: absolute;
+    left: 62%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    line-height: 0;
+    animation: pop 0.15s ease-out;
+}
+
+.dynamic-ledger {
+    position: absolute;
+    left: 62%;
+    width: 54px;
+    height: 2px;
+    background: #1a1a1a;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+/* ============================================================
+   👾 4. 戰鬥核心：史萊姆「絕對置中」與「上方換行」排版
+   ============================================================ */
+
+/* 核心點擊感應區：全裝置彈性垂直對齊 */
+#monsterBattleBox, .game-battle-zone {
+    display: flex !important;
+    flex-direction: column !important; /* 強制改為縱向由上至下排列 */
+    align-items: center !important;     /* 左右抓回絕對置中 */
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+    padding: 10px 0 !important;
+    margin: 0 auto !important;
+}
+
+/* 讓名稱與血量雷打不動排列在上方（順位 1 與 2） */
+#monsterName {
+    order: 1 !important;
+    font-size: 24px !important;
+    font-weight: 900 !important;
+    color: #2c3e50 !important;
+    margin-bottom: 6px !important;
+    text-shadow: 1px 1px 0px #fff;
+}
+
+/* 血量條外殼：換行出現在第二順位，下方加入 margin 推開史萊姆 */
+[id*="monsterHp"], .monster-hp, .hp-bar-container {
+    order: 2 !important;
+    width: 85% !important;
+    max-width: 320px !important;
+    margin: 0 auto 25px auto !important; 
+}
+
+#monsterHpFill {
+    background: linear-gradient(90deg, #ff0055, #ff5a79) !important;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 0 8px rgba(255,0,85,0.5) !important;
+}
+
+/* 史萊姆外框：排列在第三順位（換行到下方） */
 .monster-wrapper {
-    width: 200px;
-    height: 160px;
-    margin: 25px auto;
+    order: 3 !important; 
+    position: relative !important;
+    width: 240px !important;
+    height: 180px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    float: none !important;
 }
 
+/* 史萊姆本體：大尺寸且透過雙 50% 幾何絕對居中 */
 .monster-slime {
-    width: 170px;
-    height: 130px;
-    left: 15px;
-    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), inset 0 -10px 20px rgba(0,0,0,0.1);
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important; /* 精準置中公式 */
+    width: 170px !important;
+    height: 130px !important;
+    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), inset 0 -10px 20px rgba(0,0,0,0.1) !important;
+    margin: 0 !important;
+    z-index: 6;
 }
 
-/* 配合放大，重新微調五線譜與首頁史萊姆的眼鼻比例 */
+/* 史萊姆面部細節隨尺寸放大微調 */
 .monster-eye {
-    width: 14px;
-    height: 14px;
-    background-color: #2c3e50;
-    top: 38%;
+    width: 14px !important;
+    height: 14px !important;
+    background-color: #2c3e50 !important;
+    border-radius: 50% !important;
+    position: absolute !important;
+    top: 38% !important;
 }
-.monster-eye.left { left: 28%; }
-.monster-eye.right { right: 28%; }
+.monster-eye.left { left: 28% !important; }
+.monster-eye.right { right: 28% !important; }
 
 .monster-mouth {
-    width: 22px;
-    height: 10px;
-    border-bottom: 4px solid #2c3e50;
-    left: 44%;
-    top: 52%;
+    width: 22px !important;
+    height: 10px !important;
+    border-bottom: 4px solid #2c3e50 !important;
+    border-radius: 0 0 11px 11px !important;
+    position: absolute !important;
+    top: 52% !important;
+    left: 44% !important;
+    transform: none !important;
 }
 
-/* 💥 特效文字同步放大 */
+/* 💥 特效大損害文字置中跳動 */
 .hit-effect {
-    font-size: 54px;
-    left: 35%;
-    top: -10%;
+    position: absolute;
+    font-size: 54px !important;
+    font-weight: 900;
+    color: #ff0055;
+    text-shadow: 2px 2px 0px #fff;
+    left: 38% !important;
+    top: -10% !important;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 15;
 }
 
-/* 💡 介面防縮放核心：為所有卡片按鈕加上 touch-action */
-button, .item-card, .menu-box {
-    touch-action: manipulation; /* 終結行動裝置雙擊畫面會放大縮小的通病 */
+/* ============================================================
+   💢 5. 史萊姆受擊表情包與物理動畫 (生氣 / 哭哭)
+   ============================================================ */
+.monster-slime.damaged {
+    background: linear-gradient(180deg, #ff3333 0%, #aa0000 100%) !important;
+    box-shadow: 0 0 25px #ff3333 !important;
+    /* 💡 受擊時在維持絕對置中 (-50%,-50%) 的狀態下進行抖動縮放 */
+    animation: slimeHitAnim 0.15s ease-in-out infinite alternate !important;
 }
 
-/* 讓升級按鈕點擊時只有深淺變化，絕不晃動或縮放大小 */
+@keyframes slimeHitAnim {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    100% { transform: translate(-50%, -50%) scale(0.86); filter: brightness(1.2); }
+}
+
+/* --- 生氣表情 (Angry) --- */
+.monster-slime.angry .monster-eye.left {
+    transform: rotate(20deg);
+    border-radius: 2px;
+    height: 5px !important;
+}
+.monster-slime.angry .monster-eye.right {
+    transform: rotate(-20deg);
+    border-radius: 2px;
+    height: 5px !important;
+}
+.monster-slime.angry .monster-mouth {
+    border-bottom: none !important;
+    border-top: 4px solid #2c3e50 !important;
+    border-radius: 6px 6px 0 0 !important;
+    top: 56% !important;
+}
+
+/* --- 哭哭表情 (Crying) --- */
+.monster-slime.crying .monster-eye {
+    height: 5px !important;
+    transform: translateY(2px);
+}
+.monster-slime.crying .monster-mouth {
+    width: 22px !important;
+    height: 14px !important;
+    border: 4px solid #2c3e50 !important;
+    background-color: #742323 !important;
+    border-radius: 50% !important;
+    top: 50% !important;
+}
+
+.hit-effect.animate {
+    animation: explosionPop 0.3s ease-out forwards;
+}
+@keyframes explosionPop {
+    0% { opacity: 0; transform: scale(0.5) translateY(0); }
+    50% { opacity: 1; transform: scale(1.3) translateY(-15px); }
+    100% { opacity: 0; transform: scale(1) translateY(-30px); }
+}
+
+/* ============================================================
+   🕹️ 6. 介面防縮放、卡片復古街機化（解決點擊介面縮放）
+   ============================================================ */
+button {
+    width: 100%;
+    padding: 15px;
+    margin: 8px 0;
+    font-size: 15px;
+    font-weight: bold;
+    color: #ffcc00;
+    background: linear-gradient(180deg, #37374d 0%, #1c1c28 100%);
+    border: 2px solid #52526e;
+    border-bottom: 5px solid #0c0c14;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    /* 💡 終結行動裝置雙擊縮放與高亮外框 */
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 升級/回答等所有按鈕點擊時：絕不晃動、絕不縮放變形，僅做深淺變化 */
 button:active {
-    transform: none !important; 
-    filter: brightness(0.9);
+    transform: none !important;
+    border-bottom-width: 5px !important; 
+    filter: brightness(0.85);
 }
 
-
-/* ============================================================
-   🎨 1. 強制所有裝置（手機/平板）背景同步繽紛（無視深色模式）
-   ============================================================ */
-html, body {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%) !important;
-    background-size: 300% 300% !important;
-    animation: gradientBG 15s ease infinite !important;
+.btnGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 5px;
+}
+.btnGrid button {
+    padding: 16px 0;
+    margin: 0;
+    background: linear-gradient(180deg, #ff8c00 0%, #cc5200 100%);
+    border-color: #ffa333;
+    border-bottom-color: #5c2600;
+    color: #fff;
+    font-size: 18px;
 }
 
+/* 卡片與容器：擺脫單調灰黑色，升級為高質感明亮卡片 */
+.menu-box, .stat-container, .item-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fffbfd 100%) !important;
+    padding: 14px;
+    border-radius: 16px !important;
+    border: 2px solid #ffccd5 !important;
+    box-shadow: 4px 4px 0px #ff477e !important; /* 經典日系街機厚重陰影 */
+    margin-bottom: 14px;
+    color: #2c3e50 !important;
+    touch-action: manipulation !important;
+}
+.stat-container { border-left: 6px solid #00b4db !important; }
+.item-card      { border-left: 6px solid #ffcc00 !important; }
+
+.info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #7f8c8d;
+    font-size: 15px;
+}
+
+/* 裝備卡片內容優化 */
+.item-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+}
+.item-card svg {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.15));
+}
+#weapon { border-left: 6px solid #ffcc00 !important; }
+#armor  { border-left: 6px solid #00b4db !important; }
+#shield { border-left: 6px solid #00ff88 !important; }
+
 /* ============================================================
-   👾 2. 史萊姆與點擊感應區「絕對置中」優化
+   📱 7. 平板與大螢幕底欄選單「底部鎖死」系統（解決問題 3）
    ============================================================ */
-#monsterBattleBox {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
+.bottomNav {
+    position: fixed !important; /* 🌟 鎖死在視窗最底端，絕不亂跑 */
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
     width: 100% !important;
-    margin: 0 auto !important;
-    touch-action: manipulation;
-}
-
-.monster-wrapper {
+    height: 70px !important;
+    z-index: 99999 !important; /* 確保站在所有元件的最上層 */
+    
     display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin: 25px auto !important;
-    position: relative !important;
-    float: none !important; /* 防禦舊排版干擾 */
+    background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%) !important;
+    box-shadow: 0 -4px 20px rgba(214, 0, 82, 0.25) !important;
+    border-top: 3px solid #ffffff !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
-.monster-slime {
-    position: relative !important; /* 改為相對定位，靠 flex 完美置中 */
-    left: 0 !important;            /* 清除之前的左邊距偏移 */
-    margin: 0 auto !important;
+.bottomNav button {
+    flex: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100% !important;
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+}
+
+.bottomNav button:active {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+    transform: none !important;
 }
 
 /* ============================================================
-   ❌ 3. 隱藏歡迎字樣（防禦性 CSS 方案）
+   🖥️ 8. 平板與大螢幕專屬響應式優化佈局
    ============================================================ */
-/* 如果你懶得動 HTML，這行會直接在畫面上把包含歡迎標題的區域隱藏 */
-#homePage h1, .welcome-title {
+@media (min-width: 768px) {
+    .app {
+        max-width: 100%; 
+        border-left: none;
+        border-right: none;
+    }
+
+    #content {
+        padding: 24px 60px; /* 大螢幕畫面兩側稍微內縮，視覺比例更好看 */
+        padding-bottom: 110px !important;
+    }
+
+    /* 💡 平板音符按鈕拓寬為 7 欄橫向排列，好按又像鋼琴琴鍵 */
+    .btnGrid {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 12px;
+        margin-top: 15px;
+    }
+    
+    .btnGrid button {
+        padding: 22px 0; 
+        font-size: 24px;  
+    }
+
+    .note-container {
+        height: 220px;
+        margin: 20px 0;
+    }
+}
+
+/* ============================================================
+   ❌ 9. 防禦性 CSS 隱藏歡迎標題
+   ============================================================ */
+#homePage h1, .welcome-title, #homePage h2:first-of-type {
     display: none !important;
 }
 
-
+@keyframes pop {
+    0%   { transform: translate(-50%,-50%) scale(1); }
+    50%  { transform: translate(-50%,-50%) scale(1.18); }
+    100% { transform: translate(-50%,-50%) scale(1); }
+}
