@@ -11,6 +11,7 @@
 
 <div class="app">
 
+  <!-- 頂部 HUD (固定在最上方) -->
   <div class="topHUD">
     <div class="nameRow">
       <span>⚔️ Steven</span>
@@ -25,8 +26,10 @@
     </div>
   </div>
 
+  <!-- 中間獨立內容區 (各頁面切換，多出的內容會在此區域內滾動) -->
   <div id="content">
 
+    <!-- HOME (預設首頁) -->
     <div id="homePage" class="page active">
       <h2>🏠 首頁</h2>
       <div class="menu-box">
@@ -35,6 +38,7 @@
       </div>
     </div>
 
+    <!-- CHARACTER -->
     <div id="characterPage" class="page">
       <h2>👤 人物狀態</h2>
       <div id="stats" class="stat-container"></div>
@@ -48,25 +52,32 @@
       </div>
     </div>
 
+    <!-- PLAY (這裡已修正為傳入對應的譜號模式參數) -->
     <div id="playPage" class="page">
       <h2>🎮 挑戰模式</h2>
-      <button onclick="startGame()">高音譜號模式</button>
-      <button onclick="startGame()">低音譜號模式</button>
-      <button onclick="startGame()">混合模式</button>
+      <button onclick="startGame('treble')">高音譜號模式 (C4 - C6)</button>
+      <button onclick="startGame('bass')">低音譜號模式 (C2 - C4)</button>
+      <button onclick="startGame('mix')">混合模式</button>
     </div>
 
+    <!-- RANK -->
     <div id="rankPage" class="page">
       <h2>🏆 排行榜</h2>
       <p class="menu-box">全球英雄數據同步中...</p>
     </div>
 
+    <!-- SETTINGS -->
     <div id="settingPage" class="page">
       <h2>⚙️ 設定</h2>
       <p class="menu-box">音效設定、畫質調整</p>
     </div>
 
+    <!-- GAMEPLAY (這裡已將原本的純文字 C4 改為五線譜圖片容器) -->
     <div id="gamePage" class="page">
-      <div id="note">C4</div>
+      <div class="note-container">
+        <img id="noteImage" src="" alt="五線譜題目">
+      </div>
+
       <div class="btnGrid">
         <button onclick="answer('C')">C</button>
         <button onclick="answer('D')">D</button>
@@ -76,6 +87,7 @@
         <button onclick="answer('A')">A</button>
         <button onclick="answer('B')">B</button>
       </div>
+
       <div class="info">
         <div id="score">Score: 0</div>
         <div id="combo">Combo: 0</div>
@@ -85,6 +97,7 @@
 
   </div>
 
+  <!-- 底部導航欄 -->
   <div class="bottomNav">
     <button onclick="switchPage('characterPage')">👤 人物</button>
     <button onclick="switchPage('playPage')">🎮 遊玩</button>
