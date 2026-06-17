@@ -1,4 +1,4 @@
-/* game.js — NoteHunter 完整版（含裝備商店） */
+/* game.js — NoteHunter 最終版（每種裝備5階 + 固定底部 + 右上設定） */
 
 const TREBLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="150" viewBox="0 0 36 150" style="position:absolute;left:6px;top:16px;overflow:visible;"><path fill="#1a1a1a" d="M 18,4 C 20,4 24,8 24,14 C 24,22 20,30 16,38 C 22,34 28,36 30,42 C 33,50 30,60 24,64 C 20,67 15,68 12,66 C 8,64 6,60 6,55 C 6,48 10,43 16,42 C 20,41 24,43 26,47 C 28,51 27,57 24,60 C 21,63 17,63 15,61 C 13,59 13,56 15,54 C 17,52 20,53 20,55 C 20,57 18,58 17,57 C 16,56 17,54 18,55 L 18,55 C 16,53 14,54 14,57 C 14,60 16,63 19,64 C 23,65 27,62 28,58 C 29,54 27,49 24,47 C 21,45 16,45 13,47 C 9,50 8,55 9,61 C 10,67 14,71 19,72 C 25,73 30,69 32,64 C 35,57 33,48 29,42 C 26,37 21,34 16,35 C 20,26 23,16 22,8 C 21,5 19,3 18,4 Z M 18,74 C 18,74 18,110 18,125 C 16,130 12,133 10,138 C 8,142 9,146 12,147 C 16,148 20,145 22,141 C 24,137 23,132 20,129 C 19,127 18,126 18,125 "/></svg>`;
 
@@ -14,15 +14,9 @@ const ICON_SHIELD_SVG = `<svg width="40" height="40" viewBox="0 0 64 64" style="
 
 /* 玩家資料 */
 let player = {
-  level: 1, 
-  exp: 0, 
-  expToNextLevel: 100,
-  gold: 500, 
-  hp: 100, 
-  atk: 10, 
-  def: 5,
-  critChance: 0.12, 
-  critMultiplier: 1.5,
+  level: 1, exp: 0, expToNextLevel: 100,
+  gold: 1200, hp: 100, atk: 10, def: 5,
+  critChance: 0.12, critMultiplier: 1.5,
   weapon: { name: "雷神之怒・碎空", atkBonus: 120, rarity: "legendary" },
   armor:  { name: "殘破布質外衣",  hpBonus: 10,  rarity: "common" },
   shield: { name: "阿瓦隆・永恆結界盾", defBonus: 320, rarity: "mythic" }
@@ -33,9 +27,9 @@ let currentMode = "treble";
 let score = 0;
 let combo = 0;
 
-/* 音符位置 */
+/* 音符位置（保持不變） */
 const notePositions = {
-  treble: [
+  treble: [ /* ... 與之前相同 ... */ 
     { name:"C4", note:"C", top:150, ledgerLines:[150] },
     { name:"D4", note:"D", top:140, ledgerLines:[] },
     { name:"E4", note:"E", top:130, ledgerLines:[] },
@@ -52,7 +46,7 @@ const notePositions = {
     { name:"B5", note:"B", top: 20, ledgerLines:[30] },
     { name:"C6", note:"C", top: 12, ledgerLines:[30,12] }
   ],
-  bass: [
+  bass: [ /* ... 與之前相同 ... */ 
     { name:"C2", note:"C", top:168, ledgerLines:[148,168] },
     { name:"D2", note:"D", top:158, ledgerLines:[148] },
     { name:"E2", note:"E", top:148, ledgerLines:[148] },
@@ -71,26 +65,35 @@ const notePositions = {
   ]
 };
 
-/* 商店物品 */
+/* 華麗裝備商店 - 每種5個等級 */
 const shopItems = [
-  { type: "weapon", name: "星滅龍刃", bonus: 250, rarity: "legendary", cost: 850, icon: ICON_WEAPON_SVG },
-  { type: "weapon", name: "虛空裁決者", bonus: 420, rarity: "mythic", cost: 2450, icon: ICON_WEAPON_SVG },
-  { type: "armor",  name: "龍鱗聖鎧", bonus: 180, rarity: "rare", cost: 680, icon: ICON_ARMOR_SVG },
-  { type: "armor",  name: "不滅天輝甲", bonus: 320, rarity: "mythic", cost: 1980, icon: ICON_ARMOR_SVG },
-  { type: "shield", name: "泰坦壁壘", bonus: 450, rarity: "legendary", cost: 920, icon: ICON_SHIELD_SVG },
-  { type: "shield", name: "終焉守護之盾", bonus: 680, rarity: "mythic", cost: 2750, icon: ICON_SHIELD_SVG }
+  // 武器 (5階)
+  { type: "weapon", name: "炎獄魔刃", bonus: 180, rarity: "rare", cost: 620, icon: ICON_WEAPON_SVG },
+  { type: "weapon", name: "雷神之怒・碎空", bonus: 280, rarity: "legendary", cost: 1350, icon: ICON_WEAPON_SVG },
+  { type: "weapon", name: "星河斷劍", bonus: 380, rarity: "legendary", cost: 2450, icon: ICON_WEAPON_SVG },
+  { type: "weapon", name: "虛空裁決者", bonus: 520, rarity: "mythic", cost: 4800, icon: ICON_WEAPON_SVG },
+  { type: "weapon", name: "終焉滅世刃", bonus: 750, rarity: "mythic", cost: 9200, icon: ICON_WEAPON_SVG },
+
+  // 戰甲 (5階)
+  { type: "armor", name: "龍鱗聖鎧", bonus: 120, rarity: "rare", cost: 580, icon: ICON_ARMOR_SVG },
+  { type: "armor", name: "炙焰重鎧", bonus: 220, rarity: "legendary", cost: 1280, icon: ICON_ARMOR_SVG },
+  { type: "armor", name: "不滅天輝甲", bonus: 350, rarity: "legendary", cost: 2650, icon: ICON_ARMOR_SVG },
+  { type: "armor", name: "星辰守護鎧", bonus: 480, rarity: "mythic", cost: 5200, icon: ICON_ARMOR_SVG },
+  { type: "armor", name: "永恆神話甲", bonus: 680, rarity: "mythic", cost: 9800, icon: ICON_ARMOR_SVG },
+
+  // 神盾 (5階)
+  { type: "shield", name: "泰坦壁壘", bonus: 280, rarity: "legendary", cost: 950, icon: ICON_SHIELD_SVG },
+  { type: "shield", name: "聖光守護盾", bonus: 420, rarity: "legendary", cost: 1980, icon: ICON_SHIELD_SVG },
+  { type: "shield", name: "阿瓦隆・永恆結界盾", bonus: 580, rarity: "mythic", cost: 3650, icon: ICON_SHIELD_SVG },
+  { type: "shield", name: "混沌終焉盾", bonus: 720, rarity: "mythic", cost: 6800, icon: ICON_SHIELD_SVG },
+  { type: "shield", name: "宇宙起源之盾", bonus: 950, rarity: "mythic", cost: 12500, icon: ICON_SHIELD_SVG }
 ];
 
 /* 工具函數 */
-function getPlayerTotalAtk() {
-  return player.atk + (player.weapon?.atkBonus ?? 0);
-}
+function getPlayerTotalAtk() { return player.atk + (player.weapon?.atkBonus ?? 0); }
+function getPlayerTotalDef() { return player.def + (player.shield?.defBonus ?? 0); }
 
-function getPlayerTotalDef() {
-  return player.def + (player.shield?.defBonus ?? 0);
-}
-
-/* 存檔系統 */
+/* 存檔 */
 function saveGameData() {
   localStorage.setItem("noteHunter_save", JSON.stringify({ score, player }));
 }
@@ -103,7 +106,7 @@ function loadGameData() {
       score = d.score || 0;
       if (d.player) player = d.player;
     }
-  } catch(e) { console.error(e); }
+  } catch(e) {}
   updateUI();
   updateExpUI();
 }
@@ -112,24 +115,19 @@ function loadGameData() {
 function switchPage(pageId) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
-  
   if (pageId === "characterPage") updateCharacter();
   if (pageId === "shopPage") renderShop();
 }
 
-/* 遊戲開始 */
+/* 遊戲流程 */
 function startGame(mode) {
   currentMode = mode;
   switchPage("gamePage");
   nextNote();
 }
 
-/* 下一個音符 */
 function nextNote() {
-  let activeMode = currentMode === "mix"
-    ? (Math.random() < 0.5 ? "treble" : "bass")
-    : currentMode;
-
+  let activeMode = currentMode === "mix" ? (Math.random() < 0.5 ? "treble" : "bass") : currentMode;
   document.getElementById("staffClef").innerHTML = activeMode === "treble" ? TREBLE_SVG : BASS_SVG;
 
   const pool = notePositions[activeMode];
@@ -153,7 +151,6 @@ function nextNote() {
   });
 }
 
-/* 回答音符 */
 function answer(n) {
   if (n === currentNote) {
     const isCrit = Math.random() < player.critChance;
@@ -162,7 +159,7 @@ function answer(n) {
     score += damage;
     combo++;
     player.exp += 15;
-    player.gold += Math.floor(Math.random() * 5) + 2;
+    player.gold += Math.floor(Math.random() * 8) + 3;
     levelUpCheck();
   } else {
     combo = 0;
@@ -173,7 +170,7 @@ function answer(n) {
   nextNote();
 }
 
-/* UI 更新 */
+/* UI */
 function updateUI() {
   document.getElementById("score").innerText = "Score: " + score;
   document.getElementById("combo").innerText = "Combo: " + combo;
@@ -193,11 +190,11 @@ function levelUpCheck() {
     player.level++;
     player.hp += 25;
     player.atk += 6;
-    player.expToNextLevel = Math.floor(player.expToNextLevel * 1.1);
+    player.expToNextLevel = Math.floor(player.expToNextLevel * 1.12);
   }
 }
 
-/* 角色面板更新 */
+/* 角色面板 */
 function updateCharacter() {
   const totalAtk = getPlayerTotalAtk();
   const totalHp = player.hp + (player.armor?.hpBonus ?? 0);
@@ -218,15 +215,7 @@ function updateCharacter() {
     el.style.display = "flex";
     el.style.alignItems = "center";
     el.style.gap = "14px";
-    el.innerHTML = `
-      ${icon}
-      <div>
-        <div style="font-weight:bold;color:#fff;">${item.name}</div>
-        <div style="font-size:13px;color:#aaa;">
-          ${id === "weapon" ? "攻擊 +" : id === "armor" ? "生命 +" : "防禦 +"} 
-          ${item[id === "weapon" ? "atkBonus" : id === "armor" ? "hpBonus" : "defBonus"]}
-        </div>
-      </div>`;
+    el.innerHTML = `${icon}<div><div style="font-weight:bold;color:#fff;">${item.name}</div><div style="font-size:13px;color:#aaa;">${id==='weapon'?'攻擊':id==='armor'?'生命':'防禦'} +${item[id==='weapon'?'atkBonus':id==='armor'?'hpBonus':'defBonus']}</div></div>`;
   };
 
   renderSlot("weapon", player.weapon, ICON_WEAPON_SVG);
@@ -234,15 +223,17 @@ function updateCharacter() {
   renderSlot("shield", player.shield, ICON_SHIELD_SVG);
 }
 
-/* 商店渲染 */
+/* 商店 */
 function renderShop() {
   const grid = document.getElementById("shopGrid");
   grid.innerHTML = "";
 
-  shopItems.forEach((item, index) => {
-    const isOwned = player[item.type] && player[item.type].name === item.name;
+  shopItems.forEach((item, i) => {
+    const equipped = player[item.type];
+    const isOwned = equipped && equipped.name === item.name;
+
     const div = document.createElement("div");
-    div.className = "shop-item";
+    div.className = `shop-item ${item.rarity}`;
     div.innerHTML = `
       <div class="shop-item-info">
         ${item.icon}
@@ -253,22 +244,18 @@ function renderShop() {
           </div>
         </div>
       </div>
-      <button class="buy-btn ${isOwned ? 'owned' : ''}" onclick="buyItem(${index})">
-        ${isOwned ? "已擁有" : `💰 ${item.cost}`}
+      <button class="buy-btn ${isOwned ? 'owned' : ''}" onclick="buyItem(${i})">
+        ${isOwned ? "已裝備" : `💰 ${item.cost}`}
       </button>
     `;
     grid.appendChild(div);
   });
 }
 
-/* 購買物品 */
 function buyItem(index) {
   const item = shopItems[index];
-  if (player.gold < item.cost) {
-    alert("💰 金幣不足！");
-    return;
-  }
-  if (confirm(`確定要購買「${item.name}」嗎？`)) {
+  if (player.gold < item.cost) return alert("💰 金幣不足！");
+  if (confirm(`確定購買「${item.name}」？`)) {
     player.gold -= item.cost;
     player[item.type] = {
       name: item.name,
@@ -279,16 +266,12 @@ function buyItem(index) {
     updateUI();
     updateExpUI();
     renderShop();
-    if (document.getElementById("characterPage").classList.contains("active")) {
-      updateCharacter();
-    }
-    alert(`✅ 已成功裝備 ${item.name}！`);
+    if (document.getElementById("characterPage").classList.contains("active")) updateCharacter();
+    alert(`✅ 已裝備 ${item.name}！`);
   }
 }
 
-function backHome() {
-  switchPage("homePage");
-}
+function backHome() { switchPage("homePage"); }
 
-/* 初始化遊戲 */
+/* 初始化 */
 loadGameData();
