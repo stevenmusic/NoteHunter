@@ -1,17 +1,18 @@
 /* ============================================================
-   🎨 1. 全域重設與炫彩霓虹流動背景
+   🎨 1. 全域重設與清爽背景 (移除大面積刺眼色塊)
    ============================================================ */
 * { 
     box-sizing: border-box; 
+    border: none; /* 防禦性清除任何微小雜線 */
+    outline: none;
 }
 
 html, body {
     margin: 0; 
     padding: 0;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, 'Microsoft JhengHei', sans-serif;
-    background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 30%, #76daff 70%, #8ebdff 100%) !important;
-    background-size: 400% 400% !important;
-    animation: gradientBG 12s ease infinite !important;
+    /* 改為柔和、具層次感的輕量漸層背景 */
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%) !important;
     height: 100svh;
     display: flex;
     justify-content: center;
@@ -21,22 +22,14 @@ html, body {
     -webkit-user-select: none;
 }
 
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* 💡 遊戲主容器：滿版全螢幕 + 輕透磨砂玻璃感 */
+/* 遊戲主容器：精緻留白與霧面質感 */
 .app {
     width: 100vw;       
     height: 100svh;
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.92) !important;
-    border: 4px solid #ff2a6d !important;
-    box-shadow: 0 15px 35px rgba(255, 42, 109, 0.35), 
-                inset 0 0 20px rgba(255, 117, 140, 0.15) !important;
+    background: #ffffff !important;
+    border: 2px solid #e2e8f0 !important;
     position: relative;
     overflow: hidden;
 }
@@ -46,51 +39,42 @@ html, body {
    ============================================================ */
 .topHUD {
     padding: 14px 18px;
-    background: linear-gradient(180deg, #fff0f3 0%, #ffe3e8 100%) !important;
-    border-bottom: 3px solid #ff477e !important;
+    background: #f8fafc !important;
+    border-bottom: 2px solid #edf2f7 !important;
     flex-shrink: 0;
-    box-shadow: 0 4px 15px rgba(255, 71, 126, 0.15);
 }
 
 .nameRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #d60052; 
-    font-weight: 900;
+    color: #1e293b; 
+    font-weight: 800;
     font-size: 16px;
 }
 
 .level {
     color: #ffffff !important; 
     background: #ff2a6d;
-    padding: 3px 8px;
+    padding: 2px 8px;
     border-radius: 6px;
-    font-size: 13px;
-    border: 1px solid #ffffff;
+    font-size: 12px;
     font-weight: bold;
-    box-shadow: 0 2px 5px rgba(255, 42, 109, 0.3);
 }
 
 .expBar {
-    height: 10px;
-    background: #fff0f3;
-    border-radius: 6px;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
     margin-top: 10px;
     overflow: hidden;
-    border: 2px solid #ffccd5;
 }
 
 .expFill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #00b4db, #00d2ff) !important;
-    box-shadow: 0 0 8px rgba(0, 210, 255, 0.6) !important;
-    transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-
-#expText {
-    color: #52526e !important; /* 💡 修正：確保 HUD 經驗值文字清晰 */
+    background: linear-gradient(90deg, #3b82f6, #60a5fa) !important;
+    transition: width 0.3s ease;
 }
 
 /* ============================================================
@@ -118,21 +102,21 @@ html, body {
 
 h2 {
     font-size: 20px;
-    font-weight: 900;
-    color: #ff2a6d !important; /* 💡 修正：強制維持原本亮麗的粉色標題 */
+    font-weight: 800;
+    color: #1e293b;
     margin-top: 4px;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 0px #fff;
+    margin-bottom: 4px;
 }
 
 h3 {
-    color: #ff477e !important; /* 💡 修正：強制維持次標題顏色 */
+    font-size: 15px;
+    color: #475569;
+    margin: 10px 0 5px 0;
 }
 
-/* 🔥【核心修正】修正顯形選取器：排除標題與血條文字，避免顏色被覆蓋 */
-.page *:not(button):not(button *):not(svg):not(path):not(.expFill):not(#monsterHpFill):not(.hp-fill):not(#monsterHpText):not(h2):not(h3) {
-    color: #2c3e50 !important;
+/* 全域文字防隱形設定 */
+.page *:not(button):not(button *):not(svg):not(path):not(.expFill):not(#monsterHpFill):not(#gameMonsterHpFill) {
+    color: #334155 !important;
 }
 
 /* ============================================================
@@ -140,13 +124,12 @@ h3 {
    ============================================================ */
 .note-container {
     width: 100%;
-    height: 190px;
-    background: #fdfaf2;
-    border: 3px solid #52526e;
+    height: 180px;
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
     border-radius: 12px;
     margin: 10px 0;
     position: relative;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.06);
     overflow: hidden;
 }
 
@@ -154,242 +137,194 @@ h3 {
     position: absolute;
     width: 100%;
     height: 2px;
-    background: #1a1a1a;
+    background: #64748b;
     z-index: 10;
     left: 0;
-}
-
-#staffClef {
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 2;
-    line-height: 0;
-}
-
-#noteNote {
-    position: absolute;
-    left: 62%;
-    transform: translate(-50%, -50%);
-    z-index: 5;
-    line-height: 0;
-    animation: pop 0.15s ease-out;
-}
-
-.dynamic-ledger {
-    position: absolute;
-    left: 62%;
-    width: 54px;
-    height: 2px;
-    background: #1a1a1a;
-    transform: translateX(-50%);
-    z-index: 10;
 }
 
 /* ============================================================
-   👾 4. 戰鬥核心：名字與血條並排 ➔ 史萊姆在下方
+   👾 4. 戰鬥核心：【全面置中】垂直結構排版 (完美移除了四周黑線)
    ============================================================ */
-/* 頂部名稱與血條橫置容器 */
-.monster-header {
+.monster-vertical-container {
     display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: center !important;
+    flex-direction: column !important;
+    align-items: center !important;  /* 確保內部所有組件水平置中 */
+    justify-content: center !important;
     width: 100% !important;
-    margin-bottom: 12px !important;
+    padding: 10px 0 !important;
+    background: none !important;     /* 避免背景色塊干擾 */
+    border: none !important;         /* 徹底拔除多餘黑線邊框 */
 }
 
-/* 左側：史萊姆名字（不換行，靠左對齊） */
-#monsterName {
+/* 名字置中 */
+#monsterName, #gameMonsterName {
     font-size: 18px !important;
-    font-weight: 900 !important;
-    color: #2c3e50 !important;
-    text-shadow: 1px 1px 0px #fff;
-    white-space: nowrap !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    text-align: center !important;
+    margin: 0 0 8px 0 !important;
 }
 
-/* 右側：全新加厚血條外殼（防切邊、置中、不換行） */
+/* 血條置中且厚度充足（防切邊） */
 .monster-hp-bar {
-    flex: 0 0 160px !important; /* 固定血條寬度 160px 鎖死在右側 */
-    height: 24px !important;     /* 給予足夠高度空間 */
+    width: 180px !important;
+    height: 22px !important;
     background-color: #e2e8f0 !important; 
-    border: 2px solid #cbd5e1 !important;
-    border-radius: 12px !important;
+    border-radius: 11px !important;
     overflow: hidden !important;
     position: relative !important;
     display: flex !important;             
-    align-items: center !important;       /* 垂直絕對置中 */
-    justify-content: center !important;   /* 水平絕對置中 */
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    align-items: center !important;       
+    justify-content: center !important;   
+    margin: 0 auto 15px auto !important;
+    border: none !important;
 }
 
-/* 血條桃紅漸層填色 */
-#monsterHpFill {
+#monsterHpFill, #gameMonsterHpFill {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
     height: 100% !important;
-    background: linear-gradient(90deg, #ff0055 0%, #ff5a79 100%) !important;
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.3) !important;
+    background: linear-gradient(90deg, #ef4444 0%, #f87171 100%) !important;
     z-index: 1 !important;
     transition: width 0.2s ease !important;
 }
 
-/* 💡 血條內的數字（完美壓在填色層之上、強制不切邊） */
-#monsterHpText {
-    color: #ffffff !important;            /* 高對比雪白字體 */
-    font-size: 12px !important;
-    font-weight: 900 !important;
-    line-height: 20px !important;         /* 配合高度置中，防止切邊 */
-    z-index: 10 !important;               /* 確保數字在最上層 */
+#monsterHpText, #gameMonsterHpText {
+    color: #ffffff !important;            
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;            
+    z-index: 10 !important;               
     position: relative !important;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important; /* 深陰影，極其清晰 */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5) !important; 
     white-space: nowrap !important;       
 }
 
-/* 下方：史萊姆外框 */
+/* 史萊姆外殼 */
 .monster-wrapper {
     position: relative !important;
-    width: 240px !important;
-    height: 170px !important;
-    margin: 10px auto 0 auto !important;
+    width: 160px !important;
+    height: 120px !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
+    margin: 0 auto !important;
+    border: none !important; /* 確保消滅史萊姆周圍黑線 */
 }
 
 /* 史萊姆本體 */
 .monster-slime {
     position: absolute !important;
-    left: 50% !important;
-    top: 50% !important;
-    transform: translate(-50%, -50%) !important; 
-    width: 170px !important;
-    height: 130px !important;
+    width: 130px !important;
+    height: 100px !important;
+    background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%) !important;
     border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), inset 0 -10px 20px rgba(0,0,0,0.1) !important;
-    margin: 0 !important;
-    z-index: 6;
+    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2) !important;
+    z-index: 5;
     animation: monsterFloat 2s ease-in-out infinite;
+    border: none !important;
 }
 
 .monster-eye {
-    width: 14px !important;
-    height: 14px !important;
-    background-color: #2c3e50 !important;
+    width: 10px !important;
+    height: 10px !important;
+    background-color: #ffffff !important;
     border-radius: 50% !important;
     position: absolute !important;
     top: 38% !important;
 }
-.monster-eye.left { left: 28% !important; }
-.monster-eye.right { right: 28% !important; }
+.monster-eye.left { left: 30% !important; }
+.monster-eye.right { right: 30% !important; }
 
 .monster-mouth {
-    width: 22px !important;
-    height: 10px !important;
-    border-bottom: 4px solid #2c3e50 !important;
-    border-radius: 0 0 11px 11px !important;
+    width: 16px !important;
+    height: 8px !important;
+    border-bottom: 3px solid #ffffff !important;
+    border-radius: 0 0 8px 8px !important;
     position: absolute !important;
-    top: 52% !important;
+    top: 55% !important;
     left: 44% !important;
-    transform: none !important;
-}
-
-.hit-effect {
-    position: absolute;
-    font-size: 54px !important;
-    font-weight: 900;
-    color: #ff0055;
-    text-shadow: 2px 2px 0px #fff;
-    left: 38% !important;
-    top: -10% !important;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 15;
 }
 
 /* ============================================================
-   💢 5. 史萊姆受擊特殊表情包與動態
+   🥊 5. 裝備卡片與升級排版 (人物欄位優化)
    ============================================================ */
-.monster-slime.damaged {
-    background: linear-gradient(180deg, #ff3333 0%, #aa0000 100%) !important;
-    box-shadow: 0 0 25px #ff3333 !important;
-    animation: slimeHitAnim 0.15s ease-in-out infinite alternate !important;
+.stat-container {
+    background: #f8fafc;
+    padding: 14px;
+    border-radius: 12px;
+    border-left: 4px solid #3b82f6;
+    margin-bottom: 10px;
+}
+.stat-line {
+    font-size: 15px;
+    margin: 4px 0;
 }
 
-@keyframes slimeHitAnim {
-    0% { transform: translate(-50%, -50%) scale(1); }
-    100% { transform: translate(-50%, -50%) scale(0.86); filter: brightness(1.2); }
+.item-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
-@keyframes monsterFloat {
-    0%, 100% { transform: translate(-50%, -50%) scaleX(1) translateY(0); }
-    50% { transform: translate(-50%, -50%) scaleX(1.04) scaleY(0.96) translateY(-6px); }
+.gear-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.gear-title {
+    font-weight: 700;
+    font-size: 15px;
+}
+.gear-desc {
+    font-size: 12px;
+    color: #64748b !important;
 }
 
-.monster-slime.angry .monster-eye.left {
-    transform: rotate(20deg);
-    border-radius: 2px;
-    height: 5px !important;
-}
-.monster-slime.angry .monster-eye.right {
-    transform: rotate(-20deg);
-    border-radius: 2px;
-    height: 5px !important;
-}
-.monster-slime.angry .monster-mouth {
-    border-bottom: none !important;
-    border-top: 4px solid #2c3e50 !important;
-    border-radius: 6px 6px 0 0 !important;
-    top: 56% !important;
-}
-
-.monster-slime.crying .monster-eye {
-    height: 5px !important;
-    transform: translateY(2px);
-}
-.monster-slime.crying .monster-mouth {
-    width: 22px !important;
-    height: 14px !important;
-    border: 4px solid #2c3e50 !important;
-    background-color: #742323 !important;
-    border-radius: 50% !important;
-    top: 50% !important;
-}
-
-.hit-effect.animate {
-    animation: explosionPop 0.3s ease-out forwards;
-}
-@keyframes explosionPop {
-    0% { opacity: 0; transform: scale(0.5) translateY(0); }
-    50% { opacity: 1; transform: scale(1.3) translateY(-15px); }
-    100% { opacity: 0; transform: scale(1) translateY(-30px); }
+/* 升級專用小按鈕 */
+.upgrade-btn {
+    width: auto !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+    color: #ffffff !important;
+    border-radius: 6px !important;
+    border: none !important;
+    margin: 0 !important;
+    box-shadow: 0 2px 4px rgba(37,99,235,0.2) !important;
 }
 
 /* ============================================================
-   🕹️ 6. 按鈕與街機繽紛卡片美化
+   🕹️ 6. 通用基本按鈕與功能盒
    ============================================================ */
+.menu-box {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
 button {
     width: 100%;
-    padding: 15px;
-    margin: 8px 0;
-    font-size: 15px;
-    font-weight: bold;
-    color: #ffcc00;
-    background: linear-gradient(180deg, #37374d 0%, #1c1c28 100%);
-    border: 2px solid #52526e;
-    border-bottom: 5px solid #0c0c14;
+    padding: 14px;
+    margin: 6px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    background: #f1f5f9;
     border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    touch-action: manipulation !important;
-    -webkit-tap-highlight-color: transparent;
+    transition: background 0.2s;
 }
-
 button:active {
-    transform: none !important;
-    border-bottom-width: 5px !important; 
-    filter: brightness(0.85);
+    background: #e2e8f0;
 }
 
 .btnGrid {
@@ -399,66 +334,15 @@ button:active {
     margin-top: 5px;
 }
 .btnGrid button {
-    padding: 16px 0;
+    padding: 14px 0;
     margin: 0;
-    background: linear-gradient(180deg, #ff8c00 0%, #cc5200 100%);
-    border-color: #ffa333;
-    border-bottom-color: #5c2600;
-    font-size: 18px;
-}
-
-/* 🌈 高質感明亮撞色卡片外殼 */
-.menu-box, .stat-container, .item-card {
-    background: linear-gradient(135deg, #ffffff 0%, #fffbfd 100%) !important;
-    padding: 14px;
-    border-radius: 16px !important;
-    border: 2px solid #ffccd5 !important;
-    box-shadow: 4px 4px 0px #ff477e !important; 
-    margin-bottom: 4px; 
-    touch-action: manipulation !important;
-}
-.stat-container { border-left: 6px solid #00b4db !important; }
-.item-card      { border-left: 6px solid #ffcc00 !important; }
-
-.info {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    font-weight: bold;
-    font-size: 15px;
-}
-
-.item-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-}
-.item-card svg {
-    width: 56px;
-    height: 56px;
-    flex-shrink: 0;
-    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.15));
-}
-#weapon { border-left: 6px solid #ffcc00 !important; }
-#armor  { border-left: 6px solid #00b4db !important; }
-#shield { border-left: 6px solid #00ff88 !important; }
-
-.rarity-common { box-shadow: 4px 4px 0px #ff477e !important; }
-.rarity-rare { box-shadow: 4px 4px 0px #00b4db !important; }
-.rarity-legendary { box-shadow: 4px 4px 0px #ffcc00 !important; }
-.rarity-mythic {
-    box-shadow: 4px 4px 0px #ff0078 !important;
-    animation: glow 1.5s infinite alternate;
-}
-
-@keyframes glow {
-    from { filter: brightness(1); }
-    to   { filter: brightness(1.2); }
+    background: #334155;
+    color: #ffffff;
+    font-size: 16px;
 }
 
 /* ============================================================
-   📱 7. 底欄選單「底部絕對鎖死」系統
+   📱 7. 底部固定導覽列 (高對比白字配深色底)
    ============================================================ */
 .bottomNav {
     position: fixed !important; 
@@ -466,77 +350,36 @@ button:active {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    height: 70px !important;
+    height: 64px !important;
     z-index: 99999 !important; 
-    
     display: flex !important;
-    background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%) !important;
-    box-shadow: 0 -4px 20px rgba(214, 0, 82, 0.25) !important;
-    border-top: 3px solid #ffffff !important;
-    padding-bottom: env(safe-area-inset-bottom) !important;
+    background: #1e293b !important; /* 改為深藍灰色底，非常沉穩且不刺眼 */
 }
 
 .bottomNav button {
     flex: 1 !important;
     margin: 0 !important;
-    padding: 0 !important;
-    height: 100% !important;
     background: none !important;
-    border: none !important;
     border-radius: 0 !important;
-    box-shadow: none !important;
-    font-size: 15px !important;
-    font-weight: 900 !important;
-    color: #ffffff !important; /* 💡 修正：將底欄字體改為高對比白字，完美防止文字融進背景不見 */
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.6) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important; /* 未選中為淡灰 */
 }
 
 .bottomNav button:active {
-    background: rgba(255, 255, 255, 0.25) !important;
-    transform: none !important;
+    background: #334155 !important;
+    color: #ffffff !important;
 }
 
-/* ============================================================
-   🖥️ 8. 大螢幕響應式優化
-   ============================================================ */
-@media (min-width: 768px) {
-    .app {
-        max-width: 100%; 
-        border-left: none;
-        border-right: none;
-    }
-
-    #content {
-        padding: 24px 60px; 
-        padding-bottom: 120px !important;
-    }
-
-    .btnGrid {
-        grid-template-columns: repeat(7, 1fr);
-        gap: 12px;
-        margin-top: 15px;
-    }
-    
-    .btnGrid button {
-        padding: 22px 0; 
-        font-size: 24px;  
-    }
-
-    .note-container {
-        height: 220px;
-        margin: 20px 0;
-    }
+/* 動態漂浮 */
+@keyframes monsterFloat {
+    0%, 100% { transform: translate(-50%, -50%) scaleX(1) translateY(0); }
+    50% { transform: translate(-50%, -50%) scaleX(1.03) scaleY(0.97) translateY(-4px); }
 }
-
-/* ============================================================
-   ❌ 9. 防禦性 CSS 隱藏歡迎標題
-   ============================================================ */
-#homePage h1, .welcome-title, #homePage h2:first-of-type {
-    display: none !important;
-}
-
-@keyframes pop {
-    0%   { transform: translate(-50%,-50%) scale(1); }
-    50%  { transform: translate(-50%,-50%) scale(1.18); }
-    100% { transform: translate(-50%,-50%) scale(1); }
+.hit-effect {
+    position: absolute;
+    font-size: 40px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 15;
 }
