@@ -16,13 +16,14 @@ body {
 
 .app {
   width: 100%;
-  max-width: 430px;
+  max-width: 430px; /* 手機版維持精緻的窄版設計 */
   height: 100svh;
   display: flex;
   flex-direction: column;
   background: radial-gradient(circle at center, #161626 0%, #060609 100%);
   position: relative;
   overflow: hidden;
+  transition: max-width 0.2s ease;
 }
 
 .topHUD {
@@ -222,8 +223,9 @@ button:active {
   50%  { transform: translate(-50%,-50%) scale(1.18); }
   100% { transform: translate(-50%,-50%) scale(1); }
 }
+
 /* ============================================================
-   裝備 SVG 卡片優化（新增）
+   裝備 SVG 卡片優化
    ============================================================ */
 
 .item-card {
@@ -233,7 +235,6 @@ button:active {
   padding: 12px;
 }
 
-/* SVG 圖示統一大小 */
 .item-card svg {
   width: 56px;
   height: 56px;
@@ -241,34 +242,13 @@ button:active {
   filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
 }
 
-/* 武器 */
-#weapon {
-  border-left: 4px solid #ffcc00;
-}
+#weapon { border-left: 4px solid #ffcc00; }
+#armor { border-left: 4px solid #00e5ff; }
+#shield { border-left: 4px solid #00ff88; }
 
-/* 盔甲 */
-#armor {
-  border-left: 4px solid #00e5ff;
-}
-
-/* 盾牌 */
-#shield {
-  border-left: 4px solid #00ff88;
-}
-
-/* 稀有度未來擴充用（先留好） */
-.rarity-common {
-  box-shadow: none;
-}
-
-.rarity-rare {
-  box-shadow: 0 0 10px rgba(0,229,255,0.3);
-}
-
-.rarity-legendary {
-  box-shadow: 0 0 14px rgba(255,204,0,0.5);
-}
-
+.rarity-common { box-shadow: none; }
+.rarity-rare { box-shadow: 0 0 10px rgba(0,229,255,0.3); }
+.rarity-legendary { box-shadow: 0 0 14px rgba(255,204,0,0.5); }
 .rarity-mythic {
   box-shadow: 0 0 18px rgba(255,0,120,0.6);
   animation: glow 1.5s infinite alternate;
@@ -279,9 +259,10 @@ button:active {
   to   { filter: brightness(1.3); }
 }
 
-/* ================= 怪物外觀與打擊動畫 ================= */
+/* ============================================================
+   怪物外觀與打擊動畫
+   ============================================================ */
 
-/* 怪物外殼容器 */
 .monster-wrapper {
   position: relative;
   width: 100%;
@@ -292,13 +273,11 @@ button:active {
   margin: 10px 0;
 }
 
-/* 遊戲畫面的怪物區域微調 */
 .game-battle-zone {
   height: 120px;
   margin-bottom: -10px;
 }
 
-/* 史萊姆本體（之後換圖片可以直接改 background） */
 .monster-slime {
   width: 80px;
   height: 65px;
@@ -306,11 +285,10 @@ button:active {
   border-radius: 50% 50% 42% 42% / 60% 60% 40% 40%;
   position: relative;
   box-shadow: 0 6px 12px rgba(0, 255, 204, 0.3);
-  animation: monsterFloat 2s ease-in-out infinite; /* 平時的呼吸浮動 */
+  animation: monsterFloat 2s ease-in-out infinite;
   transition: background 0.1s ease;
 }
 
-/* 怪物眼睛 */
 .monster-eye {
   width: 8px;
   height: 8px;
@@ -322,7 +300,6 @@ button:active {
 .monster-eye.left { left: 28%; }
 .monster-eye.right { right: 28%; }
 
-/* 怪物嘴巴 */
 .monster-mouth {
   width: 12px;
   height: 6px;
@@ -334,7 +311,6 @@ button:active {
   transform: translateX(-50%);
 }
 
-/* 打擊特效（💥）初始狀態：隱藏且縮小 */
 .hit-effect {
   position: absolute;
   font-size: 40px;
@@ -344,15 +320,11 @@ button:active {
   z-index: 10;
 }
 
-/* ---------------- 動畫效果群 ---------------- */
-
-/* 平時微幅浮動與縮放 */
 @keyframes monsterFloat {
   0%, 100% { transform: translateY(0) scaleX(1); }
   50% { transform: translateY(-6px) scaleX(1.05) scaleY(0.95); }
 }
 
-/* 被打時的劇烈抖動 */
 @keyframes monsterShake {
   0% { transform: translate(1px, 1px) rotate(0deg); }
   10% { transform: translate(-2px, -1px) rotate(-2deg); }
@@ -367,14 +339,12 @@ button:active {
   100% { transform: translate(1px, 1px) rotate(0deg); }
 }
 
-/* 被打擊時觸發的動態 Class */
 .monster-slime.damaged {
   background: linear-gradient(180deg, #ff3333 0%, #aa0000 100%) !important;
   box-shadow: 0 0 20px #ff3333;
   animation: monsterShake 0.2s linear !important;
 }
 
-/* 特效跳出的動態 Class */
 .hit-effect.animate {
   animation: explosionPop 0.3s ease-out forwards;
 }
@@ -383,4 +353,37 @@ button:active {
   0% { opacity: 0; transform: scale(0.5) translateY(0); }
   50% { opacity: 1; transform: scale(1.4) translateY(-10px); }
   100% { opacity: 0; transform: scale(1) translateY(-20px); }
+}
+
+/* ============================================================
+   【新加入】平板與大螢幕響應式滿版與排版優化區
+   ============================================================ */
+@media (min-width: 768px) {
+  .app {
+    max-width: 100%; /* 平板以上解除 430px 限制，直接 100% 滿版 */
+    border-left: 1px solid #2a2a3a;
+    border-right: 1px solid #2a2a3a;
+  }
+
+  #content {
+    padding: 24px 40px; /* 大螢幕畫面兩側稍微留白，讓視覺更舒適 */
+  }
+
+  /* 💡 滿版時，讓音符按鈕從 4 欄自動擴展為 7 欄，C D E F G A B 一條橫排更像鋼琴鍵！ */
+  .btnGrid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+  }
+  
+  .btnGrid button {
+    padding: 20px 0; /* 稍微增加高度，讓平板更容易用手指點擊 */
+    font-size: 22px;  /* 放大按鈕字體 */
+  }
+
+  /* 放大五線譜容器，避免在大螢幕上顯得太窄 */
+  .note-container {
+    height: 220px;
+    margin: 20px 0;
+  }
 }
