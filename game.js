@@ -125,6 +125,16 @@ let player = {
 };
 
 /* ============================================================
+   👾 史萊姆怪物資料狀態
+   ============================================================ */
+
+let monster = {
+  level: 1,
+  maxHp: 50,      // 初始血量
+  currentHp: 50
+};
+
+/* ============================================================
    🎮 遊戲狀態
    ============================================================ */
 
@@ -161,11 +171,54 @@ const notePositions = {
 };
 
 /* ============================================================
+   ⚔️ 核心戰鬥計算函式
+   ============================================================ */
+
+// 計算實際總攻擊力（人物面板 ATK + 武器庫額外加成加總）
+function getWeaponAtk() {
+  let bonus = player.weapon && player.weapon.atkBonus ? player.weapon.atkBonus : 0;
+  return player.atk + bonus;
+}
+
+// 核心扣血機制與轉生控制
+function damageMonster(amount) {
+  monster.currentHp -= amount;
+  
+  // 觸發抖動與受擊動畫
+  triggerMonsterHit();
+  
+  // 當史萊姆血量歸零，啟動重生結算機制
+  if (monster.currentHp <= 0) {
+    spawnNextSlime();
+  }
+  
+  // 自動即時儲存進度並同步所有 UI
+  updateUI();
+  updateExpUI();
+  saveGameData();
+}
+
+// 史萊姆重生、動態增幅與擊殺獎勵分配
+function spawnNextSlime() {
+  monster.level++;
+  // 下一隻史萊姆的血量隨階級呈 1.25 倍指數量級成長
+  monster.maxHp = Math.floor(50 * Math.pow(1.25, monster.level - 1));
+  monster.currentHp = monster.maxHp;
+  
+  // 擊退獎勵：自動注入金幣與角色基礎經驗值
+  player.gold += monster.level * 3;
+  player.exp += 15;
+  
+  // 驗證是否符合升級資格
+  levelUp();
+}
+
+/* ============================================================
    💾 存檔
    ============================================================ */
 
 function saveGameData(){
-  localStorage.setItem("noteHunter", JSON.stringify({player,score}));
+  localStorage.setItem("noteHunter", JSON.stringify({player, score, monster}));
 }
 
 function loadGameData(){
@@ -173,6 +226,11 @@ function loadGameData(){
   if(data){
     player = data.player || player;
     score = data.score || 0;
+    if(data.monster) monster = data.monster;
+  }
+  // 安全閥：防呆確保目前血量不漏接
+  if(monster.currentHp === undefined || monster.currentHp <= 0) {
+    monster.currentHp = monster.maxHp;
   }
   updateUI();
   updateExpUI();
@@ -213,14 +271,14 @@ function nextNote(){
 
 function answer(n){
   if(n === currentNote){
-    score += player.atk;
+    // 音符正確時，直接對怪物造成大幅度傷害
+    const baseAtk = getWeaponAtk();
+    score += baseAtk;
     combo++;
-    player.exp += 15;
-    player.gold += 3;
+    damageMonster(baseAtk); 
   } else {
     combo = 0;
   }
-  levelUp();
   updateUI();
   updateExpUI();
   saveGameData();
@@ -244,16 +302,35 @@ function levelUp(){
    ============================================================ */
 
 function updateUI(){
-  document.getElementById("score").innerText = "Score: " + score;
-  document.getElementById("combo").innerText = "Combo: " + combo;
-  document.getElementById("goldDisplay").innerText = "💰 " + player.gold;
+  if(document.getElementById("score")) document.getElementById("score").innerText = "Score: " + score;
+  if(document.getElementById("combo")) document.getElementById("combo").innerText = "Combo: " + combo;
+  if(document.getElementById("goldDisplay")) document.getElementById("goldDisplay").innerText = "💰 " + player.gold;
+  
+  // 核心對接：精準更新 HTML 的史萊姆狀態欄
+  const mName = document.getElementById("monsterName");
+  const mHpText = document.getElementById("monsterHpText");
+  const mHpFill = document.getElementById("monsterHpFill");
+  
+  if(mName) mName.innerText = `Lv.${monster.level} 史萊姆`;
+  
+  const displayHp = Math.max(0, Math.ceil(monster.currentHp));
+  if(mHpText) mHpText.innerText = `HP: ${displayHp} / ${monster.maxHp}`;
+  
+  if(mHpFill) {
+    const hpPercent = (displayHp / monster.maxHp) * 100;
+    mHpFill.style.width = hpPercent + "%";
+  }
 }
 
 function updateExpUI(){
   const fill = document.getElementById("expFill");
   const lv = document.getElementById("levelText");
-  fill.style.width = ((player.exp % 100)/100)*100 + "%";
-  lv.innerText = "Lv." + player.level;
+  const expText = document.getElementById("expText");
+  
+  let currentLevelMaxExp = player.level * player.expToNextLevel;
+  if(fill) fill.style.width = (player.exp / currentLevelMaxExp) * 100 + "%";
+  if(lv) lv.innerText = "Lv." + player.level;
+  if(expText) expText.innerText = `EXP ${player.exp} / ${currentLevelMaxExp}`;
 }
 
 /* ============================================================
@@ -289,21 +366,16 @@ function updateCharacter(){
 
 // 觸發打擊怪物動畫的函式
 function triggerMonsterHit() {
-  // 取得首頁與遊戲頁面的怪物跟特效元素
   const homeMonster = document.getElementById('homeMonster');
   const gameMonster = document.getElementById('gameMonster');
   const homeHit = document.getElementById('homeHitEffect');
   const gameHit = document.getElementById('gameHitEffect');
 
-  // 注入受擊 class (閃紅、抖動)
   if(homeMonster) homeMonster.classList.add('damaged');
   if(gameMonster) gameMonster.classList.add('damaged');
-  
-  // 注入爆炸特效 class
   if(homeHit) homeHit.classList.add('animate');
   if(gameHit) gameHit.classList.add('animate');
 
-  // 動畫結束後 (0.3秒) 自動移除 Class，以便下次能重複觸發
   setTimeout(() => {
     if(homeMonster) homeMonster.classList.remove('damaged');
     if(gameMonster) gameMonster.classList.remove('damaged');
@@ -311,6 +383,31 @@ function triggerMonsterHit() {
     if(gameHit) gameHit.classList.remove('animate');
   }, 300);
 }
+
+function backHome() {
+  switchPage('homePage');
+}
+
+/* ============================================================
+   🕹️ 自動監聽器與掛機心跳 (Ticker)
+   ============================================================ */
+
+// 機制一：滑鼠點擊史萊姆特區，造成武器總攻擊力 2 倍傷害
+document.getElementById("monsterBattleBox")?.addEventListener("click", (e) => {
+  // 阻止冒泡避免重複計算
+  e.stopPropagation(); 
+  const clickDmg = getWeaponAtk() * 2;
+  damageMonster(clickDmg);
+});
+
+// 機制二：每秒自動扣除怪物的血量（限定僅於首頁基地生效）
+setInterval(() => {
+  const homePage = document.getElementById("homePage");
+  if(homePage && homePage.classList.contains("active")) {
+    damageMonster(getWeaponAtk());
+  }
+}, 1000);
+
 /* ============================================================
    🚀 初始化
    ============================================================ */
