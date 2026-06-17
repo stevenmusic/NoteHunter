@@ -26,13 +26,12 @@ body {
   box-shadow: 0 12px 36px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  position: relative;
   height: 100vh;
   max-height: 820px;
+  overflow: hidden;
 }
 
-/* 頂部 HUD */
+/* 頂部HUD - 優化右上角設定按鈕 */
 .topHUD {
   padding: 12px 16px 8px;
   background: #1a1e29;
@@ -73,15 +72,16 @@ body {
 .setting-btn {
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 30px;
   cursor: pointer;
-  padding: 0 6px;
   color: #aaa;
+  padding: 0 4px;
   line-height: 1;
 }
 
 .setting-btn:active {
   transform: scale(0.9);
+  color: #fff;
 }
 
 /* 內容區域 */
@@ -128,7 +128,6 @@ button {
   font-weight: bold;
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.1s ease;
 }
 
 button:active {
@@ -136,7 +135,7 @@ button:active {
   background: #1f2431;
 }
 
-/* 五線譜戰場 */
+/* 五線譜 */
 .note-container {
   width: 100%;
   height: 190px;
@@ -179,12 +178,6 @@ button:active {
   margin-top: 16px;
 }
 
-.btnGrid button {
-  margin: 0;
-  padding: 16px 4px;
-  font-size: 18px;
-}
-
 .info {
   display: flex;
   justify-content: space-between;
@@ -194,18 +187,12 @@ button:active {
 }
 
 /* 角色面板 */
-.stat-container {
+.stat-container, .gear-section {
   background: #1f2431;
   border: 1px solid #2d3548;
   border-radius: 10px;
   padding: 14px;
   margin-bottom: 16px;
-  line-height: 1.7;
-}
-
-.gear-section h3 {
-  margin: 18px 0 8px;
-  color: #ccc;
 }
 
 .item-card {
@@ -258,7 +245,6 @@ button:active {
 
 .buy-btn:active {
   transform: translateY(2px);
-  border-bottom-width: 2px;
 }
 
 .buy-btn.owned {
@@ -268,30 +254,30 @@ button:active {
   cursor: not-allowed;
 }
 
-/* 稀有度邊框 */
+/* 稀有度特效 */
 .item-card.common { border-left: 5px solid #8a8a9e; }
-.item-card.uncommon { border-left: 5px solid #00ff88; }
 .item-card.rare { border-left: 5px solid #00e5ff; }
 .item-card.legendary { 
   border-left: 5px solid #ffcc00; 
-  box-shadow: 0 0 12px rgba(255,204,0,0.3);
+  box-shadow: 0 0 12px rgba(255,204,0,0.4);
 }
 .item-card.mythic { 
   border-left: 5px solid #ff0055; 
-  animation: mythicPulse 2.2s infinite alternate;
+  animation: mythicPulse 2s infinite alternate;
 }
 
 @keyframes mythicPulse {
   from { box-shadow: 0 0 8px rgba(255,0,85,0.4); }
-  to { box-shadow: 0 0 22px rgba(255,0,85,0.9); }
+  to { box-shadow: 0 0 25px rgba(255,0,85,0.9); }
 }
 
-/* 底部導航 */
+/* 固定底部導航 */
 .bottomNav {
   display: flex;
   background: #1a1e29;
   border-top: 2px solid #2c3242;
   margin-top: auto;
+  flex-shrink: 0;
 }
 
 .bottomNav button {
@@ -309,7 +295,6 @@ button:active {
   color: #fff;
 }
 
-/* 其他小調整 */
 .exit-btn {
   background: linear-gradient(180deg, #555 0%, #333 100%);
   border-color: #666;
