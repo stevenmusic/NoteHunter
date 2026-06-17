@@ -1,22 +1,24 @@
 # 🎮 NoteHunter
 
-Mobile sight-reading RPG game.
+Mobile vertical sight-reading RPG game inspired by incremental RPG UI.
 
 ## Features
-- Mobile bottom navigation UI
-- Sight reading (C–B notes)
+- Tap Titans style dark UI
+- EXP + Level system
+- Sight reading training (C–B notes)
 - Combo system
-- RPG character system
-- Equipment system (weapon / armor / shield)
+- RPG character stats
+- Equipment system
 
 ## Pages
-- Home (level / exp)
+- Home (HUD + EXP bar)
 - Character (stats + equipment)
-- Play (modes)
+- Play (game modes)
 - Rank (coming soon)
 - Settings (coming soon)
 
-## Game Modes
-- Treble Clef
-- Bass Clef
-- Mixed Mode
+## Next Update
+- Real staff notation (Treble/Bass clef)
+- Monsters + battles
+- Equipment drops
+- Online leaderboard
