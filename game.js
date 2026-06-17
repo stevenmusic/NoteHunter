@@ -103,7 +103,7 @@ fill="none" stroke="#1a1a1a" stroke-width="3.5"/>
 </svg>`;
 
 /* ============================================================
-   👤 玩家資料與怪物狀態
+   👤 玩家資料與怪物狀態 (已整合盾牌升級欄位)
    ============================================================ */
 
 let player = {
@@ -114,12 +114,12 @@ let player = {
   hp: 100,
   atk: 10,
   def: 5,
-  critChance: 0.12,
+  critChance: 0.12, // 基礎爆擊率 12%
   critMultiplier: 1.5,
 
   weapon: { name:"新手木劍", atkBonus:2, rarity:"common", level: 1 }, 
   armor:  { name:"布質外衣", hpBonus:10, rarity:"rare" },
-  shield: { name:"破舊木盾", defBonus:1, rarity:"common" }
+  shield: { name:"破舊木盾", defBonus:1, critBonus: 0, rarity:"common", level: 1 } // 新增盾牌等級與爆擊加成
 };
 
 let monster = {
@@ -147,7 +147,7 @@ let currentMode = "treble";
 let score = 0;
 let combo = 0;
 let lastClickTime = 0; 
-let lastHeartbeat = Date.now(); // 用於背景執行防偷懶的計時器
+let lastHeartbeat = Date.now(); 
 
 const notePositions = {
   treble: [
@@ -165,12 +165,18 @@ const notePositions = {
 };
 
 /* ============================================================
-   ⚔️ 核心戰鬥計算
+   ⚔️ 核心戰鬥與爆擊計算
    ============================================================ */
 
 function getWeaponAtk() {
   let bonus = player.weapon && player.weapon.atkBonus ? player.weapon.atkBonus : 0;
   return player.atk + bonus;
+}
+
+// 獲取當前總爆擊率 (基礎 + 盾牌加成)
+function getTotalCritChance() {
+  let bonus = player.shield && player.shield.critBonus ? player.shield.critBonus : 0;
+  return player.critChance + bonus;
 }
 
 function damageMonster(amount, skipVisuals = false) {
@@ -195,7 +201,8 @@ function spawnNextSlime() {
   monster.currentHp = monster.maxHp;
   monster.colorIndex = Math.floor(Math.random() * SLIME_COLORS.length);
   
-  player.gold += monster.level * 3;
+  // ⚡ 優化：擊殺獲得 10 金幣（確保答題獲得的 20 金幣比較多）
+  player.gold += 10;
   player.exp += 15;
   
   levelUp();
@@ -219,7 +226,7 @@ function saveGameData(){
     player, 
     score, 
     monster,
-    lastSavedTime: Date.now() // 精準紀錄離開時間
+    lastSavedTime: Date.now()
   }));
 }
 
@@ -232,33 +239,31 @@ function loadGameData(){
     score = data.score || 0;
     if(data.monster) monster = data.monster;
     
-    // 計算離線秒數
     if (data.lastSavedTime) {
       let elapsedMs = Date.now() - data.lastSavedTime;
       offlineSeconds = Math.floor(elapsedMs / 1000);
     }
   }
 
-  // 防呆機制
+  // 防呆與全新屬性初始化
   if(monster.currentHp === undefined || monster.currentHp <= 0) {
     monster.currentHp = monster.maxHp;
   }
   if(monster.colorIndex === undefined) monster.colorIndex = 0;
   if(!player.weapon.level) player.weapon.level = 1; 
+  if(!player.shield.level) player.shield.level = 1;
+  if(player.shield.critBonus === undefined) player.shield.critBonus = 0;
 
   updateUI();
   updateExpUI();
   applySlimeColor(); 
 
-  // 執行離線掛機模擬
   if (offlineSeconds > 3) {
     simulateOfflineProgress(offlineSeconds);
   }
 }
 
-// 離線快速通關演算法 (防止秒數過長造成網頁死當)
 function simulateOfflineProgress(seconds) {
-  // 最高限制模擬 24 小時，防數值溢出
   if (seconds > 86400) seconds = 86400; 
 
   let dps = getWeaponAtk(); 
@@ -271,16 +276,14 @@ function simulateOfflineProgress(seconds) {
     let secondsToKill = Math.ceil(hpLeft / dps);
 
     if (seconds >= secondsToKill) {
-      // 史萊姆被擊殺
       seconds -= secondsToKill;
       slimesDefeated++;
       monster.level++;
-      goldEarned += monster.level * 3;
+      goldEarned += 10; // 掛機同步調整為每隻 10 金幣
       expEarned += 15;
       monster.maxHp = Math.floor(50 * Math.pow(1.25, monster.level - 1));
       monster.currentHp = monster.maxHp;
     } else {
-      // 沒死，扣除部分血量
       monster.currentHp -= (seconds * dps);
       seconds = 0;
     }
@@ -289,7 +292,6 @@ function simulateOfflineProgress(seconds) {
   player.gold += goldEarned;
   player.exp += expEarned;
   
-  // 處理可能的多重升級
   while (player.exp >= player.level * player.expToNextLevel) {
     levelUp();
   }
@@ -299,14 +301,13 @@ function simulateOfflineProgress(seconds) {
   applySlimeColor();
   saveGameData();
 
-  // 跳出精緻的掛機收穫報告
   setTimeout(() => {
     alert(`💤 歡迎回來冒險者！\n在您離開的這段期間，英雄自動擊敗了 ${slimesDefeated} 隻史萊姆！\n獲得獎勵：💰 ${goldEarned} 金幣 / 🌟 ${expEarned} 經驗值！`);
   }, 600);
 }
 
 /* ============================================================
-   📌 武器升級系統 (優化：修復介面縮放與晃動)
+   📌 裝備升級系統 (整合武器升級與盾牌升級)
    ============================================================ */
 
 function upgradeWeapon() {
@@ -316,26 +317,31 @@ function upgradeWeapon() {
   if (player.gold >= cost) {
     player.gold -= cost;          
     player.weapon.level++;        
-    player.weapon.atkBonus += 4;  
+    player.weapon.atkBonus += 4;  // 升級武器提升攻擊力
     
-    // 💡 關鍵優化：不再重新用 innerHTML 整組打掉重練，直接精準更新數值文字，杜絕介面縮放
     updateCharacterValuesOnly();
     updateUI();
     saveGameData();
   }
 }
 
-// 只更新數據，不破壞按鈕結構，防止介面抖動與放大
-function updateCharacterValuesOnly() {
-  const currentTotalAtk = getWeaponAtk();
+function upgradeShield() {
+  if (!player.shield.level) player.shield.level = 1;
+  let cost = player.shield.level * 20;
   
-  // 更新狀態欄
-  const statsEl = document.getElementById("stats");
-  if (statsEl) {
-    statsEl.innerHTML = `<div style="background:rgba(255,255,255,0.85); padding:10px; border-radius:8px; border:1px solid #ffccd5; font-weight:bold; color:#ff477e; text-align:center; box-shadow: 0 4px 10px rgba(255,71,126,0.15);">⚔️ 總攻擊力: ${currentTotalAtk} (基礎 ${player.atk} + 武器 ${player.weapon.atkBonus}) | 💖 HP: ${player.hp} | 🛡️ DEF: ${player.def}</div>`;
+  if (player.gold >= cost) {
+    player.gold -= cost;
+    player.shield.level++;
+    player.shield.critBonus += 0.03; // 升級盾牌提升 3% 爆擊率
+    
+    updateCharacterValuesOnly();
+    updateUI();
+    saveGameData();
   }
-  
-  // 動態修改網頁中現成的文字，不重寫卡片 DOM 結構
+}
+
+// 精準動態局部重繪，防止放大或抖動
+function updateCharacterValuesOnly() {
   updateCharacter(); 
 }
 
@@ -358,7 +364,9 @@ function startGame(mode){
 }
 
 function nextNote(){
-  const pool = notePositions[currentMode];
+  // 支援讀音練習模式篩選機制，共用音組資料庫
+  const lookupMode = currentMode.replace('_practice', '');
+  const pool = notePositions[lookupMode] || notePositions['treble'];
   const q = pool[Math.floor(Math.random()*pool.length)];
   currentNote = q.note;
 
@@ -369,16 +377,26 @@ function nextNote(){
   }
 
   const clef = document.getElementById("staffClef");
-  if(clef) clef.innerHTML = currentMode==="treble" ? TREBLE_SVG : BASS_SVG;
+  if(clef) clef.innerHTML = lookupMode==="treble" ? TREBLE_SVG : BASS_SVG;
 }
 
 function answer(n){
   if(n === currentNote){
+    // 判定是否觸發爆擊
+    const isCrit = Math.random() < getTotalCritChance();
     const baseAtk = getWeaponAtk();
-    score += baseAtk;
+    const finalDmg = isCrit ? Math.floor(baseAtk * player.critMultiplier) : baseAtk;
+
+    score += finalDmg;
     combo++;
-    player.gold += 5; 
-    damageMonster(baseAtk); 
+    player.gold += 20; // ⚡ 答題獲得 20 金幣（大於擊殺获得的 10 金幣）
+    
+    // 若不是純讀音練習模式，則對史萊姆造成真實傷害
+    if (!currentMode.includes('_practice')) {
+      damageMonster(finalDmg); 
+    } else {
+      triggerMonsterHit(); // 練習模式僅觸發打擊動效，不扣血與刷新關卡
+    }
   } else {
     combo = 0;
   }
@@ -390,6 +408,7 @@ function answer(n){
 
 function levelUp(){
   if(player.exp >= player.level * player.expToNextLevel){
+    player.exp -= (player.level * player.expToNextLevel);
     player.level++;
     player.atk += 2;
     player.hp += 10;
@@ -427,30 +446,41 @@ function updateExpUI(){
   if(expText) expText.innerText = `EXP ${player.exp} / ${currentLevelMaxExp}`;
 }
 
-function card(item, icon, isWeapon = false){
+function card(item, icon, upgradeType = "none"){
   let actionHtml = `<div style="color:#ffcc00;font-weight:bold">★★★</div>`;
-  if (isWeapon) {
+  
+  if (upgradeType === "weapon" || upgradeType === "shield") {
     let currentLv = item.level || 1;
     let cost = currentLv * 20;
+    let clickMethod = upgradeType === "weapon" ? "upgradeWeapon()" : "upgradeShield()";
+    let btnColor = upgradeType === "weapon" ? "linear-gradient(180deg, #ff477e 0%, #ff2a6d 100%)" : "linear-gradient(180deg, #4da3ff 0%, #0066ff 100%)";
+    let borderColors = upgradeType === "weapon" ? "border: 1px solid #ff0055; border-bottom: 3px solid #b30036;" : "border: 1px solid #0055ff; border-bottom: 3px solid #0036b3;";
+
     actionHtml = `
-      <button onclick="upgradeWeapon()" style="touch-action: manipulation; background: linear-gradient(180deg, #ff477e 0%, #ff2a6d 100%); border: 1px solid #ff0055; border-bottom: 3px solid #b30036; color: #fff; font-size: 12px; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; min-width: 70px;">
+      <button onclick="${clickMethod}" style="touch-action: manipulation; background: ${btnColor}; ${borderColors} color: #fff; font-size: 12px; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; min-width: 70px;">
         <span>升級</span>
         <span style="font-size: 10px; opacity: 0.9;">💰${cost}</span>
       </button>
     `;
   }
+
+  // 格式化動態屬性文字
+  let propsText = "";
+  if (item.atkBonus) propsText += `ATK + ${item.atkBonus}  `;
+  if (item.hpBonus) propsText += `HP + ${item.hpBonus}  `;
+  if (item.defBonus) propsText += `DEF + ${item.defBonus}  `;
+  if (item.critBonus) propsText += `⚡ 爆擊率 + ${Math.round(item.critBonus * 100)}%`;
+
   return `
   <div class="item-card" style="display:flex;align-items:center;gap:10px;background: rgba(255,255,255,0.9);border: 1px solid #ffccd5;border-radius: 12px;padding: 12px;margin-bottom: 10px;box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
     <div>${icon}</div>
     <div style="flex:1">
       <div style="font-weight:800; color:#2c3e50;">
         ${item.name} 
-        ${isWeapon ? `<span style="color:#ff2a6d; font-size:13px; margin-left:4px;">Lv.${item.level || 1}</span>` : ''}
+        ${upgradeType !== "none" ? `<span style="color:#ff2a6d; font-size:13px; margin-left:4px;">Lv.${item.level || 1}</span>` : ''}
       </div>
       <div style="font-size:12px;color:#8a8a9e;margin-top:3px;">
-        ${item.atkBonus ? "ATK + "+item.atkBonus:""}
-        ${item.hpBonus ? "HP + "+item.hpBonus:""}
-        ${item.defBonus ? "DEF + "+item.defBonus:""}
+        ${propsText}
       </div>
     </div>
     <div>${actionHtml}</div>
@@ -459,14 +489,16 @@ function card(item, icon, isWeapon = false){
 
 function updateCharacter() {
   const currentTotalAtk = getWeaponAtk();
+  const currentTotalCrit = Math.round(getTotalCritChance() * 100);
+  
   document.getElementById("stats").innerHTML =
   `<div style="background:rgba(255,255,255,0.85); padding:10px; border-radius:8px; border:1px solid #ffccd5; font-weight:bold; color:#ff477e; text-align:center; box-shadow: 0 4px 10px rgba(255,71,126,0.15);">
-    ⚔️ 總攻擊力: ${currentTotalAtk} (基礎 ${player.atk} + 武器 ${player.weapon.atkBonus}) | 💖 HP: ${player.hp} | 🛡️ DEF: ${player.def}
+    ⚔️ 總攻擊力: ${currentTotalAtk} (基礎 ${player.atk} + 武器 ${player.weapon.atkBonus || 0}) | ⚡ 爆擊率: ${currentTotalCrit}% | 💖 HP: ${player.hp} | 🛡️ DEF: ${player.def}
   </div>`;
 
-  document.getElementById("weapon").innerHTML = card(player.weapon, ICON_WEAPON, true);
-  document.getElementById("armor").innerHTML = card(player.armor, ICON_ARMOR, false);
-  document.getElementById("shield").innerHTML = card(player.shield, ICON_SHIELD, false);
+  document.getElementById("weapon").innerHTML = card(player.weapon, ICON_WEAPON, "weapon");
+  document.getElementById("armor").innerHTML = card(player.armor, ICON_ARMOR, "none");
+  document.getElementById("shield").innerHTML = card(player.shield, ICON_SHIELD, "shield"); // 開啟盾牌升級卡片
 }
 
 function triggerMonsterHit() {
@@ -503,11 +535,11 @@ document.getElementById("monsterBattleBox")?.addEventListener("click", (e) => {
   if (now - lastClickTime < 200) return; 
   lastClickTime = now;
 
-  const clickDmg = getWeaponAtk() * 2;
+  const isCrit = Math.random() < getTotalCritChance();
+  const clickDmg = isCrit ? Math.floor(getWeaponAtk() * player.critMultiplier * 2) : getWeaponAtk() * 2;
   damageMonster(clickDmg);
 });
 
-// 💡 關鍵改寫：利用時間差補償。即使分頁在背景休眠被瀏覽器限制，重開時也會一口氣把漏掉的秒數攻擊補回來！
 setInterval(() => {
   const now = Date.now();
   let elapsedMs = now - lastHeartbeat;
@@ -516,11 +548,10 @@ setInterval(() => {
     lastHeartbeat = now;
     const homePage = document.getElementById("homePage");
     
-    // 如果在首頁基地，精確計算過去了幾秒，補足傷害
     if(homePage && homePage.classList.contains("active")) {
       let secondsPassed = Math.floor(elapsedMs / 1000);
       for (let i = 0; i < secondsPassed; i++) {
-        damageMonster(getWeaponAtk(), secondsPassed > 5); // 快速補血時跳過受擊動畫防卡頓
+        damageMonster(getWeaponAtk(), secondsPassed > 5); 
       }
     }
   }
