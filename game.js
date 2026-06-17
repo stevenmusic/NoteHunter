@@ -1,4 +1,4 @@
-/* game.js — SVG 純向量版，零字型依賴 */
+/* game.js — SVG 純向量版 + 五大裝備稀有度特化系統 */
 
 /*
   ┌─────────────────────────────────────────────────────┐
@@ -14,31 +14,9 @@
 
 /* ============================================================
    SVG 譜號字串
-   ─────────────────────────────────────────────────────────
-   高音譜號：
-     SVG 放置 position:absolute, left:6px, top:16px
-     SVG 尺寸 width:36px height:150px viewBox="0 0 36 150"
-     SVG 內部座標對應容器：
-       容器 top 130px → SVG y = 130-16 = 114  (第一線)
-       容器 top 110px → SVG y = 110-16 =  94  (第二線/G線)
-       容器 top  90px → SVG y =  90-16 =  74  (第三線)
-       容器 top  70px → SVG y =  70-16 =  54  (第四線)
-       容器 top  50px → SVG y =  50-16 =  34  (第五線)
-
-   低音譜號：
-     SVG 放置 left:8px, top:58px
-     SVG 尺寸 width:48px height:60px viewBox="0 0 48 60"
-     容器 top  70px → SVG y =  70-58 = 12  (第四線/F線)
-     容器 top  90px → SVG y =  90-58 = 32  (第三線)
    ============================================================ */
 
-/* 高音譜號 SVG
-   path 說明：
-   - 主幹從底部捲曲(y≈135)向上延伸到頂端(y≈4)
-   - 中間在 G 線(y=94)圍繞一個圓圈
-   - 底部在第一線(y=114)下方有捲曲
-   - 頂端有輕微向右彎曲的裝飾
-*/
+// 高音譜號 SVG
 const TREBLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
   width="36" height="150"
   viewBox="0 0 36 150"
@@ -83,10 +61,7 @@ const TREBLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
   "/>
 </svg>`;
 
-/* 低音譜號 SVG
-   - 左側豆型主體，頂端在 F 線(y=12)
-   - 兩個實心圓點在右側，上點y≈8，下點y≈20
-*/
+// 低音譜號 SVG
 const BASS_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
   width="48" height="60"
   viewBox="0 0 48 60"
@@ -113,9 +88,7 @@ const BASS_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
   <circle fill="#1a1a1a" cx="38" cy="21" r="4"/>
 </svg>`;
 
-/* 全音符 SVG（空心橢圓，線條穿心）
-   cx=0 cy=0，外部由 #noteNote 的 transform:translate(-50%,-50%) 定位
-*/
+// 全音符 SVG（空心橢圓）
 const WHOLE_NOTE_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
   width="30" height="22"
   viewBox="-15 -11 30 22"
@@ -125,15 +98,17 @@ const WHOLE_NOTE_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
 </svg>`;
 
 /* ============================================================
-   Player
+   Player 冒險者資料庫 (預設配置普通與傳奇神兵作測試)
    ============================================================ */
 let player = {
   level: 1, exp: 0, expToNextLevel: 100,
   gold: 0, hp: 100, atk: 10, def: 5,
   critChance: 0.12, critMultiplier: 1.5,
-  weapon: { name: "新手木劍",  atkBonus: 2 },
-  armor:  { name: "布質外衣",  hpBonus: 10 },
-  shield: { name: "破舊木盾",  defBonus: 1 }
+  
+  // 稀有度屬性可選值: 'common' | 'uncommon' | 'rare' | 'legendary' | 'mythic'
+  weapon: { name: "雷神之怒・碎空", atkBonus: 120, rarity: "legendary" },
+  armor:  { name: "殘破布質外衣",  hpBonus: 10,  rarity: "common" },
+  shield: { name: "宙斯・萬劫天罰神盾", defBonus: 85, rarity: "mythic" }
 };
 
 function getPlayerTotalAtk() {
@@ -150,8 +125,6 @@ let combo = 0;
 
 /* ============================================================
    音符位置表
-   top = 音符中心距容器頂部像素
-   五線: 50 / 70 / 90 / 110 / 130 px
    ============================================================ */
 const notePositions = {
   treble: [
@@ -234,7 +207,7 @@ function nextNote() {
 
   // 更新譜號 SVG
   const clefEl = document.getElementById("staffClef");
-  clefEl.innerHTML = activeMode === "treble" ? TREBLE_SVG : BASS_SVG;
+  if (clefEl) clefEl.innerHTML = activeMode === "treble" ? TREBLE_SVG : BASS_SVG;
 
   // 抽題
   const pool = notePositions[activeMode];
@@ -243,21 +216,25 @@ function nextNote() {
 
   // 更新音符
   const noteEl = document.getElementById("noteNote");
-  noteEl.style.top = q.top + "px";
-  noteEl.innerHTML = WHOLE_NOTE_SVG;
-  noteEl.style.animation = "none";
-  void noteEl.offsetWidth;
-  noteEl.style.animation = "pop 0.15s ease-out";
+  if (noteEl) {
+    noteEl.style.top = q.top + "px";
+    noteEl.innerHTML = WHOLE_NOTE_SVG;
+    noteEl.style.animation = "none";
+    void noteEl.offsetWidth;
+    noteEl.style.animation = "pop 0.15s ease-out";
+  }
 
   // 清除舊加線，新增本次加線
   document.querySelectorAll(".dynamic-ledger").forEach(l => l.remove());
   const container = document.querySelector(".note-container");
-  q.ledgerLines.forEach(lineTop => {
-    const line = document.createElement("div");
-    line.className = "dynamic-ledger";
-    line.style.top = lineTop + "px";
-    container.appendChild(line);
-  });
+  if (container) {
+    q.ledgerLines.forEach(lineTop => {
+      const line = document.createElement("div");
+      line.className = "dynamic-ledger";
+      line.style.top = lineTop + "px";
+      container.appendChild(line);
+    });
+  }
 }
 
 /* ============================================================
@@ -315,7 +292,7 @@ function levelUpCheck() {
 }
 
 /* ============================================================
-   角色頁
+   角色頁裝備與稀有度渲染
    ============================================================ */
 function updateCharacter() {
   const totalAtk = getPlayerTotalAtk();
@@ -327,6 +304,7 @@ function updateCharacter() {
   const ar = document.getElementById("armor");
   const sh = document.getElementById("shield");
 
+  // 1. 渲染角色基礎屬性
   if (st) st.innerHTML = `
     <div style="line-height:1.6;">
       <strong style="color:#ffcc00;">⚔️ 總攻擊力:</strong> ${totalAtk}<br>
@@ -334,15 +312,33 @@ function updateCharacter() {
       <strong style="color:#00e5ff;">🛡️ 總防禦力:</strong> ${totalDef}<br>
       <strong style="color:#00ff88;">💥 爆擊機率:</strong> ${(player.critChance*100).toFixed(0)}%
     </div>`;
-  if (wp && player.weapon) wp.innerHTML = `
-    <div style="font-weight:bold;color:#fff;">${player.weapon.name}</div>
-    <div style="font-size:13px;color:#aaa;">加成：攻擊力 +${player.weapon.atkBonus}</div>`;
-  if (ar && player.armor) ar.innerHTML = `
-    <div style="font-weight:bold;color:#fff;">${player.armor.name}</div>
-    <div style="font-size:13px;color:#aaa;">加成：生命值 +${player.armor.hpBonus}</div>`;
-  if (sh && player.shield) sh.innerHTML = `
-    <div style="font-weight:bold;color:#fff;">${player.shield.name}</div>
-    <div style="font-size:13px;color:#aaa;">加成：防禦力 +${player.shield.defBonus}</div>`;
+
+  // 2. 渲染武器欄位 (動態依據 rarity 注入對應的卡牌樣式 class)
+  if (wp && player.weapon) {
+    const rClass = player.weapon.rarity || "common";
+    wp.className = `item-card ${rClass}`;
+    wp.innerHTML = `
+      <div style="font-weight:bold;color:#fff;">${player.weapon.name}</div>
+      <div style="font-size:13px;color:#aaa;">加成：攻擊力 +${player.weapon.atkBonus}</div>`;
+  }
+
+  // 3. 渲染戰甲欄位
+  if (ar && player.armor) {
+    const rClass = player.armor.rarity || "common";
+    ar.className = `item-card ${rClass}`;
+    ar.innerHTML = `
+      <div style="font-weight:bold;color:#fff;">${player.armor.name}</div>
+      <div style="font-size:13px;color:#aaa;">加成：生命值 +${player.armor.hpBonus}</div>`;
+  }
+
+  // 4. 渲染神盾欄位
+  if (sh && player.shield) {
+    const rClass = player.shield.rarity || "common";
+    sh.className = `item-card ${rClass}`;
+    sh.innerHTML = `
+      <div style="font-weight:bold;color:#fff;">${player.shield.name}</div>
+      <div style="font-size:13px;color:#aaa;">加成：防禦力 +${player.shield.defBonus}</div>`;
+  }
 }
 
 function backHome() { switchPage("homePage"); }
