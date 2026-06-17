@@ -1,4 +1,4 @@
-/* game.js - 古典字體與精準物理定位版 */
+/* game.js - 傳統樂譜字體物理校正版 */
 
 let player = {
   level: 1,
@@ -30,7 +30,7 @@ let currentMode = "treble";
 let score = 0;
 let combo = 0;
 
-// 精準校正後的音樂字體 Y 軸像素對應表 (每一度音程精確距離為 10px)
+// 🎯 依據 Bravura Text 音符中心重構的精確 Y 軸像素表（每度音高相差 10px）
 const notePositions = {
   treble: [
     { name: "C4", note: "C", top: 150, ledgerLines: [150] }, // 下加一線 (中央C)
@@ -47,10 +47,10 @@ const notePositions = {
     { name: "G5", note: "G", top: 40,  ledgerLines: [] }, 
     { name: "A5", note: "A", top: 30,  ledgerLines: [30] },  // 上加一線
     { name: "B5", note: "B", top: 20,  ledgerLines: [30] },  
-    { name: "C6", note: "C", top: 10,  ledgerLines: [30, 10] } // 上加二線 (穩穩留在容器內 10px 處，絕不超出)
+    { name: "C6", note: "C", top: 10,  ledgerLines: [30, 10] } // 上加二線 (安全留在容器內 10px 處，絕不溢出)
   ],
   bass: [
-    { name: "C2", note: "C", top: 170, ledgerLines: [150, 170] }, // 下加二線 (留在安全範圍 170px，絕不切掉)
+    { name: "C2", note: "C", top: 170, ledgerLines: [150, 170] }, // 下加二線 (安全留在 170px 處)
     { name: "D2", note: "D", top: 160, ledgerLines: [150] }, 
     { name: "E2", note: "E", top: 150, ledgerLines: [150] }, // 下加一線
     { name: "F2", note: "F", top: 140, ledgerLines: [] }, 
@@ -110,17 +110,17 @@ function nextNote() {
     activeMode = Math.random() < 0.5 ? "treble" : "bass";
   }
 
-  // 使用 Leland 字型編碼與標準交響樂譜比例對齊
+  // 🎯 依據你提供的圖片比例鎖定：讓譜號高大、優雅，具有交響樂譜出版質感
   if (activeMode === "treble") {
     pool = notePositions.treble;
     clefEl.innerText = "𝄞"; 
-    clefEl.style.fontSize = "75px";
-    clefEl.style.top = "16px";  // 讓高音譜號最漂亮的下圓肚剛好鎖在 G4 線上
+    clefEl.style.fontSize = "115px"; // 放大高音譜號，使其完美高出五線譜
+    clefEl.style.top = "12px";  
   } else {
     pool = notePositions.bass;
     clefEl.innerText = "𝄢"; 
-    clefEl.style.fontSize = "52px";
-    clefEl.style.top = "48px";  // 讓低音譜的大頭與核心雙點精確夾住 F3 線
+    clefEl.style.fontSize = "72px";  // 放大低音譜號
+    clefEl.style.top = "46px";  
   }
 
   const randomQuiz = pool[Math.floor(Math.random() * pool.length)];
