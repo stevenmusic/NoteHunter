@@ -1,5 +1,5 @@
 /* ============================================================
-   🎨 1. 全域重設與炫彩霓虹流動背景（解決顏色單調）
+   🎨 1. 全域重設與炫彩霓虹流動背景
    ============================================================ */
 * { 
     box-sizing: border-box; 
@@ -43,7 +43,7 @@ html, body {
 }
 
 /* ============================================================
-   📊 2. 繽紛活力頂部狀態欄 (HUD)
+   📊 2. 頂部狀態欄 (HUD)
    ============================================================ */
 .topHUD {
     padding: 14px 18px;
@@ -57,7 +57,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #d60052; /* 提高對比文字識別度 */
+    color: #d60052; 
     font-weight: 900;
     font-size: 16px;
 }
@@ -91,21 +91,23 @@ html, body {
 }
 
 /* ============================================================
-   🕹️ 3. 核心主排版與分頁（解決平板底欄鎖死與推擠問題）
+   🕹️ 3. 核心主排版區域（🔧 解決切換分頁欄位往上跑、縮成一團的問題）
    ============================================================ */
 #content {
     flex: 1;
     overflow-y: auto;
-    padding: 16px;
-    /* 💡 核心安全緩衝：確保主內容不被底下鎖死的固定選單遮擋 */
-    padding-bottom: 100px !important; 
+    padding: 20px 16px; 
+    padding-bottom: 110px !important; /* 確保內容不被底部固定選單擋住 */
     -webkit-overflow-scrolling: touch;
 }
 
 .page {
     display: none;
     flex-direction: column;
-    height: 100%;
+    height: auto !important;     /* 💡 解放 100% 限制，防止分頁切換時內容被奇怪拉伸 */
+    min-height: 100%;
+    gap: 16px !important;        /* 💡 讓非首頁的所有欄位、卡片維持固定美觀的黃金間距，絕不往上亂衝 */
+    justify-content: flex-start; /* 頂部對齊開頭 */
 }
 .page.active { 
     display: flex; 
@@ -116,7 +118,7 @@ h2 {
     font-weight: 900;
     color: #ff2a6d;
     margin-top: 4px;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     letter-spacing: 1px;
     text-shadow: 1px 1px 0px #fff;
 }
@@ -130,7 +132,7 @@ h2 {
     background: #fdfaf2;
     border: 3px solid #52526e;
     border-radius: 12px;
-    margin: 10px 0 20px 0;
+    margin: 10px 0;
     position: relative;
     box-shadow: 0 6px 15px rgba(0,0,0,0.06);
     overflow: hidden;
@@ -173,37 +175,40 @@ h2 {
 }
 
 /* ============================================================
-   👾 4. 戰鬥核心：史萊姆「絕對置中」與「上方換行」排版
+   👾 4. 戰鬥核心：名稱 ➔ 等級 ➔ 血量 ➔ 史萊姆（🔧 嚴格由上至下排序與置中）
    ============================================================ */
 
-/* 核心點擊感應區：全裝置彈性垂直對齊 */
+/* 核心點擊感應區 */
 #monsterBattleBox, .game-battle-zone {
     display: flex !important;
-    flex-direction: column !important; /* 強制改為縱向由上至下排列 */
-    align-items: center !important;     /* 左右抓回絕對置中 */
-    justify-content: center !important;
+    flex-direction: column !important; /* 強制縱向垂直排列 */
+    align-items: center !important;     /* 左右絕對置中 */
+    justify-content: flex-start !important;
     width: 100% !important;
     text-align: center !important;
     padding: 10px 0 !important;
     margin: 0 auto !important;
 }
 
-/* 讓名稱與血量雷打不動排列在上方（順位 1 與 2） */
-#monsterName {
+/* 🟢 第一順位：史萊姆的名稱與怪獸等級（強制置頂並單獨換行） */
+#monsterName, .monster-name, #monsterLevel, .monster-level {
     order: 1 !important;
     font-size: 24px !important;
     font-weight: 900 !important;
     color: #2c3e50 !important;
     margin-bottom: 6px !important;
     text-shadow: 1px 1px 0px #fff;
+    display: block !important; 
+    width: 100% !important;
 }
 
-/* 血量條外殼：換行出現在第二順位，下方加入 margin 推開史萊姆 */
+/* 🟡 第二順位：血量條（寬度固定置中，下方 margin 大力推開史萊姆） */
 [id*="monsterHp"], .monster-hp, .hp-bar-container {
     order: 2 !important;
     width: 85% !important;
     max-width: 320px !important;
-    margin: 0 auto 25px auto !important; 
+    margin: 6px auto 25px auto !important; 
+    display: block !important;
 }
 
 #monsterHpFill {
@@ -211,7 +216,7 @@ h2 {
     box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 0 8px rgba(255,0,85,0.5) !important;
 }
 
-/* 史萊姆外框：排列在第三順位（換行到下方） */
+/* 🔴 第三順位：史萊姆外框（乖乖待在名字與血量的正下方） */
 .monster-wrapper {
     order: 3 !important; 
     position: relative !important;
@@ -229,16 +234,17 @@ h2 {
     position: absolute !important;
     left: 50% !important;
     top: 50% !important;
-    transform: translate(-50%, -50%) !important; /* 精準置中公式 */
+    transform: translate(-50%, -50%) !important; /* 精準置中核心 */
     width: 170px !important;
     height: 130px !important;
     border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), inset 0 -10px 20px rgba(0,0,0,0.1) !important;
     margin: 0 !important;
     z-index: 6;
+    animation: monsterFloat 2s ease-in-out infinite;
 }
 
-/* 史萊姆面部細節隨尺寸放大微調 */
+/* 史萊姆面部細節 */
 .monster-eye {
     width: 14px !important;
     height: 14px !important;
@@ -261,7 +267,7 @@ h2 {
     transform: none !important;
 }
 
-/* 💥 特效大損害文字置中跳動 */
+/* 💥 特效大損害文字 */
 .hit-effect {
     position: absolute;
     font-size: 54px !important;
@@ -276,18 +282,23 @@ h2 {
 }
 
 /* ============================================================
-   💢 5. 史萊姆受擊表情包與物理動畫 (生氣 / 哭哭)
+   💢 5. 史萊姆受擊特殊表情包與受擊物理動畫
    ============================================================ */
 .monster-slime.damaged {
     background: linear-gradient(180deg, #ff3333 0%, #aa0000 100%) !important;
     box-shadow: 0 0 25px #ff3333 !important;
-    /* 💡 受擊時在維持絕對置中 (-50%,-50%) 的狀態下進行抖動縮放 */
+    /* 💡 受擊時在維持絕對置中 (-50%,-50%) 的狀態下進行抖動與縮放 */
     animation: slimeHitAnim 0.15s ease-in-out infinite alternate !important;
 }
 
 @keyframes slimeHitAnim {
     0% { transform: translate(-50%, -50%) scale(1); }
     100% { transform: translate(-50%, -50%) scale(0.86); filter: brightness(1.2); }
+}
+
+@keyframes monsterFloat {
+    0%, 100% { transform: translate(-50%, -50%) scaleX(1) translateY(0); }
+    50% { transform: translate(-50%, -50%) scaleX(1.04) scaleY(0.96) translateY(-6px); }
 }
 
 /* --- 生氣表情 (Angry) --- */
@@ -332,7 +343,7 @@ h2 {
 }
 
 /* ============================================================
-   🕹️ 6. 介面防縮放、卡片復古街機化（解決點擊介面縮放）
+   🕹 * 6. 介面防縮放、卡片復古繽紛街機化
    ============================================================ */
 button {
     width: 100%;
@@ -347,12 +358,10 @@ button {
     border-radius: 8px;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    /* 💡 終結行動裝置雙擊縮放與高亮外框 */
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* 升級/回答等所有按鈕點擊時：絕不晃動、絕不縮放變形，僅做深淺變化 */
 button:active {
     transform: none !important;
     border-bottom-width: 5px !important; 
@@ -375,14 +384,14 @@ button:active {
     font-size: 18px;
 }
 
-/* 卡片與容器：擺脫單調灰黑色，升級為高質感明亮卡片 */
+/* 🌈 升級為高質感明亮撞色卡片 */
 .menu-box, .stat-container, .item-card {
     background: linear-gradient(135deg, #ffffff 0%, #fffbfd 100%) !important;
     padding: 14px;
     border-radius: 16px !important;
     border: 2px solid #ffccd5 !important;
-    box-shadow: 4px 4px 0px #ff477e !important; /* 經典日系街機厚重陰影 */
-    margin-bottom: 14px;
+    box-shadow: 4px 4px 0px #ff477e !important; /* 經典厚重感陰影 */
+    margin-bottom: 4px; /* 由 12px 縮小，配合 gap 排版 */
     color: #2c3e50 !important;
     touch-action: manipulation !important;
 }
@@ -398,7 +407,6 @@ button:active {
     font-size: 15px;
 }
 
-/* 裝備卡片內容優化 */
 .item-card {
     display: flex;
     align-items: center;
@@ -415,17 +423,30 @@ button:active {
 #armor  { border-left: 6px solid #00b4db !important; }
 #shield { border-left: 6px solid #00ff88 !important; }
 
+.rarity-common { box-shadow: 4px 4px 0px #ff477e !important; }
+.rarity-rare { box-shadow: 4px 4px 0px #00b4db !important; }
+.rarity-legendary { box-shadow: 4px 4px 0px #ffcc00 !important; }
+.rarity-mythic {
+    box-shadow: 4px 4px 0px #ff0078 !important;
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    from { filter: brightness(1); }
+    to   { filter: brightness(1.2); }
+}
+
 /* ============================================================
-   📱 7. 平板與大螢幕底欄選單「底部鎖死」系統（解決問題 3）
+   📱 7. 平板與大螢幕底欄選單「底部絕對鎖死」系統
    ============================================================ */
 .bottomNav {
-    position: fixed !important; /* 🌟 鎖死在視窗最底端，絕不亂跑 */
+    position: fixed !important; 
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
     height: 70px !important;
-    z-index: 99999 !important; /* 確保站在所有元件的最上層 */
+    z-index: 99999 !important; 
     
     display: flex !important;
     background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%) !important;
@@ -466,11 +487,10 @@ button:active {
     }
 
     #content {
-        padding: 24px 60px; /* 大螢幕畫面兩側稍微內縮，視覺比例更好看 */
-        padding-bottom: 110px !important;
+        padding: 24px 60px; 
+        padding-bottom: 120px !important;
     }
 
-    /* 💡 平板音符按鈕拓寬為 7 欄橫向排列，好按又像鋼琴琴鍵 */
     .btnGrid {
         grid-template-columns: repeat(7, 1fr);
         gap: 12px;
