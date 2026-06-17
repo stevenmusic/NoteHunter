@@ -43,6 +43,53 @@ const notePositions = {
   ]
 };
 
+/* ==========================================
+   💾 核心新功能：存檔與讀檔機制
+   ========================================== */
+
+// 1. 自動存檔功能
+function saveGameData() {
+  const saveData = {
+    score: score,
+    player: player // 會把 data.js 裡面的等級、經驗、裝備一起包進來保存
+  };
+  // 將物件轉換成字串，存入瀏覽器本地硬碟中
+  localStorage.setItem("noteHunter_save", JSON.stringify(saveData));
+}
+
+// 2. 自動讀檔功能
+function loadGameData() {
+  const savedString = localStorage.getItem("noteHunter_save");
+  
+  if (savedString) {
+    try {
+      const savedData = JSON.parse(savedString);
+      
+      // 回填分數
+      score = savedData.score || 0;
+      
+      // 回填玩家角色狀態（等級、金幣、裝備）
+      if (savedData.player) {
+        player = savedData.player;
+      }
+      
+      console.log("🎮 成功載入歷史存檔紀錄！");
+    } catch (e) {
+      console.error("讀取存檔時發生錯誤，改用全新冒險初始化", e);
+    }
+  } else {
+    console.log("🆕 沒有找到任何歷史紀錄，開啟全新冒險！");
+  }
+  
+  // 讀取完畢後，立刻重整一次 UI 畫面顯示正確數值
+  updateUI();
+  updateExpUI();
+}
+
+/* ==========================================
+   🎮 遊戲核心邏輯
+   ========================================== */
+
 function switchPage(pageId) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
@@ -55,39 +102,33 @@ function startGame(mode) {
   nextNote();
 }
 
-/* --- 動態渲染音符與譜號修正 --- */
 function nextNote() {
   let pool = [];
   const clefEl = document.getElementById("staffClef");
 
-  // 決定當前模式
   let activeMode = currentMode;
   if (currentMode === "mix") {
     activeMode = Math.random() < 0.5 ? "treble" : "bass";
   }
 
-  // 核心優化：針對高音譜與低音譜的不同圖形外觀，動態注入精確的縮放與定位比例
   if (activeMode === "treble") {
     pool = notePositions.treble;
     clefEl.innerText = "𝄞"; 
     clefEl.style.fontSize = "80px";
-    clefEl.style.top = "10px";  /* 讓高音譜下半部的圈圈剛好包住第二線 */
+    clefEl.style.top = "10px";  
   } else {
     pool = notePositions.bass;
     clefEl.innerText = "𝄢"; 
     clefEl.style.fontSize = "52px";
-    clefEl.style.top = "33px";  /* 讓低音譜的大頭貼在第四線，且兩個點精準夾住第四線 */
+    clefEl.style.top = "33px";  
   }
 
-  // 隨機出題
   const randomQuiz = pool[Math.floor(Math.random() * pool.length)];
   currentNote = randomQuiz.note; 
 
-  // 設定音符高度
   const noteEl = document.getElementById("noteNote");
   noteEl.style.top = randomQuiz.top + "px";
 
-  // 清除並重繪短加線
   document.querySelectorAll(".dynamic-ledger").forEach(line => line.remove());
   const containerEl = document.querySelector(".note-container");
   randomQuiz.ledgerLines.forEach(lineTop => {
@@ -97,7 +138,6 @@ function nextNote() {
     containerEl.appendChild(line);
   });
 
-  // 動態彈出效果
   noteEl.style.animation = "none";
   void noteEl.offsetWidth; 
   noteEl.style.animation = "pop 0.15s ease-out";
@@ -117,8 +157,13 @@ function answer(n) {
   } else {
     combo = 0;
   }
+  
   updateUI();
   updateExpUI();
+  
+  // 🌟 核心修正：只要數值一變動（答題後），就自動在背景默默存檔！
+  saveGameData();
+  
   nextNote();
 }
 
@@ -176,3 +221,6 @@ function updateCharacter() {
 function backHome() {
   switchPage("homePage");
 }
+
+// 🌟 核心修正：當這個 game.js 檔案被網頁載入時，第一時間自動執行「讀檔」！
+loadGameData();
