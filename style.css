@@ -1,6 +1,3 @@
-/* ==========================================
-   1. 全域初始化與手機防爆版修正
-   ========================================== */
 * {
   box-sizing: border-box;
 }
@@ -20,7 +17,6 @@ body {
   -webkit-user-select: none;
 }
 
-/* 遊戲主容器 */
 .app {
   width: 100%;
   max-width: 430px; 
@@ -110,7 +106,7 @@ h2 {
 }
 
 /* ==========================================
-   4. 互動式物理五線譜容器 (修正：線條置頂)
+   4. 互動式五線譜 (黑線在上層)
    ========================================== */
 .note-container {
   width: 100%;
@@ -124,16 +120,15 @@ h2 {
   overflow: hidden;
 }
 
-/* 五線譜的黑色實線 (調高 z-index 至 4，確保壓在音符上方) */
+/* 核心修正：五線譜實線與動態加線的 z-index 拉高到 10 */
 .staff-line {
   position: absolute;
   width: 100%;
   height: 2px;
-  background: #222222; 
-  z-index: 4; 
+  background: #222222 !important; 
+  z-index: 10; 
 }
 
-/* 左側譜號圖示基礎設定 (大小與位置改由 JS 依據譜號特徵動態調控) */
 #staffClef {
   position: absolute;
   left: 15px;
@@ -143,43 +138,43 @@ h2 {
   line-height: 1;
 }
 
-/* 音符定位外容器 */
+/* 音符外殼 z-index 壓低在下層 */
 #noteNote {
   position: absolute;
-  left: 60%; /* 往右移一點，騰出空間給大譜號 */
+  left: 60%; 
   width: 32px;
   height: 20px;
   transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2; /* 放在線條 (z-index: 4) 的下層 */
+  z-index: 2; 
   animation: pop 0.15s ease-out;
 }
 
-/* 經典全音符 (修正：改為透明底，讓上層的五線譜黑線能穿透過去) */
+/* 核心修正：背景改為 transparent，且主體絕不能有白色底 */
 .note-head {
   width: 27px;
   height: 18px;
-  border: 4.5px solid #111111; 
-  background: transparent; /* 透明底，實現線在圈上層 */
+  border: 4.5px solid #111111 !important; 
+  background: transparent !important; 
   border-radius: 50%;
   transform: rotate(-20deg); 
 }
 
-/* 動態產生的短加線 (同步調高 z-index 至 4，穿過音符上層) */
+/* 加線同步移到最上層 */
 .dynamic-ledger {
   position: absolute;
   left: 60%;
   width: 44px; 
   height: 2px;
-  background: #111111;
+  background: #111111 !important; 
   transform: translateX(-50%); 
-  z-index: 4; 
+  z-index: 10; 
 }
 
 /* ==========================================
-   5. TT2 風格：厚底立體按鈕與 GRID 佈局
+   5. TT2 風格按鈕
    ========================================== */
 button {
   width: 100%;
@@ -220,9 +215,6 @@ button:active {
   font-size: 18px;
 }
 
-/* ==========================================
-   6. 卡片面板與資訊顯示
-   ========================================== */
 .menu-box, .stat-container, .item-card {
   background: rgba(22, 22, 34, 0.8);
   padding: 14px;
@@ -243,9 +235,6 @@ button:active {
   font-size: 15px;
 }
 
-/* ==========================================
-   7. 底部導航欄
-   ========================================== */
 .bottomNav {
   display: flex;
   background: #09090e;
@@ -273,9 +262,6 @@ button:active {
   transform: none;
 }
 
-/* ==========================================
-   8. TT2 動畫
-   ========================================== */
 @keyframes pop {
   0% { transform: translate(-50%, -50%) scale(1); }
   50% { transform: translate(-50%, -50%) scale(1.18); }
