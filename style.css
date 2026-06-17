@@ -11,7 +11,6 @@ body {
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
   background: #060609;
   color: #fff;
-  /* 使用 svh 鎖定手機視窗高度，防止網址列伸縮推擠 layout */
   height: 100svh; 
   display: flex;
   justify-content: center;
@@ -24,7 +23,7 @@ body {
 /* 遊戲主容器 */
 .app {
   width: 100%;
-  max-width: 430px; /* 緊貼 iPhone Pro Max 完美握持比例 */
+  max-width: 430px; 
   height: 100svh;   
   display: flex;
   flex-direction: column; 
@@ -111,12 +110,12 @@ h2 {
 }
 
 /* ==========================================
-   4. 互動式物理五線譜容器 (高還原標準白底五線譜)
+   4. 互動式物理五線譜容器 (修正：線條置頂)
    ========================================== */
 .note-container {
   width: 100%;
   height: 160px;
-  background: #ffffff; /* 還原真實樂譜白底 */
+  background: #ffffff; 
   border: 3px solid #52526e; 
   border-radius: 12px;
   margin: 10px 0 20px 0;
@@ -125,74 +124,73 @@ h2 {
   overflow: hidden;
 }
 
-/* 五線譜的黑色實線 */
+/* 五線譜的黑色實線 (調高 z-index 至 4，確保壓在音符上方) */
 .staff-line {
   position: absolute;
   width: 100%;
   height: 2px;
   background: #222222; 
+  z-index: 4; 
 }
 
-/* 左側譜號圖示 (𝄞 / 𝄢) */
+/* 左側譜號圖示基礎設定 (大小與位置改由 JS 依據譜號特徵動態調控) */
 #staffClef {
   position: absolute;
-  left: 20px;
-  top: 15px;
-  font-size: 64px;
+  left: 15px;
   color: #222222;
   z-index: 1;
-  font-family: Georgia, serif;
+  font-family: 'Times New Roman', Times, Georgia, serif;
+  line-height: 1;
 }
 
-/* 音符定位外容器 (由 JS 動態調整 top 座標) */
+/* 音符定位外容器 */
 #noteNote {
   position: absolute;
-  left: 55%; /* 居中偏右，與譜號錯開 */
+  left: 60%; /* 往右移一點，騰出空間給大譜號 */
   width: 32px;
   height: 20px;
   transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 5;
+  z-index: 2; /* 放在線條 (z-index: 4) 的下層 */
   animation: pop 0.15s ease-out;
 }
 
-/* 經典全音符：帶有傾斜度的空心橢圓 */
+/* 經典全音符 (修正：改為透明底，讓上層的五線譜黑線能穿透過去) */
 .note-head {
-  width: 26px;
+  width: 27px;
   height: 18px;
   border: 4.5px solid #111111; 
-  background: #ffffff; /* 白底填充，穿過線條時才能完美遮擋 */
+  background: transparent; /* 透明底，實現線在圈上層 */
   border-radius: 50%;
-  transform: rotate(-20deg); /* 樂譜印刷微傾角 */
+  transform: rotate(-20deg); 
 }
 
-/* 核心優化：由 JS 動態產生的專屬短加線樣式 */
+/* 動態產生的短加線 (同步調高 z-index 至 4，穿過音符上層) */
 .dynamic-ledger {
   position: absolute;
-  left: 55%;
-  width: 42px; /* 略寬於音符的標準短線 */
+  left: 60%;
+  width: 44px; 
   height: 2px;
   background: #111111;
-  transform: translateX(-50%); /* 水平完美居中對齊音符 */
-  z-index: 3; /* 位於音符下層，營造穿心視覺效果 */
+  transform: translateX(-50%); 
+  z-index: 4; 
 }
 
 /* ==========================================
    5. TT2 風格：厚底立體按鈕與 GRID 佈局
    ========================================== */
-/* 功能性按鈕 */
 button {
   width: 100%;
   padding: 15px;
   margin: 8px 0;
   font-size: 15px;
   font-weight: bold;
-  color: #ffcc00; /* TT2 金色文字 */
+  color: #ffcc00; 
   background: linear-gradient(180deg, #37374d 0%, #1c1c28 100%);
   border: 2px solid #52526e;
-  border-bottom: 5px solid #0c0c14; /* 做出按鈕厚度 */
+  border-bottom: 5px solid #0c0c14; 
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0,0,0,0.4);
@@ -201,11 +199,10 @@ button {
 
 button:active {
   transform: translateY(3px); 
-  border-bottom-width: 2px; /* 按鈕壓實 */
+  border-bottom-width: 2px; 
   box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
-/* 4縱列答題 Grid 鍵盤 */
 .btnGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -213,7 +210,6 @@ button:active {
   margin-top: 5px;
 }
 
-/* 答題按鈕特製成 TT2 戰鬥橘色系 */
 .btnGrid button {
   padding: 16px 0;
   margin: 0;
@@ -248,13 +244,13 @@ button:active {
 }
 
 /* ==========================================
-   7. 底部導航欄 (死卡底部、精準均分)
+   7. 底部導航欄
    ========================================== */
 .bottomNav {
   display: flex;
   background: #09090e;
   border-top: 2px solid #2a2a3a;
-  padding-bottom: env(safe-area-inset-bottom); /* 避開全面屏手機底部手勢白條 */
+  padding-bottom: env(safe-area-inset-bottom); 
   flex-shrink: 0; 
 }
 
@@ -274,7 +270,7 @@ button:active {
 .bottomNav button:active {
   background: #141420;
   color: #00e5ff;
-  transform: none; /* 導航不套用立體縮放 */
+  transform: none;
 }
 
 /* ==========================================
