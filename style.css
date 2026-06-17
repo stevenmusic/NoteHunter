@@ -1,5 +1,5 @@
 /* ============================================================
-   🎨 全域樣式與和風優化
+   🎨 全域樣式與滿版優化
    ============================================================ */
 * {
   box-sizing: border-box;
@@ -13,22 +13,16 @@
 body {
   background: #121110; 
   color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  width: 100vw;
+  height: 100dvh;
   overflow: hidden;
 }
 
-/* 📱 使用 100dvh 動態高度解決手機端頂部網址列覆蓋或擠壓的問題 */
+/* 📱 滿版核心：移除 max-width、邊框、圓角與陰影，全螢幕無縫撐滿 */
 .game-window {
   width: 100%;
-  max-width: 440px;
   height: 100dvh; 
   background: linear-gradient(180deg, #241f1c 0%, #161311 100%);
-  border: 4px solid #d4af37;
-  border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.8);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -36,64 +30,64 @@ body {
 }
 
 /* ============================================================
-   👑 永久置頂頂欄面板
+   👑 永久置頂頂欄面板 (滿版橫向延展)
    ============================================================ */
 .global-header {
   background: #1c1a17;
-  border-bottom: 2px solid #d4af37;
-  padding: 12px 15px;
+  border-bottom: 3px solid #d4af37; /* 加粗金邊，滿版更有儀式感 */
+  padding: 12px 24px; /* 稍微加寬左右留白 */
   display: flex;
   flex-direction: column;
   gap: 8px;
-  z-index: 1100; /* 高於一切分頁，永不被切除 */
+  z-index: 1100;
 }
 .header-top-row { display: flex; justify-content: space-between; align-items: center; }
-.player-name-badge { font-size: 14px; font-weight: bold; color: #f5f2eb; background: #332b24; padding: 4px 8px; border-left: 3px solid #bc002d; border-radius: 2px; }
-.lv-badge { background: linear-gradient(180deg, #bc002d 0%, #8a0022 100%); border: 1px solid #d4af37; padding: 3px 10px; border-radius: 3px; font-weight: bold; font-size: 12px; }
-.gold-badge { background: #111; border: 1px solid #d4af37; padding: 3px 10px; border-radius: 3px; font-weight: bold; color: #d4af37; font-size: 12px; }
-.exp-bar-container { width: 100%; height: 14px; background: #111; border-radius: 2px; position: relative; overflow: hidden; border: 1px solid #443a30; }
+.player-name-badge { font-size: 14px; font-weight: bold; color: #f5f2eb; background: #332b24; padding: 4px 12px; border-left: 4px solid #bc002d; border-radius: 2px; }
+.lv-badge { background: linear-gradient(180deg, #bc002d 0%, #8a0022 100%); border: 1px solid #d4af37; padding: 3px 12px; border-radius: 3px; font-weight: bold; font-size: 12px; }
+.gold-badge { background: #111; border: 1px solid #d4af37; padding: 3px 12px; border-radius: 3px; font-weight: bold; color: #d4af37; font-size: 12px; }
+.exp-bar-container { width: 100%; height: 16px; background: #111; border-radius: 2px; position: relative; overflow: hidden; border: 1px solid #443a30; }
 .exp-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #d4af37, #bc002d); transition: width 0.3s; }
-.exp-bar-text { position: absolute; width:100%; height:100%; top:0; left:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:bold; color:#fff; text-shadow: 0 1px 2px #000; }
+.exp-bar-text { position: absolute; width:100%; height:100%; top:0; left:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#fff; text-shadow: 0 1px 2px #000; }
 
 /* ============================================================
-   ⚔️ 中央核心主舞台 (不位移、不遮擋)
+   ⚔️ 中央核心主舞台 (滿版置中)
    ============================================================ */
 .arena-layer {
-  flex: 1.1; 
+  flex: 1.2; 
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 0;
-  background: rgba(0, 0, 0, 0.15);
+  padding: 15px 0;
+  background: rgba(0, 0, 0, 0.2);
   border-bottom: 1px dashed #4a3f35;
 }
-.battle-box { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 8px; }
-.monster-name { font-size: 18px; font-weight: bold; text-shadow: 0 2px 4px #000, 0 0 8px #bc002d; }
-.hp-bar-container { width: 70%; height: 15px; background: #2b0c10; border: 1.5px solid #d4af37; border-radius: 2px; position: relative; overflow: hidden; }
+.battle-box { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 12px; }
+.monster-name { font-size: 20px; font-weight: bold; text-shadow: 0 2px 4px #000, 0 0 8px #bc002d; }
+.hp-bar-container { width: 60%; max-width: 500px; height: 16px; background: #2b0c10; border: 1.5px solid #d4af37; border-radius: 2px; position: relative; overflow: hidden; }
 .hp-bar-fill { width: 100%; height: 100%; background: linear-gradient(180deg, #bc002d 0%, #7e001c 100%); transition: width 0.12s ease-out; }
-.hp-bar-text { position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; text-shadow: 0 1px 3px #000; }
+.hp-bar-text { position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; text-shadow: 0 1px 3px #000; }
 
 .monster-wrapper {
   touch-action: manipulation;
   position: relative;
-  width: 140px;
-  height: 110px;
+  width: 160px;
+  height: 130px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .monster-slime {
-  width: 105px; height: 90px; border-radius: 50% 50% 45% 45%;
+  width: 120px; height: 100px; border-radius: 50% 50% 45% 45%;
   box-shadow: inset -6px -8px 10px rgba(0,0,0,0.4), 0 8px 15px rgba(0,0,0,0.5);
   border: 2.5px solid rgba(255, 255, 255, 0.7); transition: background 0.4s ease;
   cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
-.monster-yokai-icon { font-size: 28px; z-index: 2; margin-top: -5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+.monster-yokai-icon { font-size: 32px; z-index: 2; margin-top: -5px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
 .slime-face { position: relative; width: 60px; height: 25px; top: 2px; z-index: 3; }
-.slime-eye { width: 7px; height: 7px; background: #111; border-radius: 50%; position: absolute; top: 2px; }
-.slime-eye.left { left: 14px; }
-.slime-eye.right { right: 14px; }
-.slime-mouth { width: 12px; height: 6px; border-bottom: 2px solid #111; border-radius: 0 0 12px 12px; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); }
+.slime-eye { width: 8px; height: 8px; background: #111; border-radius: 50%; position: absolute; top: 2px; }
+.slime-eye.left { left: 12px; }
+.slime-eye.right { right: 12px; }
+.slime-mouth { width: 14px; height: 7px; border-bottom: 2px solid #111; border-radius: 0 0 12px 12px; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); }
 
 /* 妖怪受擊動態搖晃 */
 .monster-slime.damaged { animation: yokaiShake 0.2s linear; }
@@ -106,11 +100,10 @@ body {
 /* ============================================================
    ⚡ 特效升級：手動斬擊與自動火花
    ============================================================ */
-/* 1. 手動點擊：凌厲白刃紅光雙層砍痕 */
 .slash-line {
   position: absolute;
-  width: 160px;
-  height: 5px;
+  width: 180px;
+  height: 6px;
   background: #ffffff;
   box-shadow: 0 0 6px #ffffff, 0 0 14px #ff1a1a;
   border-radius: 50%;
@@ -126,10 +119,9 @@ body {
   100% { transform: rotate(-32deg) scaleX(1); opacity: 0; }
 }
 
-/* 2. 自動掛機：爆破炸裂能量火花 */
 .auto-spark {
   position: absolute;
-  font-size: 32px;
+  font-size: 36px;
   opacity: 0;
   pointer-events: none;
   z-index: 40;
@@ -143,65 +135,67 @@ body {
 }
 
 /* ============================================================
-   📂 下方動態抽屜排版 (穩定鎖定高度，不推擠主舞台)
+   📂 下方動態抽屜排版 (滿版橫向自適應)
    ============================================================ */
 .drawer-layer {
-  height: 250px; /* 固定抽屜高度，切換時舞台絕不飄移 */
-  background: rgba(20, 18, 16, 0.85);
-  border-top: 1px solid #4a3f35;
-  padding: 12px 15px;
+  height: 260px; 
+  background: rgba(20, 18, 16, 0.92); /* 稍微加深避免背景干擾 */
+  border-top: 2px solid #4a3f35;
+  padding: 15px 24px;
   overflow: hidden;
 }
 .drawer-content { display: none; height: 100%; flex-direction: column; }
 .drawer-content.active-content { display: flex; }
 
-.default-tip-box { justify-content: center; align-items: center; color: #9c8f84; font-size: 13px; font-weight: bold; text-align: center; line-height: 1.8; }
-.menu-box { gap: 12px; }
-.menu-box h3 { font-size: 13px; color: #9c8f84; border-left: 3px solid #bc002d; padding-left: 6px; margin-bottom: 5px;}
+.default-tip-box { justify-content: center; align-items: center; color: #9c8f84; font-size: 14px; font-weight: bold; text-align: center; line-height: 1.8; }
+.menu-box { gap: 12px; max-width: 600px; margin: 0 auto; width: 100%; } /* 限制內容最大寬度防止在大螢幕上拉得太醜 */
+.menu-box h3 { font-size: 14px; color: #9c8f84; border-left: 3px solid #bc002d; padding-left: 6px; margin-bottom: 5px;}
 
 .btn { touch-action: manipulation; width: 100%; padding: 12px; font-size: 15px; font-weight: bold; color: white; border: none; border-radius: 4px; cursor: pointer; }
 .btn-blue { background: linear-gradient(180deg, #44596e 0%, #223140 100%); border: 1px solid #d4af37; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
 .btn:active { transform: translateY(2px); }
 
-/* 裝備列表與內部卡片 */
-.character-container { overflow: hidden; }
-.equipment-list { flex: 1; overflow-y: auto; padding-right: 2px; display: flex; flex-direction: column; gap: 8px; }
-.item-card { display: flex; align-items: center; gap: 12px; background: linear-gradient(135deg, #fcfaf5 0%, #f5eedf 100%); border: 2px solid #d4af37; border-radius: 6px; padding: 8px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); position: relative; }
+/* 裝備列表滿版自適應優化 */
+.character-container { overflow: hidden; max-width: 600px; margin: 0 auto; width: 100%; }
+.equipment-list { flex: 1; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 8px; }
+.item-card { display: flex; align-items: center; gap: 12px; background: linear-gradient(135deg, #fcfaf5 0%, #f5eedf 100%); border: 2px solid #d4af37; border-radius: 6px; padding: 8px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); position: relative; }
 .card-title { font-weight: bold; color: #1c1b1a; font-size: 14px; }
 .card-lv { color: #bc002d; font-size: 12px; margin-left: 4px; font-weight: bold; }
 .card-props { font-size: 11px; color: #5c5549; margin-top: 2px; font-weight: bold; }
-.up-btn { touch-action: manipulation; color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 70px; height: 38px; justify-content: center; border: none; }
+.up-btn { touch-action: manipulation; color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; min-width: 80px; height: 38px; justify-content: center; border: none; }
 .up-btn-weapon { background: linear-gradient(180deg, #bc002d 0%, #80001c 100%); border-bottom: 2px solid #520010; }
 .up-btn-shield { background: linear-gradient(180deg, #3d6350 0%, #203b2e 100%); border-bottom: 2px solid #102118; }
 
 /* ============================================================
-   🎵 答題專用全景層 (無縫覆蓋核心)
+   🎵 答題專用全景層 (無縫滿版覆蓋)
    ============================================================ */
 .game-play-layer {
   display: none;
   position: absolute;
-  top: 76px; /* 緊貼置頂欄下方 */
-  bottom: 60px; /* 緊貼底欄上方 */
+  top: 79px; /* 緊貼滿版頂欄下方 */
+  bottom: 60px; /* 緊貼底導覽列上方 */
   left: 0; right: 0;
   background: #161311;
   z-index: 1000;
 }
 .game-play-layer.active-play { display: flex; flex-direction: column; }
-.game-container { display: flex; flex-direction: column; height: 100%; padding: 10px 15px; justify-content: space-between; }
+.game-container { display: flex; flex-direction: column; height: 100%; padding: 15px 24px; justify-content: space-between; max-width: 700px; margin: 0 auto; width: 100%; }
 
-.staff-wrapper { background: #fdfaf2; border: 3px solid #cbd1b3; border-radius: 6px; height: 155px; position: relative; box-shadow: inset 0 4px 10px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.4); }
+.staff-wrapper { background: #fdfaf2; border: 3px solid #cbd1b3; border-radius: 6px; height: 160px; position: relative; box-shadow: inset 0 4px 10px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.4); }
 .staff-lines { position: absolute; width: 100%; top: 25px; }
 .staff-lines div { height: 1.5px; background-color: #3a3530; margin-bottom: 16px; }
-#noteNote { position: absolute; left: 135px; transition: top 0.1s ease-out; }
+#noteNote { position: absolute; left: 45%; /* 在寬螢幕下置中偏左一點 */ transition: top 0.1s ease-out; }
 
-.answer-keyboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-bottom: 5px; }
-.key-btn { touch-action: manipulation; background: linear-gradient(180deg, #f5f2eb 0%, #dfdacf 100%); border: 2px solid #5a5245; border-bottom: 4px solid #3a352d; border-radius: 4px; color: #2c251e; font-size: 18px; font-weight: bold; padding: 10px 0; cursor: pointer; }
+.answer-keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; padding-bottom: 5px; } /* 滿版下把按鈕一字排開(7欄)更像鍵盤！ */
+.key-btn { touch-action: manipulation; background: linear-gradient(180deg, #f5f2eb 0%, #dfdacf 100%); border: 2px solid #5a5245; border-bottom: 4px solid #3a352d; border-radius: 4px; color: #2c251e; font-size: 18px; font-weight: bold; padding: 12px 0; cursor: pointer; }
 .key-btn:active { border-bottom-width: 1px; transform: translateY(2px); }
 
-.game-header { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: bold; color: #d4af37; }
-.btn-back { touch-action: manipulation; background: #6e251d; border: 1px solid #9c3327; color: white; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;}
+.game-header { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: bold; color: #d4af37; }
+.btn-back { touch-action: manipulation; background: #6e251d; border: 1px solid #9c3327; color: white; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-size: 13px;}
 
-/* 🗺️ 底部控制導覽列 */
-.nav-bar { display: flex; gap: 10px; padding: 10px 15px; background: #1c1a17; border-top: 2px solid #d4af37; height: 60px; z-index: 1100; }
-.nav-btn { touch-action: manipulation; flex: 1; padding: 10px; background: #211c19; border: 1px solid #4a3f35; color: #9c8f84; font-weight: bold; border-radius: 4px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+/* ============================================================
+   🗺️ 底部控制導覽列 (滿版延展)
+   ============================================================ */
+.nav-bar { display: flex; gap: 15px; padding: 10px 24px; background: #1c1a17; border-top: 3px solid #d4af37; height: 60px; z-index: 1100; }
+.nav-btn { touch-action: manipulation; flex: 1; padding: 10px; background: #211c19; border: 1px solid #4a3f35; color: #9c8f84; font-weight: bold; border-radius: 4px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
 .nav-btn.active { background: linear-gradient(180deg, #d4af37 0%, #aa851c 100%); color: #1c1b1a; border-color: #fff; }
