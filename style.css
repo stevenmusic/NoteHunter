@@ -8,46 +8,57 @@ body {
 .app {
   max-width: 420px;
   margin: auto;
-  padding: 10px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.header {
+/* TOP */
+.top {
   display: flex;
   justify-content: space-between;
   padding: 10px;
   background: #222;
-  border-radius: 10px;
-  margin-bottom: 10px;
 }
 
-button {
-  width: 100%;
-  padding: 14px;
-  margin: 6px 0;
-  font-size: 16px;
-  border-radius: 8px;
-  border: none;
+/* CONTENT */
+#content {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
 }
 
-.noteBox {
-  text-align: center;
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+/* NOTE */
+#note {
   font-size: 80px;
-  margin: 30px 0;
+  text-align: center;
+  margin: 20px 0;
 }
 
-.buttons {
+.btnGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
 
-.buttons button {
-  padding: 18px;
-  font-size: 18px;
+/* BOTTOM NAV */
+.bottomNav {
+  display: flex;
+  background: #222;
 }
 
-.info {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
+.bottomNav button {
+  flex: 1;
+  padding: 15px;
+  color: white;
+  background: none;
+  border: none;
 }
