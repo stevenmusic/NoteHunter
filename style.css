@@ -1,3 +1,6 @@
+/* ==========================================
+   1. 全域初始化與手機防爆版修正
+   ========================================== */
 * {
   box-sizing: border-box;
 }
@@ -8,31 +11,37 @@ body {
   font-family: 'Segoe UI', Arial, sans-serif;
   background: #09090d;
   color: #fff;
-  height: 100svh; /* 鎖定全螢幕高度，不隨內容撐開 */
+  /* 使用 svh 鎖定手機視窗高度，網址列伸縮時絕不推擠版面 */
+  height: 100svh; 
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* 遊戲主容器 */
 .app {
   width: 100%;
-  max-width: 430px;
-  height: 100svh; /* 完美貼合手機高度 */
+  max-width: 430px; /* 鎖定 iPhone Pro Max 完美寬度 */
+  height: 100svh;   /* 完美貼合手機實際可視高度 */
   display: flex;
-  flex-direction: column; /* 讓 HUD、內容、底部導航垂直依序排列 */
-  background: #0f0f16;
+  flex-direction: column; /* 讓 HUD、內容區、底部導航垂直依序排列 */
+  background: radial-gradient(circle at center, #1a1a26 0%, #09090d 100%);
   position: relative;
   overflow: hidden;
 }
 
-/* 頂部 HUD */
+/* ==========================================
+   2. 頂部 HUD 區塊 (固定在最上方)
+   ========================================== */
 .topHUD {
   padding: 12px 16px;
   background: linear-gradient(180deg, #242433 0%, #12121c 100%);
   border-bottom: 2px solid #3d3d52;
-  flex-shrink: 0; /* 防止被擠壓 */
+  flex-shrink: 0; /* 防止被中間內容擠壓變形 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
 .nameRow {
@@ -41,6 +50,8 @@ body {
   align-items: center;
   color: #ffe600;
   font-weight: bold;
+  font-size: 15px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 }
 
 .level {
@@ -49,6 +60,7 @@ body {
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 12px;
+  border: 1px solid #00e5ff;
 }
 
 .expBar {
@@ -57,22 +69,28 @@ body {
   border-radius: 4px;
   margin-top: 8px;
   overflow: hidden;
+  border: 1px solid #333;
 }
 
 .expFill {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, #00e5ff, #00ff88);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+  transition: width 0.3s ease;
 }
 
-/* 中間內容捲動區 */
+/* ==========================================
+   3. 中間獨立內容滾動區
+   ========================================== */
 #content {
   flex: 1; /* 自動吃滿剩下的中間所有空間 */
-  overflow-y: auto; /* 如果單一頁面內容太多，只在中間滾動，不會撐開整個網頁 */
+  overflow-y: auto; /* 如果內容太多，只在中間滾動，絕對不會撐開整個網頁 */
   padding: 15px;
+  -webkit-overflow-scrolling: touch; /* 讓 iOS 滾動更流暢 */
 }
 
-/* 核心：預設沒 active 的頁面絕對不顯示！ */
+/* 核心：預設沒有 active 的頁面絕對不顯示 */
 .page {
   display: none; 
   flex-direction: column;
@@ -84,16 +102,117 @@ body {
   display: flex;
 }
 
-/* 底部導航 (徹底固定在最底層) */
+h2 {
+  font-size: 20px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* ==========================================
+   4. 五線譜題目圖片容器
+   ========================================== */
+.note-container {
+  width: 100%;
+  height: 160px;
+  background: #ffffff; /* 保持白底以清晰顯示黑色的五線譜與音符 */
+  border: 3px solid #565675;
+  border-radius: 12px;
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.25);
+}
+
+#noteImage {
+  height: 85%;
+  object-fit: contain; /* 確保圖片不變形 */
+}
+
+/* ==========================================
+   5. TT2 風格按鈕與 GRID 排版
+   ========================================== */
+/* 一般按鈕 (帶有厚度的立體感) */
+button {
+  width: 100%;
+  padding: 14px;
+  margin: 6px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffcc00;
+  background: linear-gradient(180deg, #3a3a4f 0%, #1e1e2d 100%);
+  border: 2px solid #565675;
+  border-bottom: 5px solid #0f0f18; /* 做出按鈕厚度 */
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  transition: all 0.05s ease;
+}
+
+button:active {
+  transform: translateY(3px); /* 點擊時下壓 */
+  border-bottom-width: 2px; /* 厚度變薄 */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* 答題專用 4 縱列 Grid */
+.btnGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btnGrid button {
+  padding: 16px 0;
+  background: linear-gradient(180deg, #ff9900 0%, #cc6600 100%);
+  border-color: #ffbb55;
+  border-bottom-color: #663300;
+  color: #fff;
+  font-size: 18px;
+}
+
+/* ==========================================
+   6. 卡片與分數資訊
+   ========================================== */
+.menu-box, .stat-container, .item-card {
+  background: rgba(23, 23, 36, 0.8);
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #2d2d3f;
+  margin-bottom: 12px;
+}
+
+.stat-container {
+  border-left: 4px solid #00e5ff;
+}
+
+.item-card {
+  border-left: 4px solid #ffe600;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #a0a0b5;
+}
+
+/* ==========================================
+   7. 底部導航欄 (死死固定、平均分配)
+   ========================================== */
 .bottomNav {
   display: flex;
   background: #0b0b12;
   border-top: 2px solid #2d2d3f;
-  padding-bottom: env(safe-area-inset-bottom); /* 避開 iPhone 底部白條 */
+  padding-bottom: env(safe-area-inset-bottom); /* 自動避開 iPhone 底部小黑條手勢區 */
   flex-shrink: 0; /* 絕對不允許被內容擠壓變形 */
 }
 
-/* 底部按鈕平均分配 25% 寬度 */
+/* 4個選項精確平分 25% 寬度 */
 .bottomNav button {
   flex: 1; 
   margin: 0;
@@ -110,55 +229,14 @@ body {
 .bottomNav button:active {
   background: #161622;
   color: #00e5ff;
-  transform: none;
+  transform: none; /* 導航按鈕不套用下壓效果 */
 }
 
-/* 一般點擊按鈕樣式 (TT2 立體感) */
-button {
-  width: 100%;
-  padding: 14px;
-  margin: 6px 0;
-  font-size: 16px;
-  font-weight: bold;
-  color: #ffcc00;
-  background: linear-gradient(180deg, #3a3a4f 0%, #1e1e2d 100%);
-  border: 2px solid #565675;
-  border-bottom: 5px solid #0f0f18;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-button:active {
-  transform: translateY(3px);
-  border-bottom-width: 2px;
-}
-
-/* 答題專用 Grid */
-.btnGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-/* 卡片美化 */
-.menu-box, .stat-container, .item-card {
-  background: #171724;
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #2d2d3f;
-  margin-bottom: 10px;
-}
-
-#note {
-  font-size: 72px;
-  font-weight: bold;
-  text-align: center;
-  margin: 20px 0;
-  text-shadow: 0 0 15px #00e5ff;
-}
-
-.info {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
+/* ==========================================
+   8. 動態特效
+   ========================================== */
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
