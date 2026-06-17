@@ -8,7 +8,7 @@
   font-family: 'Noto Serif TC', 'PingFang TC', 'Microsoft JhengHei', serif;
   user-select: none;
   -webkit-user-select: none;
-  /* 📱 消除行動裝置點擊時的網頁原生藍色高亮方塊 */
+  /* 📱 消除行動裝置（iOS/Android）頻繁點擊按鈕或怪物時產生的原生藍色高亮方框 */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -20,7 +20,7 @@ body {
   overflow: hidden;
 }
 
-/* 📱 滿版核心：移除所有固定寬度、模擬手機框與圓角，無縫撐滿螢幕 */
+/* 📱 滿版核心：移除所有固定寬度，無縫撐滿螢幕 */
 .game-window {
   width: 100%;
   height: 100dvh; 
@@ -77,13 +77,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 .monster-slime {
   width: 120px; height: 100px; border-radius: 50% 50% 45% 45%;
   background: #2a6f97;
   box-shadow: inset -6px -8px 10px rgba(0,0,0,0.4), 0 8px 15px rgba(0,0,0,0.5);
   border: 2.5px solid rgba(255, 255, 255, 0.7); transition: background 0.4s ease;
-  cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative;
 }
 .slime-face { position: relative; width: 60px; height: 25px; top: 2px; z-index: 3; }
 .slime-eye { width: 8px; height: 8px; background: #111; border-radius: 50%; position: absolute; top: 2px; }
@@ -91,7 +93,7 @@ body {
 .slime-eye.right { right: 12px; }
 .slime-mouth { width: 14px; height: 7px; border-bottom: 2px solid #111; border-radius: 0 0 12px 12px; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); }
 
-/* 妖怪之魂動態圖標 */
+/* 妖怪之魂 Emoji 圖標調整 */
 .monster-yokai-icon { font-size: 28px; margin-bottom: -5px; z-index: 2; }
 
 /* 妖怪受擊動態搖晃 */
@@ -102,7 +104,7 @@ body {
   100% { transform: scale(1, 1) rotate(0); }
 }
 
-/* 手動斬擊特效線 */
+/* 手動答對/點擊之斬擊特效線 */
 .slash-line {
   position: absolute; width: 180px; height: 6px; background: #ffffff;
   box-shadow: 0 0 6px #ffffff, 0 0 14px #ff1a1a; border-radius: 50%;
@@ -115,7 +117,7 @@ body {
   100% { transform: rotate(-32deg) scaleX(1); opacity: 0; }
 }
 
-/* 💥 自動秒傷火花特效（補齊原本遺漏的樣式） */
+/* 💥 連擊火花爆破效果 */
 .auto-spark {
   position: absolute; right: 10px; top: 10px; font-size: 26px;
   opacity: 0; pointer-events: none; z-index: 45;
@@ -148,7 +150,7 @@ body {
 .btn-blue { background: linear-gradient(180deg, #44596e 0%, #223140 100%); border: 1px solid #d4af37; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
 .btn:active { transform: translateY(2px); }
 
-/* 裝備列表與數值樣式 */
+/* 🌟 裝備列表與 JS 動態渲染樣式對齊 */
 .character-container { overflow-y: auto; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 10px; }
 #stats { font-size: 12px; color: #d4af37; background: #26211c; padding: 6px 12px; border-radius: 4px; border: 1px solid #4a3f35; display: flex; justify-content: space-between; font-weight: bold; }
 .equipment-list { flex: 1; display: flex; flex-direction: column; gap: 8px; }
@@ -163,7 +165,7 @@ body {
 .up-btn:active { transform: translateY(1px); border-bottom-width: 1px; }
 
 /* ============================================================
-   🎵 答題專用全景層 (CSS核心修正：完美實作HTML內刻五線譜)
+   🎵 答題專用全景層 (完美彈性 Flexbox 排版，絕不跑位)
    ============================================================ */
 .game-play-layer {
   display: none; 
@@ -180,7 +182,7 @@ body {
   position: relative;
 }
 
-/* 進入答題遊戲時，強制隱藏大廳主舞台與下方抽屜 */
+/* 進入答題遊戲時，強制隱藏大廳主舞台與下方抽屜，避免元件干擾 */
 .game-window.playing-mode .arena-layer,
 .game-window.playing-mode .drawer-layer {
   display: none !important;
@@ -190,7 +192,7 @@ body {
 .game-header { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: bold; color: #d4af37; }
 .btn-back { touch-action: manipulation; background: #6e251d; border: 1px solid #9c3327; color: white; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-size: 13px;}
 
-/* 五線譜容器：優化底色、建立畫布空間 */
+/* 🎼 五線譜相片容器佈局 */
 .staff-wrapper { 
   background: #fdfaf2; 
   border: 3px solid #cbd1b3; 
@@ -204,11 +206,11 @@ body {
   overflow: hidden;
 }
 
-/* 🎼 實體五線譜線條繪製 */
+/* 🎼 實體五線譜繪製（5條橫線集中在容器中央） */
 .staff-lines {
   position: absolute;
   width: 100%;
-  height: 80px; /* 限制五線譜集中在中央區域 */
+  height: 80px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -220,7 +222,7 @@ body {
   background-color: #3a352d;
 }
 
-/* 🎼 譜號定位 (高音/低音譜號透過 JS 修改 textContent 如 𝄞 或 𝄢) */
+/* 🎼 譜號字體定位 (𝄞、𝄢) */
 #staffClef {
   position: absolute;
   left: 20px;
@@ -230,21 +232,22 @@ body {
   font-family: serif;
 }
 
-/* 🎼 樂譜音符定位 (預留給 JS 計算 top/bottom 比例來移動高低) */
+/* 🎼 樂譜圖片專用定位 (讀取 questions.js 內的 img) */
 #noteNote {
   position: absolute;
-  left: 55%;
-  font-size: 38px;
-  color: #2c251e;
-  pointer-events: none;
-  transform: translate(-50%, -43%); /* 精準修正 Emoji 音符的視覺重心 */
-  transition: top 0.15s ease-out;  /* 讓新音符出現時有滑動感或快速就位 */
-}
-
-/* (保留備用) 若未來改採圖片題庫時的防跑版樣式 */
-.staff-note-img {
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* 讓引入的題庫圖片完美適應、垂直居中且不變形 */
+.staff-note-img {
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain; 
   pointer-events: none;
 }
@@ -255,7 +258,7 @@ body {
 .key-btn:active { border-bottom-width: 1px; transform: translateY(2px); }
 
 /* ============================================================
-   🗺️ 底部控制導覽列 (常駐最下方，防 iPhone 安全區遮擋)
+   🗺️ 底部控制導覽列 (常駐最下方，相容滿版瀏海屏手機)
    ============================================================ */
 .nav-bar { 
   display: flex; 
@@ -263,7 +266,7 @@ body {
   padding: 10px 24px; 
   background: #1c1a17; 
   border-top: 3px solid #d4af37; 
-  /* 支援全螢幕手機底部的安全邊距 */
+  /* 自動偵測並加入 iOS 全螢幕底部的安全阻擋邊距，避免白條遮擋 */
   height: calc(60px + env(safe-area-inset-bottom)); 
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
   z-index: 1100; 
