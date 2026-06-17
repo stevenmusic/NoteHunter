@@ -1,12 +1,12 @@
 /* =========================
-   GLOBAL RESET
+   BASE (不動你的架構)
 ========================= */
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -18,17 +18,15 @@ body {
   justify-content: center;
   align-items: center;
 
-  min-height: 100vh;
+  /* 🔧 修正 iOS viewport 問題 */
+  min-height: 100dvh;
+
   padding: 10px;
 }
 
-/* =========================
-   APP CONTAINER (FIX iOS)
-========================= */
 .app {
   width: 100%;
   max-width: 420px;
-
   background-color: #161920;
   border: 2px solid #2c3242;
   border-radius: 16px;
@@ -37,19 +35,24 @@ body {
   display: flex;
   flex-direction: column;
 
+  /* 🔧 修正 iOS 高度問題 */
   height: 100dvh;
-  max-height: 820px;
 
+  max-height: 820px;
   overflow: hidden;
 }
 
 /* =========================
    TOP HUD
 ========================= */
+
 .topHUD {
   padding: 12px 16px 8px;
   background: #1a1e29;
   border-bottom: 2px solid #2c3242;
+
+  /* 🔧 讓齒輪定位基準正確 */
+  position: relative;
 }
 
 .nameRow {
@@ -59,12 +62,35 @@ body {
   font-weight: bold;
   font-size: 18px;
   margin-bottom: 6px;
+
+  /* 🔧 提供定位參考 */
+  position: relative;
 }
 
-.level {
-  color: #00e5ff;
+/* 🔧 齒輪：真正右上角 */
+.setting-btn {
+  position: absolute;
+  right: 0px;
+  top: -6px;
+
+  font-size: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  color: #aaa;
+  padding: 0 4px;
+  line-height: 1;
+
+  z-index: 50;
 }
 
+.setting-btn:active {
+  transform: scale(0.9);
+  color: #fff;
+}
+
+/* EXP */
 .expBar {
   height: 10px;
   background: #222836;
@@ -75,33 +101,22 @@ body {
 
 .expFill {
   height: 100%;
-  width: 0%;
   background: linear-gradient(90deg, #00ff88, #00e5ff);
-  transition: width 0.35s ease;
+  width: 0%;
+  transition: width 0.4s ease;
 }
 
 .infoRow {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 13px;
-}
-
-.setting-btn {
-  background: none;
-  border: none;
-  font-size: 30px;
-  color: #aaa;
-  cursor: pointer;
-}
-
-.setting-btn:active {
-  transform: scale(0.9);
-  color: #fff;
 }
 
 /* =========================
    CONTENT
 ========================= */
+
 #content {
   padding: 16px;
   flex: 1;
@@ -120,8 +135,8 @@ body {
 h2 {
   text-align: center;
   margin-bottom: 16px;
-  font-size: 22px;
   color: #fff;
+  font-size: 22px;
 }
 
 .menu-box {
@@ -130,24 +145,23 @@ h2 {
   border-radius: 12px;
   padding: 16px;
   text-align: center;
+  margin-bottom: 16px;
 }
 
 /* =========================
    BUTTONS
 ========================= */
+
 button {
   width: 100%;
   padding: 14px;
   margin: 8px 0;
-
   background: #252b3a;
   border: 1px solid #3d4761;
   color: #fff;
-
   font-size: 15px;
   font-weight: bold;
   border-radius: 10px;
-
   cursor: pointer;
 }
 
@@ -157,12 +171,12 @@ button:active {
 }
 
 /* =========================
-   GAME STAGE (IMPORTANT)
+   NOTE AREA
 ========================= */
+
 .note-container {
   width: 100%;
   height: 190px;
-
   background-color: #f4f5f7;
   border-radius: 12px;
 
@@ -173,13 +187,7 @@ button:active {
   box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* 五線譜 */
-.staff {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
+/* staff */
 .staff-line {
   position: absolute;
   left: 0;
@@ -188,18 +196,17 @@ button:active {
   background-color: #333;
 }
 
-/* ledger line（修正置中問題） */
+/* ledger */
 .dynamic-ledger {
   position: absolute;
-  left: 65%;
-  transform: translateX(-50%);
+  left: calc(65% - 22px);
   width: 44px;
   height: 2px;
   background-color: #1a1a1a;
   z-index: 2;
 }
 
-/* 音符 */
+/* note */
 #noteNote {
   position: absolute;
   left: 65%;
@@ -207,25 +214,17 @@ button:active {
   z-index: 3;
 }
 
-/* SVG scale control */
-#noteNote svg {
-  width: 34px;
-  height: auto;
-}
-
 /* =========================
-   BUTTON GRID (音名)
+   GAME BUTTONS
 ========================= */
+
 .btnGrid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
   margin-top: 16px;
 }
 
-/* =========================
-   INFO BAR
-========================= */
 .info {
   display: flex;
   justify-content: space-between;
@@ -235,8 +234,9 @@ button:active {
 }
 
 /* =========================
-   CHARACTER PANEL
+   CHARACTER / SHOP
 ========================= */
+
 .stat-container,
 .gear-section {
   background: #1f2431;
@@ -247,6 +247,7 @@ button:active {
 }
 
 .item-card {
+  position: relative;
   width: 100%;
   padding: 14px;
   background: #1c202c;
@@ -255,9 +256,7 @@ button:active {
   margin-bottom: 12px;
 }
 
-/* =========================
-   SHOP
-========================= */
+/* shop layout */
 .shop-grid {
   display: flex;
   flex-direction: column;
@@ -266,80 +265,69 @@ button:active {
 
 .shop-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-
+  justify-content: space-between;
   background: #1c202c;
   padding: 14px;
   border-radius: 12px;
   border: 1px solid #2d3548;
 }
 
-.shop-item-info {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-}
-
-.buy-btn {
-  min-width: 110px;
-  padding: 12px;
-
-  background: linear-gradient(180deg, #00e5ff, #008ca3);
-  border: 1px solid #00e5ff;
-
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
-}
-
-.buy-btn:active {
-  transform: translateY(2px);
-}
-
-.buy-btn.owned {
-  background: #2a2a3a;
-  border-color: #555;
-  color: #888;
-}
-
 /* =========================
-   RARITY
+   RARITY VISUAL (加強版，不動JS)
 ========================= */
-.item-card.rare { border-left: 5px solid #00e5ff; }
+
+.item-card.common { border-left: 5px solid #8a8a9e; }
+
+.item-card.rare {
+  border-left: 5px solid #00e5ff;
+  box-shadow: 0 0 10px rgba(0,229,255,0.2);
+}
 
 .item-card.legendary {
   border-left: 5px solid #ffcc00;
-  box-shadow: 0 0 12px rgba(255,204,0,0.4);
+  box-shadow: 0 0 16px rgba(255,204,0,0.35);
 }
 
 .item-card.mythic {
   border-left: 5px solid #ff0055;
   animation: mythicPulse 2s infinite alternate;
+  box-shadow: 0 0 22px rgba(255,0,85,0.35);
 }
 
 @keyframes mythicPulse {
-  from { box-shadow: 0 0 8px rgba(255,0,85,0.4); }
-  to   { box-shadow: 0 0 25px rgba(255,0,85,0.9); }
+  from { box-shadow: 0 0 10px rgba(255,0,85,0.4); }
+  to   { box-shadow: 0 0 28px rgba(255,0,85,0.9); }
+}
+
+/* shop glow（不影響原JS） */
+.glow-gold {
+  text-shadow: 0 0 10px #ffcc00;
+}
+
+.glow-red {
+  text-shadow: 0 0 14px #ff0055;
 }
 
 /* =========================
-   BOTTOM NAV
+   BOTTOM NAV (修正固定)
 ========================= */
+
 .bottomNav {
   display: flex;
   background: #1a1e29;
   border-top: 2px solid #2c3242;
+
+  /* 🔧 保證不被內容推動 */
   flex-shrink: 0;
 }
 
 .bottomNav button {
   flex: 1;
+  padding: 16px 0;
   background: transparent;
   border: none;
-
-  padding: 16px 0;
-  color: #aaa;
+  color: #ccc;
   font-size: 14px;
 }
 
@@ -348,17 +336,12 @@ button:active {
   color: #fff;
 }
 
-/* future active state */
-.bottomNav button.active {
-  color: #00e5ff;
-  border-top: 2px solid #00e5ff;
-}
-
 /* =========================
    EXIT BUTTON
 ========================= */
+
 .exit-btn {
-  background: linear-gradient(180deg, #555, #333);
+  background: linear-gradient(180deg, #555 0%, #333 100%);
   border-color: #666;
   color: #ddd;
   margin-top: 20px;
