@@ -1,37 +1,51 @@
-/* 全域與基礎排版 */
+/* =========================
+   GLOBAL RESET
+========================= */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   background-color: #0d0f12;
   color: #e3e8ee;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
   min-height: 100vh;
   padding: 10px;
 }
 
+/* =========================
+   APP CONTAINER (FIX iOS)
+========================= */
 .app {
   width: 100%;
   max-width: 420px;
+
   background-color: #161920;
   border: 2px solid #2c3242;
   border-radius: 16px;
   box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+
   display: flex;
   flex-direction: column;
-  height: 100vh;
+
+  height: 100dvh;
   max-height: 820px;
+
   overflow: hidden;
 }
 
-/* 頂部HUD - 優化右上角設定按鈕 */
+/* =========================
+   TOP HUD
+========================= */
 .topHUD {
   padding: 12px 16px 8px;
   background: #1a1e29;
@@ -47,6 +61,10 @@ body {
   margin-bottom: 6px;
 }
 
+.level {
+  color: #00e5ff;
+}
+
 .expBar {
   height: 10px;
   background: #222836;
@@ -57,15 +75,14 @@ body {
 
 .expFill {
   height: 100%;
-  background: linear-gradient(90deg, #00ff88, #00e5ff);
   width: 0%;
-  transition: width 0.4s ease;
+  background: linear-gradient(90deg, #00ff88, #00e5ff);
+  transition: width 0.35s ease;
 }
 
 .infoRow {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   font-size: 13px;
 }
 
@@ -73,10 +90,8 @@ body {
   background: none;
   border: none;
   font-size: 30px;
-  cursor: pointer;
   color: #aaa;
-  padding: 0 4px;
-  line-height: 1;
+  cursor: pointer;
 }
 
 .setting-btn:active {
@@ -84,7 +99,9 @@ body {
   color: #fff;
 }
 
-/* 內容區域 */
+/* =========================
+   CONTENT
+========================= */
 #content {
   padding: 16px;
   flex: 1;
@@ -103,8 +120,8 @@ body {
 h2 {
   text-align: center;
   margin-bottom: 16px;
-  color: #fff;
   font-size: 22px;
+  color: #fff;
 }
 
 .menu-box {
@@ -113,20 +130,24 @@ h2 {
   border-radius: 12px;
   padding: 16px;
   text-align: center;
-  margin-bottom: 16px;
 }
 
-/* 按鈕通用樣式 */
+/* =========================
+   BUTTONS
+========================= */
 button {
   width: 100%;
   padding: 14px;
   margin: 8px 0;
+
   background: #252b3a;
   border: 1px solid #3d4761;
   color: #fff;
+
   font-size: 15px;
   font-weight: bold;
   border-radius: 10px;
+
   cursor: pointer;
 }
 
@@ -135,16 +156,28 @@ button:active {
   background: #1f2431;
 }
 
-/* 五線譜 */
+/* =========================
+   GAME STAGE (IMPORTANT)
+========================= */
 .note-container {
   width: 100%;
   height: 190px;
+
   background-color: #f4f5f7;
   border-radius: 12px;
+
   position: relative;
   border: 4px solid #3b4254;
+
   overflow: visible;
   box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* 五線譜 */
+.staff {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .staff-line {
@@ -155,15 +188,18 @@ button:active {
   background-color: #333;
 }
 
+/* ledger line（修正置中問題） */
 .dynamic-ledger {
   position: absolute;
-  left: calc(65% - 22px);
+  left: 65%;
+  transform: translateX(-50%);
   width: 44px;
   height: 2px;
   background-color: #1a1a1a;
   z-index: 2;
 }
 
+/* 音符 */
 #noteNote {
   position: absolute;
   left: 65%;
@@ -171,13 +207,25 @@ button:active {
   z-index: 3;
 }
 
+/* SVG scale control */
+#noteNote svg {
+  width: 34px;
+  height: auto;
+}
+
+/* =========================
+   BUTTON GRID (音名)
+========================= */
 .btnGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
   margin-top: 16px;
 }
 
+/* =========================
+   INFO BAR
+========================= */
 .info {
   display: flex;
   justify-content: space-between;
@@ -186,8 +234,11 @@ button:active {
   font-size: 16px;
 }
 
-/* 角色面板 */
-.stat-container, .gear-section {
+/* =========================
+   CHARACTER PANEL
+========================= */
+.stat-container,
+.gear-section {
   background: #1f2431;
   border: 1px solid #2d3548;
   border-radius: 10px;
@@ -196,17 +247,17 @@ button:active {
 }
 
 .item-card {
-  position: relative;
   width: 100%;
   padding: 14px;
   background: #1c202c;
   border-radius: 10px;
   border: 1px solid #2d3548;
   margin-bottom: 12px;
-  overflow: hidden;
 }
 
-/* 商店樣式 */
+/* =========================
+   SHOP
+========================= */
 .shop-grid {
   display: flex;
   flex-direction: column;
@@ -215,32 +266,31 @@ button:active {
 
 .shop-item {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+
   background: #1c202c;
   padding: 14px;
   border-radius: 12px;
   border: 1px solid #2d3548;
-  gap: 12px;
 }
 
 .shop-item-info {
   display: flex;
-  align-items: center;
   gap: 14px;
-  flex: 1;
+  align-items: center;
 }
 
 .buy-btn {
   min-width: 110px;
-  padding: 12px 14px;
-  background: linear-gradient(180deg, #00e5ff 0%, #008ca3 100%);
+  padding: 12px;
+
+  background: linear-gradient(180deg, #00e5ff, #008ca3);
   border: 1px solid #00e5ff;
-  border-bottom: 3px solid #004c57;
+
   color: white;
   font-weight: bold;
   border-radius: 8px;
-  cursor: pointer;
 }
 
 .buy-btn:active {
@@ -251,43 +301,46 @@ button:active {
   background: #2a2a3a;
   border-color: #555;
   color: #888;
-  cursor: not-allowed;
 }
 
-/* 稀有度特效 */
-.item-card.common { border-left: 5px solid #8a8a9e; }
+/* =========================
+   RARITY
+========================= */
 .item-card.rare { border-left: 5px solid #00e5ff; }
-.item-card.legendary { 
-  border-left: 5px solid #ffcc00; 
+
+.item-card.legendary {
+  border-left: 5px solid #ffcc00;
   box-shadow: 0 0 12px rgba(255,204,0,0.4);
 }
-.item-card.mythic { 
-  border-left: 5px solid #ff0055; 
+
+.item-card.mythic {
+  border-left: 5px solid #ff0055;
   animation: mythicPulse 2s infinite alternate;
 }
 
 @keyframes mythicPulse {
   from { box-shadow: 0 0 8px rgba(255,0,85,0.4); }
-  to { box-shadow: 0 0 25px rgba(255,0,85,0.9); }
+  to   { box-shadow: 0 0 25px rgba(255,0,85,0.9); }
 }
 
-/* 固定底部導航 */
+/* =========================
+   BOTTOM NAV
+========================= */
 .bottomNav {
   display: flex;
   background: #1a1e29;
   border-top: 2px solid #2c3242;
-  margin-top: auto;
   flex-shrink: 0;
 }
 
 .bottomNav button {
   flex: 1;
-  padding: 16px 0;
   background: transparent;
   border: none;
-  color: #ccc;
+
+  padding: 16px 0;
+  color: #aaa;
   font-size: 14px;
-  font-weight: 500;
 }
 
 .bottomNav button:active {
@@ -295,8 +348,17 @@ button:active {
   color: #fff;
 }
 
+/* future active state */
+.bottomNav button.active {
+  color: #00e5ff;
+  border-top: 2px solid #00e5ff;
+}
+
+/* =========================
+   EXIT BUTTON
+========================= */
 .exit-btn {
-  background: linear-gradient(180deg, #555 0%, #333 100%);
+  background: linear-gradient(180deg, #555, #333);
   border-color: #666;
   color: #ddd;
   margin-top: 20px;
