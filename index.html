@@ -18,10 +18,9 @@
     <div class="expBar">
       <div class="expFill" id="expFill"></div>
     </div>
-    <div class="infoRow">
+    <div class="infoRow" style="display:flex;justify-content:space-between;margin-top:5px;font-size:13px;">
       <span id="expText">EXP 0 / 100</span>
       <span id="goldDisplay" style="color:#ffcc00;font-weight:bold;">💰 0</span>
-      <button onclick="switchPage('settingPage')" class="setting-btn">⚙️</button>
     </div>
   </div>
 
@@ -60,11 +59,6 @@
       <p class="menu-box" style="text-align:center;color:#8a8a9e;">全球聯賽計算中，請先提升戰力...</p>
     </div>
 
-    <div id="shopPage" class="page">
-      <h2>🛒 裝備商店</h2>
-      <div class="shop-grid" id="shopGrid"></div>
-    </div>
-
     <div id="settingPage" class="page">
       <h2>⚙️ 冒險設定</h2>
       <p class="menu-box" style="text-align:center;color:#8a8a9e;">打擊音效與畫面粒子特效優化中</p>
@@ -72,13 +66,20 @@
 
     <div id="gamePage" class="page">
       <div class="note-container">
+
+        <!-- 五條固定譜線：由下到上，間距20px，範圍 50–130px -->
         <div class="staff-line" style="top:130px;"></div>
         <div class="staff-line" style="top:110px;"></div>
         <div class="staff-line" style="top: 90px;"></div>
         <div class="staff-line" style="top: 70px;"></div>
         <div class="staff-line" style="top: 50px;"></div>
+
+        <!-- 譜號（JS 動態替換內容） -->
         <div id="staffClef"></div>
+
+        <!-- 全音符（JS 動態設定 top） -->
         <div id="noteNote"></div>
+
       </div>
 
       <div class="btnGrid">
@@ -95,7 +96,7 @@
         <div id="score">Score: 0</div>
         <div id="combo">Combo: 0</div>
       </div>
-      <button onclick="backHome()" class="exit-btn">撤退回基地</button>
+      <button onclick="backHome()" style="margin-top:25px;background:linear-gradient(180deg,#555 0%,#333 100%);border-color:#666;border-bottom-color:#111;color:#ddd;">撤退回基地</button>
     </div>
 
   </div>
@@ -104,11 +105,10 @@
     <button onclick="switchPage('characterPage')">👤 人物</button>
     <button onclick="switchPage('playPage')">🎮 遊玩</button>
     <button onclick="switchPage('rankPage')">🏆 排行</button>
-    <button onclick="switchPage('shopPage')">🛒 商店</button>
+    <button onclick="switchPage('settingPage')">⚙️ 設定</button>
   </div>
 
 </div>
-
 <script src="game.js"></script>
 </body>
 </html>
