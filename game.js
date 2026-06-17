@@ -1,4 +1,4 @@
-/* game.js — SVG 純向量版 + 五大裝備稀有度特化系統 */
+/* game.js — SVG 純向量版 + 五大裝備稀有度特化系統 (結構修正版) */
 
 /*
   ┌─────────────────────────────────────────────────────┐
@@ -98,17 +98,17 @@ const WHOLE_NOTE_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
 </svg>`;
 
 /* ============================================================
-   Player 冒險者資料庫 (預設配置普通與傳奇神兵作測試)
+   Player 冒險者資料庫 (在這裡自由調整測試三種裝備的稀有度！)
    ============================================================ */
 let player = {
   level: 1, exp: 0, expToNextLevel: 100,
   gold: 0, hp: 100, atk: 10, def: 5,
   critChance: 0.12, critMultiplier: 1.5,
   
-  // 稀有度屬性可選值: 'common' | 'uncommon' | 'rare' | 'legendary' | 'mythic'
+  // 可設定稀有度: 'common' | 'uncommon' | 'rare' | 'legendary' | 'mythic'
   weapon: { name: "雷神之怒・碎空", atkBonus: 120, rarity: "legendary" },
   armor:  { name: "殘破布質外衣",  hpBonus: 10,  rarity: "common" },
-  shield: { name: "宙斯・萬劫天罰神盾", defBonus: 85, rarity: "mythic" }
+  shield: { name: "阿瓦隆・永恆結界盾", defBonus: 320, rarity: "mythic" }
 };
 
 function getPlayerTotalAtk() {
@@ -292,7 +292,7 @@ function levelUpCheck() {
 }
 
 /* ============================================================
-   角色頁裝備與稀有度渲染
+   角色頁裝備與稀有度渲染 (已修正 Class 覆蓋臭蟲)
    ============================================================ */
 function updateCharacter() {
   const totalAtk = getPlayerTotalAtk();
@@ -313,10 +313,10 @@ function updateCharacter() {
       <strong style="color:#00ff88;">💥 爆擊機率:</strong> ${(player.critChance*100).toFixed(0)}%
     </div>`;
 
-  // 2. 渲染武器欄位 (動態依據 rarity 注入對應的卡牌樣式 class)
+  // 2. 渲染武器欄位 (精確重組 item-card 和稀有度樣式類別)
   if (wp && player.weapon) {
     const rClass = player.weapon.rarity || "common";
-    wp.className = `item-card ${rClass}`;
+    wp.className = `item-card ${rClass}`; // 確保 item-card 被保留
     wp.innerHTML = `
       <div style="font-weight:bold;color:#fff;">${player.weapon.name}</div>
       <div style="font-size:13px;color:#aaa;">加成：攻擊力 +${player.weapon.atkBonus}</div>`;
@@ -325,7 +325,7 @@ function updateCharacter() {
   // 3. 渲染戰甲欄位
   if (ar && player.armor) {
     const rClass = player.armor.rarity || "common";
-    ar.className = `item-card ${rClass}`;
+    ar.className = `item-card ${rClass}`; // 確保 item-card 被保留
     ar.innerHTML = `
       <div style="font-weight:bold;color:#fff;">${player.armor.name}</div>
       <div style="font-size:13px;color:#aaa;">加成：生命值 +${player.armor.hpBonus}</div>`;
@@ -334,7 +334,7 @@ function updateCharacter() {
   // 4. 渲染神盾欄位
   if (sh && player.shield) {
     const rClass = player.shield.rarity || "common";
-    sh.className = `item-card ${rClass}`;
+    sh.className = `item-card ${rClass}`; // 確保 item-card 被保留
     sh.innerHTML = `
       <div style="font-weight:bold;color:#fff;">${player.shield.name}</div>
       <div style="font-size:13px;color:#aaa;">加成：防禦力 +${player.shield.defBonus}</div>`;
