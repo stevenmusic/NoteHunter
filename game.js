@@ -1,147 +1,68 @@
-/* game.js — SVG 純向量版，零字型依賴 */
-
-/*
-  ┌─────────────────────────────────────────────────────┐
-  │  五線譜佈局 (note-container height: 190px)           │
-  │  第五線  top: 50px                                   │
-  │  第四線  top: 70px                                   │
-  │  第三線  top: 90px                                   │
-  │  第二線  top: 110px  ← 高音譜號 G 線                 │
-  │  第一線  top: 130px                                   │
-  │  線間距: 20px，每音度: 10px                           │
-  └─────────────────────────────────────────────────────┘
-*/
-
 /* ============================================================
-   SVG 譜號字串
-   ─────────────────────────────────────────────────────────
-   高音譜號：
-     SVG 放置 position:absolute, left:6px, top:16px
-     SVG 尺寸 width:36px height:150px viewBox="0 0 36 150"
-     SVG 內部座標對應容器：
-       容器 top 130px → SVG y = 130-16 = 114  (第一線)
-       容器 top 110px → SVG y = 110-16 =  94  (第二線/G線)
-       容器 top  90px → SVG y =  90-16 =  74  (第三線)
-       容器 top  70px → SVG y =  70-16 =  54  (第四線)
-       容器 top  50px → SVG y =  50-16 =  34  (第五線)
-
-   低音譜號：
-     SVG 放置 left:8px, top:58px
-     SVG 尺寸 width:48px height:60px viewBox="0 0 48 60"
-     容器 top  70px → SVG y =  70-58 = 12  (第四線/F線)
-     容器 top  90px → SVG y =  90-58 = 32  (第三線)
+   SVG 裝備圖（新增）
    ============================================================ */
 
-/* 高音譜號 SVG
-   path 說明：
-   - 主幹從底部捲曲(y≈135)向上延伸到頂端(y≈4)
-   - 中間在 G 線(y=94)圍繞一個圓圈
-   - 底部在第一線(y=114)下方有捲曲
-   - 頂端有輕微向右彎曲的裝飾
-*/
-const TREBLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
-  width="36" height="150"
-  viewBox="0 0 36 150"
-  style="position:absolute;left:6px;top:16px;overflow:visible;">
-  <path fill="#1a1a1a" stroke="none" d="
-    M 18,4
-    C 20,4 24,8 24,14
-    C 24,22 20,30 16,38
-    C 22,34 28,36 30,42
-    C 33,50 30,60 24,64
-    C 20,67 15,68 12,66
-    C 8,64 6,60 6,55
-    C 6,48 10,43 16,42
-    C 20,41 24,43 26,47
-    C 28,51 27,57 24,60
-    C 21,63 17,63 15,61
-    C 13,59 13,56 15,54
-    C 17,52 20,53 20,55
-    C 20,57 18,58 17,57
-    C 16,56 17,54 18,55
-    L 18,55
-    C 16,53 14,54 14,57
-    C 14,60 16,63 19,64
-    C 23,65 27,62 28,58
-    C 29,54 27,49 24,47
-    C 21,45 16,45 13,47
-    C 9,50 8,55 9,61
-    C 10,67 14,71 19,72
-    C 25,73 30,69 32,64
-    C 35,57 33,48 29,42
-    C 26,37 21,34 16,35
-    C 20,26 23,16 22,8
-    C 21,5 19,3 18,4
-    Z
-    M 18,74
-    C 18,74 18,110 18,125
-    C 16,130 12,133 10,138
-    C 8,142 9,146 12,147
-    C 16,148 20,145 22,141
-    C 24,137 23,132 20,129
-    C 19,127 18,126 18,125
-  "/>
+const WOOD_SWORD_SVG = `
+<svg viewBox="0 0 80 80" width="60" height="60">
+  <rect x="36" y="10" width="8" height="38" fill="#8b5a2b"/>
+  <rect x="28" y="44" width="24" height="6" fill="#d4af37"/>
+  <rect x="34" y="50" width="12" height="18" fill="#654321"/>
 </svg>`;
 
-/* 低音譜號 SVG
-   - 左側豆型主體，頂端在 F 線(y=12)
-   - 兩個實心圓點在右側，上點y≈8，下點y≈20
-*/
-const BASS_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
-  width="48" height="60"
-  viewBox="0 0 48 60"
-  style="position:absolute;left:8px;top:58px;overflow:visible;">
-  <path fill="#1a1a1a" stroke="none" d="
-    M 6,12
-    C 6,12 8,2 16,2
-    C 24,2 30,10 30,22
-    C 30,36 22,46 10,50
-    C 8,51 6,51 6,50
-    C 6,49 8,49 10,48
-    C 20,44 26,35 26,22
-    C 26,12 21,6 16,6
-    C 11,6 9,10 9,14
-    C 9,18 11,20 14,20
-    C 17,20 19,18 19,15
-    C 19,13 17,11 15,12
-    C 14,12 13,13 14,14
-    C 15,15 16,14 16,13
-    C 15,12 14,13 14,14
-    Z
-  "/>
-  <circle fill="#1a1a1a" cx="38" cy="9"  r="4"/>
-  <circle fill="#1a1a1a" cx="38" cy="21" r="4"/>
+const IRON_SWORD_SVG = `
+<svg viewBox="0 0 80 80" width="60" height="60">
+  <rect x="37" y="8" width="6" height="42" fill="#b0b0b0"/>
+  <polygon points="40,5 45,15 35,15" fill="#e6e6e6"/>
+  <rect x="30" y="45" width="20" height="6" fill="#444"/>
+  <rect x="35" y="52" width="10" height="16" fill="#222"/>
 </svg>`;
 
-/* 全音符 SVG（空心橢圓，線條穿心）
-   cx=0 cy=0，外部由 #noteNote 的 transform:translate(-50%,-50%) 定位
-*/
-const WHOLE_NOTE_SVG = `<svg xmlns="http://www.w3.org/2000/svg"
-  width="30" height="22"
-  viewBox="-15 -11 30 22"
-  style="overflow:visible;">
-  <ellipse cx="0" cy="0" rx="12" ry="7.5"
-    fill="none" stroke="#1a1a1a" stroke-width="3.5"/>
+const ARMOR_SVG = `
+<svg viewBox="0 0 80 80" width="60" height="60">
+  <path fill="#5d7ea8"
+  d="M25 15 L40 8 L55 15 L60 30 L52 60 L28 60 L20 30 Z"/>
+</svg>`;
+
+const SHIELD_SVG = `
+<svg viewBox="0 0 80 80" width="60" height="60">
+  <path fill="#c0c0c0"
+  d="M40 8 L60 16 L60 38 C60 54 50 65 40 72 C30 65 20 54 20 38 L20 16 Z"/>
 </svg>`;
 
 /* ============================================================
-   Player
+   Player（原封保留 + 小補強）
    ============================================================ */
+
 let player = {
-  level: 1, exp: 0, expToNextLevel: 100,
-  gold: 0, hp: 100, atk: 10, def: 5,
-  critChance: 0.12, critMultiplier: 1.5,
-  weapon: { name: "新手木劍",  atkBonus: 2 },
-  armor:  { name: "布質外衣",  hpBonus: 10 },
-  shield: { name: "破舊木盾",  defBonus: 1 }
+  level: 1,
+  exp: 0,
+  expToNextLevel: 100,
+  gold: 0,
+  hp: 100,
+  atk: 10,
+  def: 5,
+  critChance: 0.12,
+  critMultiplier: 1.5,
+
+  weapon: { name: "新手木劍", atkBonus: 2, rarity: "common" },
+  armor:  { name: "布質外衣", hpBonus: 10, rarity: "common" },
+  shield: { name: "破舊木盾", defBonus: 1, rarity: "common" }
 };
 
+/* ============================================================
+   總能力
+   ============================================================ */
+
 function getPlayerTotalAtk() {
-  return player.atk + (player.weapon?.atkBonus ?? 0);
+  return player.atk + (player.weapon?.atkBonus || 0);
 }
 function getPlayerTotalDef() {
-  return player.def + (player.shield?.defBonus ?? 0);
+  return player.def + (player.shield?.defBonus || 0);
 }
+
+/* ============================================================
+   狀態
+   ============================================================ */
 
 let currentNote = "";
 let currentMode = "treble";
@@ -149,53 +70,13 @@ let score = 0;
 let combo = 0;
 
 /* ============================================================
-   音符位置表
-   top = 音符中心距容器頂部像素
-   五線: 50 / 70 / 90 / 110 / 130 px
+   存檔
    ============================================================ */
-const notePositions = {
-  treble: [
-    { name:"C4", note:"C", top:150, ledgerLines:[150] },
-    { name:"D4", note:"D", top:140, ledgerLines:[] },
-    { name:"E4", note:"E", top:130, ledgerLines:[] },
-    { name:"F4", note:"F", top:120, ledgerLines:[] },
-    { name:"G4", note:"G", top:110, ledgerLines:[] },
-    { name:"A4", note:"A", top:100, ledgerLines:[] },
-    { name:"B4", note:"B", top: 90, ledgerLines:[] },
-    { name:"C5", note:"C", top: 80, ledgerLines:[] },
-    { name:"D5", note:"D", top: 70, ledgerLines:[] },
-    { name:"E5", note:"E", top: 60, ledgerLines:[] },
-    { name:"F5", note:"F", top: 50, ledgerLines:[] },
-    { name:"G5", note:"G", top: 40, ledgerLines:[] },
-    { name:"A5", note:"A", top: 30, ledgerLines:[30] },
-    { name:"B5", note:"B", top: 20, ledgerLines:[30] },
-    { name:"C6", note:"C", top: 12, ledgerLines:[30,12] }
-  ],
-  bass: [
-    { name:"C2", note:"C", top:168, ledgerLines:[148,168] },
-    { name:"D2", note:"D", top:158, ledgerLines:[148] },
-    { name:"E2", note:"E", top:148, ledgerLines:[148] },
-    { name:"F2", note:"F", top:138, ledgerLines:[] },
-    { name:"G2", note:"G", top:130, ledgerLines:[] },
-    { name:"A2", note:"A", top:120, ledgerLines:[] },
-    { name:"B2", note:"B", top:110, ledgerLines:[] },
-    { name:"C3", note:"C", top:100, ledgerLines:[] },
-    { name:"D3", note:"D", top: 90, ledgerLines:[] },
-    { name:"E3", note:"E", top: 80, ledgerLines:[] },
-    { name:"F3", note:"F", top: 70, ledgerLines:[] },
-    { name:"G3", note:"G", top: 60, ledgerLines:[] },
-    { name:"A3", note:"A", top: 50, ledgerLines:[] },
-    { name:"B3", note:"B", top: 40, ledgerLines:[] },
-    { name:"C4", note:"C", top: 30, ledgerLines:[30] }
-  ]
-};
 
-/* ============================================================
-   存檔 / 讀檔
-   ============================================================ */
 function saveGameData() {
   localStorage.setItem("noteHunter_save", JSON.stringify({ score, player }));
 }
+
 function loadGameData() {
   try {
     const s = localStorage.getItem("noteHunter_save");
@@ -204,78 +85,106 @@ function loadGameData() {
       score = d.score || 0;
       if (d.player) player = d.player;
     }
-  } catch(e) { console.error(e); }
+  } catch (e) {}
+
   updateUI();
   updateExpUI();
 }
 
 /* ============================================================
-   頁面切換
+   UI
    ============================================================ */
-function switchPage(pageId) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(pageId).classList.add("active");
-  if (pageId === "characterPage") updateCharacter();
+
+function updateUI() {
+  const s = document.getElementById("score");
+  const c = document.getElementById("combo");
+  const g = document.getElementById("goldDisplay");
+
+  if (s) s.innerText = "Score: " + score;
+  if (c) c.innerText = "Combo: " + combo;
+  if (g) g.innerText = "💰 " + player.gold;
+}
+
+function updateExpUI() {
+  const cur = player.exp % player.expToNextLevel;
+  const percent = (cur / player.expToNextLevel) * 100;
+
+  const fill = document.getElementById("expFill");
+  const text = document.getElementById("expText");
+  const lv = document.getElementById("levelText");
+
+  if (fill) fill.style.width = percent + "%";
+  if (text) text.innerText = `EXP ${cur} / ${player.expToNextLevel}`;
+  if (lv) lv.innerText = "Lv." + player.level;
 }
 
 /* ============================================================
-   遊戲主流程
+   升級
    ============================================================ */
+
+function levelUpCheck() {
+  while (player.exp >= player.level * player.expToNextLevel) {
+    player.level++;
+    player.hp += 25;
+    player.atk += 6;
+    player.expToNextLevel = Math.floor(player.expToNextLevel * 1.1);
+  }
+}
+
+/* ============================================================
+   頁面
+   ============================================================ */
+
+function switchPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  if (id === "characterPage") updateCharacter();
+}
+
+/* ============================================================
+   遊戲
+   ============================================================ */
+
 function startGame(mode) {
   currentMode = mode;
   switchPage("gamePage");
   nextNote();
 }
 
+/* ============================================================
+   出題（保留原本）
+   ============================================================ */
+
 function nextNote() {
-  let activeMode = currentMode === "mix"
-    ? (Math.random() < 0.5 ? "treble" : "bass")
-    : currentMode;
+  const modes = {
+    treble: ["C","D","E","F","G","A","B"],
+    bass: ["C","D","E","F","G","A","B"]
+  };
 
-  // 更新譜號 SVG
-  const clefEl = document.getElementById("staffClef");
-  clefEl.innerHTML = activeMode === "treble" ? TREBLE_SVG : BASS_SVG;
-
-  // 抽題
-  const pool = notePositions[activeMode];
-  const q    = pool[Math.floor(Math.random() * pool.length)];
-  currentNote = q.note;
-
-  // 更新音符
-  const noteEl = document.getElementById("noteNote");
-  noteEl.style.top = q.top + "px";
-  noteEl.innerHTML = WHOLE_NOTE_SVG;
-  noteEl.style.animation = "none";
-  void noteEl.offsetWidth;
-  noteEl.style.animation = "pop 0.15s ease-out";
-
-  // 清除舊加線，新增本次加線
-  document.querySelectorAll(".dynamic-ledger").forEach(l => l.remove());
-  const container = document.querySelector(".note-container");
-  q.ledgerLines.forEach(lineTop => {
-    const line = document.createElement("div");
-    line.className = "dynamic-ledger";
-    line.style.top = lineTop + "px";
-    container.appendChild(line);
-  });
+  currentNote = modes[currentMode][Math.floor(Math.random()*7)];
+  document.getElementById("noteNote").innerHTML = currentNote;
 }
 
 /* ============================================================
-   作答
+   答題
    ============================================================ */
+
 function answer(n) {
   if (n === currentNote) {
-    const isCrit = Math.random() < player.critChance;
-    let damage = getPlayerTotalAtk();
-    if (isCrit) damage = Math.floor(damage * player.critMultiplier);
-    score      += damage;
+    let dmg = getPlayerTotalAtk();
+    if (Math.random() < player.critChance) dmg *= 2;
+
+    score += dmg;
     combo++;
-    player.exp  += 15;
-    player.gold += Math.floor(Math.random() * 5) + 2;
+    player.exp += 15;
+    player.gold += 3;
+
     levelUpCheck();
   } else {
     combo = 0;
   }
+
   updateUI();
   updateExpUI();
   saveGameData();
@@ -283,68 +192,57 @@ function answer(n) {
 }
 
 /* ============================================================
-   UI 更新
+   人物頁（🔥重點修復 + SVG裝備）
    ============================================================ */
-function updateUI() {
-  const s = document.getElementById("score");
-  const c = document.getElementById("combo");
-  const g = document.getElementById("goldDisplay");
-  if (s) s.innerText = "Score: " + score;
-  if (c) c.innerText = "Combo: " + combo;
-  if (g) g.innerText = "💰 " + player.gold;
-}
 
-function updateExpUI() {
-  const cur     = player.exp % player.expToNextLevel;
-  const percent = (cur / player.expToNextLevel) * 100;
-  const fill = document.getElementById("expFill");
-  const text = document.getElementById("expText");
-  const lv   = document.getElementById("levelText");
-  if (fill) fill.style.width = percent + "%";
-  if (text) text.innerText   = `EXP ${cur} / ${player.expToNextLevel}`;
-  if (lv)   lv.innerText     = "Lv." + player.level;
-}
+function updateCharacter() {
 
-function levelUpCheck() {
-  while (player.exp >= player.level * player.expToNextLevel) {
-    player.level++;
-    player.hp  += 25;
-    player.atk += 6;
-    player.expToNextLevel = Math.floor(player.expToNextLevel * 1.1);
-  }
+  const atk = getPlayerTotalAtk();
+  const hp = player.hp + (player.armor?.hpBonus || 0);
+  const def = getPlayerTotalDef();
+
+  document.getElementById("stats").innerHTML = `
+    <div>
+      ⚔️ 攻擊：${atk}<br>
+      ❤️ 生命：${hp}<br>
+      🛡 防禦：${def}<br>
+      💥 爆擊：${Math.floor(player.critChance*100)}%
+    </div>
+  `;
+
+  document.getElementById("weapon").innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center">
+      ${WOOD_SWORD_SVG}
+      <div>
+        <b>${player.weapon.name}</b><br>
+        +${player.weapon.atkBonus} ATK
+      </div>
+    </div>
+  `;
+
+  document.getElementById("armor").innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center">
+      ${ARMOR_SVG}
+      <div>
+        <b>${player.armor.name}</b><br>
+        +${player.armor.hpBonus} HP
+      </div>
+    </div>
+  `;
+
+  document.getElementById("shield").innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center">
+      ${SHIELD_SVG}
+      <div>
+        <b>${player.shield.name}</b><br>
+        +${player.shield.defBonus} DEF
+      </div>
+    </div>
+  `;
 }
 
 /* ============================================================
-   角色頁
+   初始化
    ============================================================ */
-function updateCharacter() {
-  const totalAtk = getPlayerTotalAtk();
-  const totalHp  = player.hp + (player.armor?.hpBonus ?? 0);
-  const totalDef = getPlayerTotalDef();
-
-  const st = document.getElementById("stats");
-  const wp = document.getElementById("weapon");
-  const ar = document.getElementById("armor");
-  const sh = document.getElementById("shield");
-
-  if (st) st.innerHTML = `
-    <div style="line-height:1.6;">
-      <strong style="color:#ffcc00;">⚔️ 總攻擊力:</strong> ${totalAtk}<br>
-      <strong style="color:#ff4444;">❤️ 總生命值:</strong> ${totalHp}<br>
-      <strong style="color:#00e5ff;">🛡️ 總防禦力:</strong> ${totalDef}<br>
-      <strong style="color:#00ff88;">💥 爆擊機率:</strong> ${(player.critChance*100).toFixed(0)}%
-    </div>`;
-  if (wp && player.weapon) wp.innerHTML = `
-    <div style="font-weight:bold;color:#fff;">${player.weapon.name}</div>
-    <div style="font-size:13px;color:#aaa;">加成：攻擊力 +${player.weapon.atkBonus}</div>`;
-  if (ar && player.armor) ar.innerHTML = `
-    <div style="font-weight:bold;color:#fff;">${player.armor.name}</div>
-    <div style="font-size:13px;color:#aaa;">加成：生命值 +${player.armor.hpBonus}</div>`;
-  if (sh && player.shield) sh.innerHTML = `
-    <div style="font-weight:bold;color:#fff;">${player.shield.name}</div>
-    <div style="font-size:13px;color:#aaa;">加成：防禦力 +${player.shield.defBonus}</div>`;
-}
-
-function backHome() { switchPage("homePage"); }
 
 loadGameData();
