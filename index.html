@@ -40,13 +40,15 @@
               <div class="slime-mouth"></div>
             </div>
           </div>
-          <div id="slashFx" class="slash-line"></div> <div id="autoFx" class="auto-spark">💥</div>   </div>
+          <div id="slashFx" class="slash-line"></div> 
+          <div id="autoFx" class="auto-spark">💥</div>   
+        </div>
       </div>
     </div>
 
     <div id="actionDrawer" class="drawer-layer">
       
-      <div id="defaultTip" class="drawer-content active-content default-tip-box">
+      <div id="defaultTip" class="drawer-content default-tip-box">
         <p>🏮 點擊下方選單展開冒險與裝備 🏮</p>
         <p style="font-size: 11px; color: #7a6e65; margin-top: 5px;">史萊姆修練在中庭持續進行中...</p>
       </div>
@@ -69,13 +71,19 @@
     <div id="gamePlayLayer" class="game-play-layer">
       <div class="game-container">
         <div class="game-header">
-          <span id="score">戰功: 0</span>
           <span id="combo">連擊: 0</span>
+          <span id="gameModeTitle" style="font-size: 13px; color: #9c8f84;"></span>
           <button class="btn-back" onclick="backToLobby()">歸陣</button>
         </div>
 
         <div class="staff-wrapper">
-          <div class="staff-lines"><div></div><div></div><div></div><div></div><div></div></div>
+          <div class="staff-lines">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
           <div id="staffClef"></div>
           <div id="noteNote"></div>
         </div>
@@ -99,6 +107,7 @@
 
   </div>
 
+  <script src="questions.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
