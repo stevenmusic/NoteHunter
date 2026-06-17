@@ -1,6 +1,3 @@
-/* ==========================================
-   1. 全域初始化與手機瀏覽器阻擋修正
-   ========================================== */
 * {
   box-sizing: border-box;
 }
@@ -8,40 +5,34 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Impact, Arial, sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
   background: #09090d;
   color: #fff;
-  /* 解決手機網址列擋住的關鍵：使用 svh (Short Viewport Height) */
-  height: 100svh; 
+  height: 100svh; /* 鎖定全螢幕高度，不隨內容撐開 */
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 }
 
-/* 模擬手機獨立視窗，確保在任何裝置都不會爆版 */
+/* 遊戲主容器 */
 .app {
   width: 100%;
-  max-width: 430px; /* iPhone Pro Max 標準寬度 */
-  height: 100svh;   /* 完美貼合手機扣除工具列後的高度 */
+  max-width: 430px;
+  height: 100svh; /* 完美貼合手機高度 */
   display: flex;
-  flex-direction: column;
-  background: radial-gradient(circle at center, #1a1a26 0%, #09090d 100%);
+  flex-direction: column; /* 讓 HUD、內容、底部導航垂直依序排列 */
+  background: #0f0f16;
   position: relative;
-  /* 防止 iOS 橡皮筋回彈干擾 */
-  overflow: hidden; 
+  overflow: hidden;
 }
 
-/* ==========================================
-   2. 頂部 HUD (避開上方網址列與瀏海)
-   ========================================== */
+/* 頂部 HUD */
 .topHUD {
-  padding: 14px 16px;
-  margin: 12px 12px 6px 12px;
-  border-radius: 8px;
-  background: linear-gradient(180deg, #2a2a3a 0%, #151522 100%);
-  border: 2px solid #4e4e66;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #242433 0%, #12121c 100%);
+  border-bottom: 2px solid #3d3d52;
+  flex-shrink: 0; /* 防止被擠壓 */
 }
 
 .nameRow {
@@ -49,140 +40,62 @@ body {
   justify-content: space-between;
   align-items: center;
   color: #ffe600;
-  font-weight: 900;
-  font-size: 16px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  font-weight: bold;
 }
 
 .level {
   color: #00e5ff;
-  background: #0d0d18;
-  padding: 2px 8px;
+  background: #000;
+  padding: 2px 6px;
   border-radius: 4px;
-  border: 1px solid #00e5ff;
+  font-size: 12px;
 }
 
-/* EXP 經驗條 */
 .expBar {
-  height: 12px;
-  background: #0b0b11;
-  border-radius: 6px;
-  margin-top: 10px;
+  height: 8px;
+  background: #222;
+  border-radius: 4px;
+  margin-top: 8px;
   overflow: hidden;
-  border: 1px solid #333;
 }
 
 .expFill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #00e5ff, #00ffaa);
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #00e5ff, #00ff88);
 }
 
-/* ==========================================
-   3. 中間獨立內容區 (絕對不會跟上下打架)
-   ========================================== */
+/* 中間內容捲動區 */
 #content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-  /* 讓內部滾動流暢 */
-  -webkit-overflow-scrolling: touch; 
+  flex: 1; /* 自動吃滿剩下的中間所有空間 */
+  overflow-y: auto; /* 如果單一頁面內容太多，只在中間滾動，不會撐開整個網頁 */
+  padding: 15px;
 }
 
-/* 基礎頁面隱藏與顯示切換 */
+/* 核心：預設沒 active 的頁面絕對不顯示！ */
 .page {
-  display: none;
+  display: none; 
   flex-direction: column;
   height: 100%;
 }
 
+/* 只有 active 的頁面才展示 */
 .page.active {
   display: flex;
 }
 
-/* 標題統一樣式 */
-h2 {
-  font-size: 22px;
-  color: #fff;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-}
-
-/* ==========================================
-   4. TT2 風格按鈕與卡片
-   ========================================== */
-button {
-  width: 100%;
-  padding: 14px;
-  margin: 6px 0;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  background: linear-gradient(180deg, #3a3a4f 0%, #232335 100%);
-  border: 2px solid #565675;
-  border-bottom: 5px solid #13131f; /* 立體厚度感 */
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  transition: all 0.05s ease;
-}
-
-button:active {
-  transform: translateY(3px);
-  border-bottom-width: 2px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-
-/* 遊戲區的大字 C4 */
-#note {
-  font-size: 96px;
-  font-weight: 900;
-  text-align: center;
-  margin: 30px 0;
-  color: #ffffff;
-  text-shadow: 0 0 20px #ffe600, 0 0 40px #ff5500;
-}
-
-/* 答題按鈕 4 縱列 */
-.btnGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-.btnGrid button {
-  padding: 16px 0;
-  background: linear-gradient(180deg, #ff9900 0%, #cc6600 100%);
-  border-color: #ffbb55;
-  border-bottom-color: #663300;
-  color: #fff;
-  font-size: 18px;
-}
-
-/* RPG 屬性卡片 */
-.stat-container, .item-card {
-  background: rgba(30, 30, 45, 0.8);
-  border: 1px solid #444;
-  border-left: 5px solid #00e5ff;
-  padding: 12px;
-  margin: 6px 0;
-  border-radius: 6px;
-}
-
-/* ==========================================
-   5. 底部導航欄 (平均分配且修正阻擋)
-   ========================================== */
+/* 底部導航 (徹底固定在最底層) */
 .bottomNav {
   display: flex;
-  background: #111118;
+  background: #0b0b12;
   border-top: 2px solid #2d2d3f;
-  padding-bottom: env(safe-area-inset-bottom); /* 自動適應 iPhone 底部橫條 */
+  padding-bottom: env(safe-area-inset-bottom); /* 避開 iPhone 底部白條 */
+  flex-shrink: 0; /* 絕對不允許被內容擠壓變形 */
 }
 
+/* 底部按鈕平均分配 25% 寬度 */
 .bottomNav button {
-  flex: 1; /* 平分底部寬度 */
+  flex: 1; 
   margin: 0;
   padding: 16px 0;
   background: none;
@@ -191,17 +104,61 @@ button:active {
   box-shadow: none;
   color: #8a8a9e;
   font-size: 14px;
+  font-weight: normal;
 }
 
 .bottomNav button:active {
-  transform: none;
-  background: #1a1a26;
+  background: #161622;
   color: #00e5ff;
+  transform: none;
 }
 
-/* 動態特效 */
-@keyframes pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-  100% { transform: scale(1); }
+/* 一般點擊按鈕樣式 (TT2 立體感) */
+button {
+  width: 100%;
+  padding: 14px;
+  margin: 6px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffcc00;
+  background: linear-gradient(180deg, #3a3a4f 0%, #1e1e2d 100%);
+  border: 2px solid #565675;
+  border-bottom: 5px solid #0f0f18;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+}
+
+/* 答題專用 Grid */
+.btnGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+/* 卡片美化 */
+.menu-box, .stat-container, .item-card {
+  background: #171724;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #2d2d3f;
+  margin-bottom: 10px;
+}
+
+#note {
+  font-size: 72px;
+  font-weight: bold;
+  text-align: center;
+  margin: 20px 0;
+  text-shadow: 0 0 15px #00e5ff;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
 }
