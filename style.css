@@ -12,7 +12,6 @@ html, body {
     background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 30%, #76daff 70%, #8ebdff 100%) !important;
     background-size: 400% 400% !important;
     animation: gradientBG 12s ease infinite !important;
-    color: #2c3e50; /* 預設改為深色調 */
     height: 100svh;
     display: flex;
     justify-content: center;
@@ -40,18 +39,17 @@ html, body {
                 inset 0 0 20px rgba(255, 117, 140, 0.15) !important;
     position: relative;
     overflow: hidden;
-    color: #2c3e50 !important; /* 🔥 關鍵修正：強制讓容器內沒設定顏色的文字一律變深色，防止隱形 */
 }
 
 /* ============================================================
-   📊 2. 頂部狀態欄 (HUD)
+   📊 2. 頂部玩家狀態欄 (HUD)
    ============================================================ */
 .topHUD {
     padding: 14px 18px;
     background: linear-gradient(180deg, #fff0f3 0%, #ffe3e8 100%) !important;
     border-bottom: 3px solid #ff477e !important;
     flex-shrink: 0;
-    box-shadow: 0 4px 15 rgba(255, 71, 126, 0.15);
+    box-shadow: 0 4px 15px rgba(255, 71, 126, 0.15);
 }
 
 .nameRow {
@@ -64,7 +62,7 @@ html, body {
 }
 
 .level {
-    color: #ffffff !important; /* 這裡維持白色，因為背景是粉紅鈕 */
+    color: #ffffff !important; 
     background: #ff2a6d;
     padding: 3px 8px;
     border-radius: 6px;
@@ -92,7 +90,7 @@ html, body {
 }
 
 /* ============================================================
-   🕹️ 3. 核心主排版區域（分頁固定防上衝規則）
+   🕹️ 3. 核心主排版區域與分頁設定
    ============================================================ */
 #content {
     flex: 1;
@@ -109,7 +107,6 @@ html, body {
     min-height: 100%;
     gap: 16px !important;        
     justify-content: flex-start; 
-    color: #2c3e50 !important; /* 🔥 關鍵修正：確保分頁內所有原生選項文字 100% 顯現 */
 }
 .page.active { 
     display: flex; 
@@ -123,6 +120,11 @@ h2 {
     margin-bottom: 8px;
     letter-spacing: 1px;
     text-shadow: 1px 1px 0px #fff;
+}
+
+/* 🔥【核心修正】終極文字防禦規則：強制讓所有躲起來的其他分頁內容與選項 100% 顯現（排除按鈕） */
+#content *:not(button):not(button *):not(svg):not(path):not(.expFill):not(#monsterHpFill) {
+    color: #2c3e50 !important;
 }
 
 /* ============================================================
@@ -177,7 +179,7 @@ h2 {
 }
 
 /* ============================================================
-   👾 4. 戰鬥核心：名稱 ➔ 等級 ➔ 血量 ➔ 史萊姆（嚴格由上至下排序與置中）
+   👾 4. 戰鬥核心：名稱 ➔ 等級 ➔ 血量 ➔ 史萊姆（排版由上至下鎖死）
    ============================================================ */
 #monsterBattleBox, .game-battle-zone {
     display: flex !important;
@@ -188,35 +190,45 @@ h2 {
     text-align: center !important;
     padding: 10px 0 !important;
     margin: 0 auto !important;
+    height: auto !important;
 }
 
-/* 🟢 第一順位：史萊姆的名稱與怪獸等級（強制置頂並單獨換行） */
+/* 🟢 第一順位：史萊姆的名稱與怪獸等級 */
 #monsterName, .monster-name, #monsterLevel, .monster-level {
     order: 1 !important;
     font-size: 24px !important;
     font-weight: 900 !important;
-    color: #2c3e50 !important;
     margin-bottom: 6px !important;
     text-shadow: 1px 1px 0px #fff;
     display: block !important; 
     width: 100% !important;
 }
 
-/* 🟡 第二順位：血量條 */
+/* 🟡 第二順位：【核心修正】史萊姆血條容器（賦予 3D 實體厚度，消滅黑色直線） */
 [id*="monsterHp"], .monster-hp, .hp-bar-container {
     order: 2 !important;
     width: 85% !important;
     max-width: 320px !important;
-    margin: 6px auto 25px auto !important; 
+    height: 16px !important;            /* 💡 給予足夠高度，擺脫扁平直線 */
+    background-color: #e2e8f0 !important; /* 💡 清晰的高對比灰白底色槽 */
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    margin: 8px auto 25px auto !important; 
+    overflow: hidden !important;
     display: block !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
 }
 
-#monsterHpFill {
-    background: linear-gradient(90deg, #ff0055, #ff5a79) !important;
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 0 8px rgba(255,0,85,0.5) !important;
+/* 💡 血條本體：極度顯眼的霓虹桃紅漸層 */
+#monsterHpFill, .hp-fill {
+    display: block !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, #ff0055 0%, #ff5a79 100%) !important;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 0 10px rgba(255,0,85,0.6) !important;
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 🔴 第三順位：史萊姆外框 */
+/* 🔴 第三順位：史萊姆外框（乖乖待在血條正下方） */
 .monster-wrapper {
     order: 3 !important; 
     position: relative !important;
@@ -229,7 +241,7 @@ h2 {
     float: none !important;
 }
 
-/* 史萊姆本體 */
+/* 史萊姆本體：透過雙 50% 幾何絕對居中 */
 .monster-slime {
     position: absolute !important;
     left: 50% !important;
@@ -338,7 +350,7 @@ h2 {
 }
 
 /* ============================================================
-   🕹️ 6. 介面防縮放、卡片復古繽紛街機化
+   🕹️ 6. 按鈕與街機繽紛卡片美化
    ============================================================ */
 button {
     width: 100%;
@@ -375,11 +387,10 @@ button:active {
     background: linear-gradient(180deg, #ff8c00 0%, #cc5200 100%);
     border-color: #ffa333;
     border-bottom-color: #5c2600;
-    color: #fff !important; /* 強制按鈕字體為白色 */
     font-size: 18px;
 }
 
-/* 🌈 升級為高質感明亮撞色卡片（文字全部強制顯形） */
+/* 🌈 高質感明亮撞色卡片外殼 */
 .menu-box, .stat-container, .item-card {
     background: linear-gradient(135deg, #ffffff 0%, #fffbfd 100%) !important;
     padding: 14px;
@@ -387,23 +398,16 @@ button:active {
     border: 2px solid #ffccd5 !important;
     box-shadow: 4px 4px 0px #ff477e !important; 
     margin-bottom: 4px; 
-    color: #2c3e50 !important; /* 🔥 強制卡片內文字為深色 */
     touch-action: manipulation !important;
 }
 .stat-container { border-left: 6px solid #00b4db !important; }
 .item-card      { border-left: 6px solid #ffcc00 !important; }
-
-/* 修正卡片內部可能存在的子標籤/說明文字隱形問題 */
-.menu-box *, .stat-container *, .item-card * {
-    color: #2c3e50 !important;
-}
 
 .info {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
     font-weight: bold;
-    color: #576574 !important; /* 🔥 修正：從淺灰調深，確保清晰度 */
     font-size: 15px;
 }
 
@@ -453,10 +457,6 @@ button:active {
     box-shadow: 0 -4px 20px rgba(214, 0, 82, 0.25) !important;
     border-top: 3px solid #ffffff !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
-}
-
-.bottomNav button, .bottomNav button * {
-    color: #ffffff !important; /* 強制底部導覽文字一定是白色 */
 }
 
 .bottomNav button {
