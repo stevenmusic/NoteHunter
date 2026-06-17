@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NoteHunter</title>
+  <title>NoteHunter - TT2 Edition</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,7 +11,6 @@
 
 <div class="app">
 
-  <!-- 頂部 HUD (固定在最上方) -->
   <div class="topHUD">
     <div class="nameRow">
       <span>⚔️ Steven</span>
@@ -26,56 +25,56 @@
     </div>
   </div>
 
-  <!-- 中間獨立內容區 (各頁面切換，多出的內容會在此區域內滾動) -->
   <div id="content">
 
-    <!-- HOME (預設首頁) -->
     <div id="homePage" class="page active">
-      <h2>🏠 首頁</h2>
+      <h2>🏠 首頁基地</h2>
       <div class="menu-box">
         <p>歡迎來到 NoteHunter</p>
-        <p style="color: #aaa; font-size: 14px;">準備好迎接你的冒險了嗎？</p>
+        <p style="color: #8a8a9e; font-size: 14px; margin-top: 5px;">點擊下方「遊玩」選擇譜號模式，開啟你的音符斬殺冒險！</p>
       </div>
     </div>
 
-    <!-- CHARACTER -->
     <div id="characterPage" class="page">
-      <h2>👤 人物狀態</h2>
+      <h2>👤 英雄狀態</h2>
       <div id="stats" class="stat-container"></div>
       <div class="gear-section">
-        <h3>⚔️ 武器</h3>
+        <h3>⚔️ 武器庫</h3>
         <div id="weapon" class="item-card"></div>
-        <h3>🥋 衣服</h3>
+        <h3>🥋 戰甲</h3>
         <div id="armor" class="item-card"></div>
-        <h3>🛡️ 盾牌</h3>
+        <h3>🛡️ 神盾</h3>
         <div id="shield" class="item-card"></div>
       </div>
     </div>
 
-    <!-- PLAY (這裡已修正為傳入對應的譜號模式參數) -->
     <div id="playPage" class="page">
-      <h2>🎮 挑戰模式</h2>
+      <h2>🎮 選擇戰役模式</h2>
       <button onclick="startGame('treble')">高音譜號模式 (C4 - C6)</button>
       <button onclick="startGame('bass')">低音譜號模式 (C2 - C4)</button>
-      <button onclick="startGame('mix')">混合模式</button>
+      <button onclick="startGame('mix')">混合譜號模式 (全範圍)</button>
     </div>
 
-    <!-- RANK -->
     <div id="rankPage" class="page">
-      <h2>🏆 排行榜</h2>
-      <p class="menu-box">全球英雄數據同步中...</p>
+      <h2>🏆 諸神排行榜</h2>
+      <p class="menu-box" style="text-align: center; color: #8a8a9e;">全球聯賽計算中，請先提升戰力...</p>
     </div>
 
-    <!-- SETTINGS -->
     <div id="settingPage" class="page">
-      <h2>⚙️ 設定</h2>
-      <p class="menu-box">音效設定、畫質調整</p>
+      <h2>⚙️ 冒險設定</h2>
+      <p class="menu-box" style="text-align: center; color: #8a8a9e;">打擊音效與畫面粒子特效優化中</p>
     </div>
 
-    <!-- GAMEPLAY (這裡已將原本的純文字 C4 改為五線譜圖片容器) -->
     <div id="gamePage" class="page">
       <div class="note-container">
-        <img id="noteImage" src="" alt="五線譜題目">
+        <div class="staff-lines"></div>
+        <div class="staff-lines"></div>
+        <div class="staff-lines"></div>
+        <div class="staff-lines"></div>
+        <div class="staff-lines"></div>
+        
+        <div id="staffClef">𝄞</div>
+        <div id="noteDisplay">C4</div>
       </div>
 
       <div class="btnGrid">
@@ -92,12 +91,11 @@
         <div id="score">Score: 0</div>
         <div id="combo">Combo: 0</div>
       </div>
-      <button onclick="backHome()" style="margin-top: 20px; background: #444; border-color:#666;">返回基地</button>
+      <button onclick="backHome()" style="margin-top: 25px; background: linear-gradient(180deg, #555 0%, #333 100%); border-color:#666; border-bottom-color:#111; color:#ddd;">撤退回基地</button>
     </div>
 
   </div>
 
-  <!-- 底部導航欄 -->
   <div class="bottomNav">
     <button onclick="switchPage('characterPage')">👤 人物</button>
     <button onclick="switchPage('playPage')">🎮 遊玩</button>
