@@ -12,7 +12,7 @@ html, body {
     background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 30%, #76daff 70%, #8ebdff 100%) !important;
     background-size: 400% 400% !important;
     animation: gradientBG 12s ease infinite !important;
-    color: #2c3e50;
+    color: #2c3e50; /* 預設改為深色調 */
     height: 100svh;
     display: flex;
     justify-content: center;
@@ -40,6 +40,7 @@ html, body {
                 inset 0 0 20px rgba(255, 117, 140, 0.15) !important;
     position: relative;
     overflow: hidden;
+    color: #2c3e50 !important; /* 🔥 關鍵修正：強制讓容器內沒設定顏色的文字一律變深色，防止隱形 */
 }
 
 /* ============================================================
@@ -50,7 +51,7 @@ html, body {
     background: linear-gradient(180deg, #fff0f3 0%, #ffe3e8 100%) !important;
     border-bottom: 3px solid #ff477e !important;
     flex-shrink: 0;
-    box-shadow: 0 4px 15px rgba(255, 71, 126, 0.15);
+    box-shadow: 0 4px 15 rgba(255, 71, 126, 0.15);
 }
 
 .nameRow {
@@ -63,7 +64,7 @@ html, body {
 }
 
 .level {
-    color: #ffffff;
+    color: #ffffff !important; /* 這裡維持白色，因為背景是粉紅鈕 */
     background: #ff2a6d;
     padding: 3px 8px;
     border-radius: 6px;
@@ -91,23 +92,24 @@ html, body {
 }
 
 /* ============================================================
-   🕹️ 3. 核心主排版區域（🔧 解決切換分頁欄位往上跑、縮成一團的問題）
+   🕹️ 3. 核心主排版區域（分頁固定防上衝規則）
    ============================================================ */
 #content {
     flex: 1;
     overflow-y: auto;
     padding: 20px 16px; 
-    padding-bottom: 110px !important; /* 確保內容不被底部固定選單擋住 */
+    padding-bottom: 110px !important; 
     -webkit-overflow-scrolling: touch;
 }
 
 .page {
     display: none;
     flex-direction: column;
-    height: auto !important;     /* 💡 解放 100% 限制，防止分頁切換時內容被奇怪拉伸 */
+    height: auto !important;     
     min-height: 100%;
-    gap: 16px !important;        /* 💡 讓非首頁的所有欄位、卡片維持固定美觀的黃金間距，絕不往上亂衝 */
-    justify-content: flex-start; /* 頂部對齊開頭 */
+    gap: 16px !important;        
+    justify-content: flex-start; 
+    color: #2c3e50 !important; /* 🔥 關鍵修正：確保分頁內所有原生選項文字 100% 顯現 */
 }
 .page.active { 
     display: flex; 
@@ -175,14 +177,12 @@ h2 {
 }
 
 /* ============================================================
-   👾 4. 戰鬥核心：名稱 ➔ 等級 ➔ 血量 ➔ 史萊姆（🔧 嚴格由上至下排序與置中）
+   👾 4. 戰鬥核心：名稱 ➔ 等級 ➔ 血量 ➔ 史萊姆（嚴格由上至下排序與置中）
    ============================================================ */
-
-/* 核心點擊感應區 */
 #monsterBattleBox, .game-battle-zone {
     display: flex !important;
-    flex-direction: column !important; /* 強制縱向垂直排列 */
-    align-items: center !important;     /* 左右絕對置中 */
+    flex-direction: column !important; 
+    align-items: center !important;     
     justify-content: flex-start !important;
     width: 100% !important;
     text-align: center !important;
@@ -202,7 +202,7 @@ h2 {
     width: 100% !important;
 }
 
-/* 🟡 第二順位：血量條（寬度固定置中，下方 margin 大力推開史萊姆） */
+/* 🟡 第二順位：血量條 */
 [id*="monsterHp"], .monster-hp, .hp-bar-container {
     order: 2 !important;
     width: 85% !important;
@@ -216,7 +216,7 @@ h2 {
     box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 0 8px rgba(255,0,85,0.5) !important;
 }
 
-/* 🔴 第三順位：史萊姆外框（乖乖待在名字與血量的正下方） */
+/* 🔴 第三順位：史萊姆外框 */
 .monster-wrapper {
     order: 3 !important; 
     position: relative !important;
@@ -229,12 +229,12 @@ h2 {
     float: none !important;
 }
 
-/* 史萊姆本體：大尺寸且透過雙 50% 幾何絕對居中 */
+/* 史萊姆本體 */
 .monster-slime {
     position: absolute !important;
     left: 50% !important;
     top: 50% !important;
-    transform: translate(-50%, -50%) !important; /* 精準置中核心 */
+    transform: translate(-50%, -50%) !important; 
     width: 170px !important;
     height: 130px !important;
     border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
@@ -244,7 +244,6 @@ h2 {
     animation: monsterFloat 2s ease-in-out infinite;
 }
 
-/* 史萊姆面部細節 */
 .monster-eye {
     width: 14px !important;
     height: 14px !important;
@@ -267,7 +266,6 @@ h2 {
     transform: none !important;
 }
 
-/* 💥 特效大損害文字 */
 .hit-effect {
     position: absolute;
     font-size: 54px !important;
@@ -282,12 +280,11 @@ h2 {
 }
 
 /* ============================================================
-   💢 5. 史萊姆受擊特殊表情包與受擊物理動畫
+   💢 5. 史萊姆受擊特殊表情包與動態
    ============================================================ */
 .monster-slime.damaged {
     background: linear-gradient(180deg, #ff3333 0%, #aa0000 100%) !important;
     box-shadow: 0 0 25px #ff3333 !important;
-    /* 💡 受擊時在維持絕對置中 (-50%,-50%) 的狀態下進行抖動與縮放 */
     animation: slimeHitAnim 0.15s ease-in-out infinite alternate !important;
 }
 
@@ -301,7 +298,6 @@ h2 {
     50% { transform: translate(-50%, -50%) scaleX(1.04) scaleY(0.96) translateY(-6px); }
 }
 
-/* --- 生氣表情 (Angry) --- */
 .monster-slime.angry .monster-eye.left {
     transform: rotate(20deg);
     border-radius: 2px;
@@ -319,7 +315,6 @@ h2 {
     top: 56% !important;
 }
 
-/* --- 哭哭表情 (Crying) --- */
 .monster-slime.crying .monster-eye {
     height: 5px !important;
     transform: translateY(2px);
@@ -343,7 +338,7 @@ h2 {
 }
 
 /* ============================================================
-   🕹 * 6. 介面防縮放、卡片復古繽紛街機化
+   🕹️ 6. 介面防縮放、卡片復古繽紛街機化
    ============================================================ */
 button {
     width: 100%;
@@ -380,30 +375,35 @@ button:active {
     background: linear-gradient(180deg, #ff8c00 0%, #cc5200 100%);
     border-color: #ffa333;
     border-bottom-color: #5c2600;
-    color: #fff;
+    color: #fff !important; /* 強制按鈕字體為白色 */
     font-size: 18px;
 }
 
-/* 🌈 升級為高質感明亮撞色卡片 */
+/* 🌈 升級為高質感明亮撞色卡片（文字全部強制顯形） */
 .menu-box, .stat-container, .item-card {
     background: linear-gradient(135deg, #ffffff 0%, #fffbfd 100%) !important;
     padding: 14px;
     border-radius: 16px !important;
     border: 2px solid #ffccd5 !important;
-    box-shadow: 4px 4px 0px #ff477e !important; /* 經典厚重感陰影 */
-    margin-bottom: 4px; /* 由 12px 縮小，配合 gap 排版 */
-    color: #2c3e50 !important;
+    box-shadow: 4px 4px 0px #ff477e !important; 
+    margin-bottom: 4px; 
+    color: #2c3e50 !important; /* 🔥 強制卡片內文字為深色 */
     touch-action: manipulation !important;
 }
 .stat-container { border-left: 6px solid #00b4db !important; }
 .item-card      { border-left: 6px solid #ffcc00 !important; }
+
+/* 修正卡片內部可能存在的子標籤/說明文字隱形問題 */
+.menu-box *, .stat-container *, .item-card * {
+    color: #2c3e50 !important;
+}
 
 .info {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
     font-weight: bold;
-    color: #7f8c8d;
+    color: #576574 !important; /* 🔥 修正：從淺灰調深，確保清晰度 */
     font-size: 15px;
 }
 
@@ -455,6 +455,10 @@ button:active {
     padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
+.bottomNav button, .bottomNav button * {
+    color: #ffffff !important; /* 強制底部導覽文字一定是白色 */
+}
+
 .bottomNav button {
     flex: 1 !important;
     margin: 0 !important;
@@ -464,7 +468,6 @@ button:active {
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    color: #ffffff !important;
     font-size: 15px !important;
     font-weight: 900 !important;
     text-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
@@ -472,7 +475,6 @@ button:active {
 
 .bottomNav button:active {
     background: rgba(255, 255, 255, 0.25) !important;
-    color: #ffffff !important;
     transform: none !important;
 }
 
