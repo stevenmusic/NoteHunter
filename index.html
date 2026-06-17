@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoteHunter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div id="playerName">👤 Steven</div>
+    <div id="playerStats">Lv.1 HP 100</div>
+  </div>
+
+  <!-- MENU -->
+  <div id="menu">
+
+    <button onclick="startGame('treble')">🎼 高音譜號 (C4–C6)</button>
+    <button onclick="startGame('bass')">🎼 低音譜號 (C2–C4)</button>
+    <button onclick="startGame('mix')">🎼 混合模式</button>
+
+    <hr>
+
+    <button onclick="alert('人物系統開發中')">👤 人物</button>
+    <button onclick="alert('排行榜開發中')">🏆 排行榜</button>
+    <button onclick="alert('設定開發中')">⚙️ 設定</button>
+
+  </div>
+
+  <!-- GAME -->
+  <div id="game" style="display:none;">
+
+    <div class="noteBox">
+      <div id="note">C4</div>
+    </div>
+
+    <div class="buttons">
+      <button onclick="answer('C')">C</button>
+      <button onclick="answer('D')">D</button>
+      <button onclick="answer('E')">E</button>
+      <button onclick="answer('F')">F</button>
+      <button onclick="answer('G')">G</button>
+      <button onclick="answer('A')">A</button>
+      <button onclick="answer('B')">B</button>
+    </div>
+
+    <div class="info">
+      <div id="score">Score: 0</div>
+      <div id="combo">Combo: 0</div>
+    </div>
+
+    <button onclick="backMenu()">← 返回</button>
+
+  </div>
+
+</div>
+
+<script src="data.js"></script>
+<script src="game.js"></script>
+
+</body>
+</html>
