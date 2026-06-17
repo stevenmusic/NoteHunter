@@ -12,7 +12,7 @@
     
     <div class="global-header">
       <div class="header-top-row">
-        <div id="playerName" class="player-name-badge">武者 · 樂之勇士</div>
+        <div id="playerName" class="player-name-badge">武者 · 雷恩</div>
         <div id="levelText" class="lv-badge">段位.1</div>
         <div id="goldDisplay" class="gold-badge">🪙 0</div>
       </div>
@@ -25,38 +25,30 @@
     </div>
 
     <div id="homePage" class="page active">
-      <div class="lobby-container">
-        <h2>畳 · 驅魔結界中</h2>
-        
-        <div class="battle-box" id="homeMonsterWrapper">
-          <div id="monsterName" class="monster-name">Lv.1 糰子暮泥</div>
-          <div class="hp-bar-container">
-            <div id="monsterHpFill" class="hp-bar-fill"></div>
-            <div id="monsterHpText" class="hp-bar-text">體力: 50 / 50</div>
-          </div>
-          <div class="monster-wrapper">
-            <div id="homeMonster" class="monster-slime">
-              <div id="homeMonsterIcon" class="monster-yokai-icon">💧</div>
-              <div class="slime-face">
-                <div class="slime-eye left"></div>
-                <div class="slime-eye right"></div>
-                <div class="slime-mouth"></div>
-              </div>
+      <div class="battle-box" id="homeMonsterWrapper">
+        <div id="monsterName" class="monster-name">Lv.1 糰子暮泥</div>
+        <div class="hp-bar-container">
+          <div id="monsterHpFill" class="hp-bar-fill"></div>
+          <div id="monsterHpText" class="hp-bar-text">體力: 50 / 50</div>
+        </div>
+        <div class="monster-wrapper">
+          <div id="homeMonster" class="monster-slime">
+            <div id="homeMonsterIcon" class="monster-yokai-icon">💧</div>
+            <div class="slime-face">
+              <div class="slime-eye left"></div>
+              <div class="slime-eye right"></div>
+              <div class="slime-mouth"></div>
             </div>
-            <div id="homeHitEffect" class="hit-effect">⚔️</div>
           </div>
         </div>
-
-        <div class="menu-box">
-          <h3>🏮 進入百鬼夜行 (闖關)</h3>
-          <button class="btn btn-blue" onclick="startGame('treble')">高音譜 · 斬妖卷</button>
-          <button class="btn btn-blue" onclick="startGame('bass')">低音譜 · 鎮魔卷</button>
-        </div>
-
-        <div class="nav-bar">
-          <button id="navHomeBtn" class="nav-btn active" onclick="switchPage('homePage')">首頁</button>
-          <button id="navCharBtn" class="nav-btn" onclick="switchPage('characterPage')">英雄裝備</button>
-        </div>
+      </div>
+      <div class="menu-box">
+        <button class="btn btn-blue" onclick="startGame('treble')">高音譜 · 斬妖卷</button>
+        <button class="btn btn-blue" onclick="startGame('bass')">低音譜 · 鎮魔卷</button>
+      </div>
+      <div class="nav-bar">
+        <button id="navHomeBtn" class="nav-btn active" onclick="switchPage('homePage')">首頁</button>
+        <button id="navCharBtn" class="nav-btn" onclick="switchPage('characterPage')">裝備</button>
       </div>
     </div>
 
@@ -64,10 +56,8 @@
       <div class="game-container">
         <div class="game-header">
           <span id="score">戰功: 0</span>
-          <span id="combo">連擊: 0</span>
           <button class="btn-back" onclick="backHome()">歸陣</button>
         </div>
-
         <div class="battle-box" id="monsterBattleBox">
           <div class="monster-wrapper">
             <div id="gameMonster" class="monster-slime">
@@ -78,15 +68,9 @@
                 <div class="slime-mouth"></div>
               </div>
             </div>
-            <div id="gameHitEffect" class="hit-effect">⚔️</div>
           </div>
         </div>
-
-        <div class="staff-wrapper">
-          <div id="quizDisplay" class="quiz-container">
-             </div>
-        </div>
-
+        <div id="quizDisplay" class="quiz-container"></div>
         <div class="answer-keyboard">
           <button class="key-btn" onclick="answer('C')">C</button>
           <button class="key-btn" onclick="answer('D')">D</button>
@@ -100,22 +84,18 @@
     </div>
 
     <div id="characterPage" class="page">
-      <div class="character-container">
-        <h2>👤 武者狀態與御道具</h2>
+      <div class="character-container" style="padding:20px;">
+        <h2>👤 武者狀態</h2>
         <div id="stats"></div>
-        <div class="equipment-list">
-          <div id="weapon"></div>
-          <div id="shield"></div>
-        </div>
+        <div id="weapon"></div>
+        <div id="shield"></div>
         <div class="nav-bar">
-          <button id="navHomeBtnChar" class="nav-btn" onclick="switchPage('homePage')">首頁</button>
-          <button id="navCharBtnChar" class="nav-btn active" onclick="switchPage('characterPage')">英雄裝備</button>
+          <button class="nav-btn" onclick="switchPage('homePage')">首頁</button>
+          <button class="nav-btn active" onclick="switchPage('characterPage')">裝備</button>
         </div>
       </div>
     </div>
-
   </div>
-
   <script src="game.js"></script>
 </body>
 </html>
