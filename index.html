@@ -11,23 +11,30 @@
 
 <div class="app">
 
-  <!-- TOP INFO -->
-  <div class="top">
-    <div id="name">👤 Steven</div>
-    <div id="level">Lv.1</div>
-    <div id="exp">EXP 0 / 100</div>
+  <!-- HUD -->
+  <div class="topHUD">
+    <div class="nameRow">
+      👤 Steven
+      <span class="level" id="levelText">Lv.1</span>
+    </div>
+
+    <div class="expBar">
+      <div class="expFill" id="expFill"></div>
+    </div>
+
+    <div class="expText" id="expText">EXP 0 / 100</div>
   </div>
 
   <!-- CONTENT -->
   <div id="content">
 
-    <!-- 首頁 -->
+    <!-- HOME -->
     <div id="homePage" class="page active">
       <h2>🏠 首頁</h2>
       <p>歡迎來到 NoteHunter</p>
     </div>
 
-    <!-- 人物 -->
+    <!-- CHARACTER -->
     <div id="characterPage" class="page">
       <h2>👤 人物</h2>
 
@@ -43,25 +50,25 @@
       <div id="shield"></div>
     </div>
 
-    <!-- 遊玩 -->
+    <!-- PLAY -->
     <div id="playPage" class="page">
-      <h2>🎮 遊玩模式</h2>
+      <h2>🎮 遊玩</h2>
 
-      <button onclick="startGame('treble')">高音譜號</button>
-      <button onclick="startGame('bass')">低音譜號</button>
-      <button onclick="startGame('mix')">混合模式</button>
+      <button onclick="startGame()">高音譜號</button>
+      <button onclick="startGame()">低音譜號</button>
+      <button onclick="startGame()">混合模式</button>
     </div>
 
-    <!-- 排行榜 -->
+    <!-- RANK -->
     <div id="rankPage" class="page">
       <h2>🏆 排行榜</h2>
-      <p>（未來開發）</p>
+      <p>尚未開放</p>
     </div>
 
-    <!-- 設定 -->
+    <!-- SETTINGS -->
     <div id="settingPage" class="page">
       <h2>⚙️ 設定</h2>
-      <p>（未來開發）</p>
+      <p>尚未開放</p>
     </div>
 
     <!-- GAME -->
@@ -79,8 +86,10 @@
         <button onclick="answer('B')">B</button>
       </div>
 
-      <div id="score">Score 0</div>
-      <div id="combo">Combo 0</div>
+      <div class="info">
+        <div id="score">Score 0</div>
+        <div id="combo">Combo 0</div>
+      </div>
 
       <button onclick="backHome()">返回</button>
 
@@ -90,12 +99,10 @@
 
   <!-- BOTTOM NAV -->
   <div class="bottomNav">
-
     <button onclick="switchPage('characterPage')">人物</button>
     <button onclick="switchPage('playPage')">遊玩</button>
     <button onclick="switchPage('rankPage')">排行</button>
     <button onclick="switchPage('settingPage')">設定</button>
-
   </div>
 
 </div>
