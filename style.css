@@ -25,6 +25,9 @@ body {
   overflow: hidden;
 }
 
+/* ==========================================
+   1. 頂部 HUD 區塊
+   ========================================== */
 .topHUD {
   padding: 12px 16px;
   background: linear-gradient(180deg, #222230 0%, #10101a 100%);
@@ -88,6 +91,9 @@ h2 {
   text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
+/* ==========================================
+   2. 五線譜與音符精確定位
+   ========================================== */
 .note-container {
   width: 100%;
   height: 190px;
@@ -136,6 +142,9 @@ h2 {
   z-index: 10;
 }
 
+/* ==========================================
+   3. 核心戰鬥動作按鈕
+   ========================================== */
 button {
   width: 100%;
   padding: 15px;
@@ -173,16 +182,104 @@ button:active {
   font-size: 18px;
 }
 
+/* ==========================================
+   4. 通用容器卡牌
+   ========================================== */
 .menu-box, .stat-container, .item-card {
   background: rgba(22,22,34,0.8);
   padding: 14px;
   border-radius: 8px;
   border: 1px solid #2d2d3f;
   margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
 }
 .stat-container { border-left: 4px solid #00e5ff; }
-.item-card      { border-left: 4px solid #ffe600; }
+.item-card      { border-left: 4px solid #ffe600; } /* 預設基礎外框 */
 
+/* ==========================================
+   🌟 新增：五種不同複雜度/稀有度武器卡牌特化樣式
+   ========================================== */
+
+/* 【1. 普通 - Common】線條極簡、啞光、無額外特效 */
+.item-card.common {
+  border-left: 4px solid #8a8a9e;
+  background: rgba(20, 20, 28, 0.6);
+  border-color: #3d3d4f;
+}
+
+/* 【2. 精良 - Uncommon】線條流暢、帶有清爽的金屬綠光高光 */
+.item-card.uncommon {
+  border-left: 4px solid #00ff66;
+  background: linear-gradient(135deg, rgba(10, 35, 20, 0.8) 0%, rgba(15, 20, 15, 0.8) 100%);
+  border-color: #1b4d2a;
+}
+
+/* 【3. 稀有 - Rare】魔力蓄能、內縮深藍魔能光暈、細緻刻紋感 */
+.item-card.rare {
+  border-left: 4px solid #00e5ff;
+  background: linear-gradient(135deg, rgba(10, 30, 45, 0.8) 0%, rgba(10, 15, 25, 0.8) 100%);
+  border-color: #12435c;
+  box-shadow: inset 0 0 12px rgba(0, 229, 255, 0.25), 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* 【4. 傳奇 - Legendary】金色奢華、呼吸燈霓虹外暈、自帶動態尊爵流光 */
+.item-card.legendary {
+  border-left: 4px solid #ffcc00;
+  background: linear-gradient(135deg, rgba(45, 35, 10, 0.9) 0%, rgba(20, 15, 5, 0.9) 100%);
+  border-color: #614e0b;
+  animation: legendaryGlow 2.5s infinite alternate ease-in-out;
+}
+/* 傳奇裝備的斜切動態反光雷射粒子線（高級感爆發） */
+.item-card.legendary::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -150%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 204, 0, 0.15), transparent);
+  transform: skewX(-25deg);
+  animation: laserSweep 3.5s infinite ease-in-out;
+}
+
+/* 【5. 神話 - Mythic】終極不朽、虛空暗紅能量、狂暴震顫、大範圍環境光暈 */
+.item-card.mythic {
+  border-left: 4px solid #ff0055;
+  background: linear-gradient(45deg, #200208 0%, #080214 100%);
+  border-color: #5c0520;
+  box-shadow: 0 0 20px rgba(255, 0, 85, 0.45), inset 0 0 15px rgba(255, 0, 85, 0.3);
+  animation: mythicPulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+.item-card.mythic::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -150%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 85, 0.3), transparent);
+  transform: skewX(-25deg);
+  animation: laserSweep 2.2s infinite ease-in-out;
+}
+
+/* ==========================================
+   🌟 新增：武器稀有度動態動畫庫
+   ========================================== */
+@keyframes legendaryGlow {
+  0% { box-shadow: 0 0 4px rgba(255, 204, 0, 0.2); }
+  100% { box-shadow: 0 0 18px rgba(255, 204, 0, 0.55), inset 0 0 8px rgba(255, 204, 0, 0.15); }
+}
+
+@keyframes mythicPulse {
+  0% { box-shadow: 0 0 12px rgba(255, 0, 85, 0.3), inset 0 0 10px rgba(255, 0, 85, 0.2); border-color: #5c0520; }
+  50% { box-shadow: 0 0 25px rgba(255, 0, 85, 0.65), inset 0 0 18px rgba(255, 0, 85, 0.4); border-color: #ff0055; }
+  100% { box-shadow: 0 0 12px rgba(255, 0, 85, 0.3), inset 0 0 10px rgba(255, 0, 85, 0.2); border-color: #5c0520; }
+}
+
+@keyframes laserSweep {
+  0% { left: -150%; }
+  30% { left: 150%; }
+  100% { left: 150%; }
+}
+
+/* ==========================================
+   5. 其餘資訊欄與底欄
+   ========================================== */
 .info {
   display: flex;
   justify-content: space-between;
