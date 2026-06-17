@@ -8,7 +8,7 @@ body {
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
   background: #060609;
   color: #fff;
-  height: 100svh; 
+  height: 100svh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,23 +19,20 @@ body {
 
 .app {
   width: 100%;
-  max-width: 430px; 
-  height: 100svh;   
+  max-width: 430px;
+  height: 100svh;
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   background: radial-gradient(circle at center, #161626 0%, #060609 100%);
   position: relative;
   overflow: hidden;
 }
 
-/* ==========================================
-   2. 頂部 HUD 區塊
-   ========================================== */
 .topHUD {
   padding: 12px 16px;
   background: linear-gradient(180deg, #222230 0%, #10101a 100%);
   border-bottom: 2px solid #36364a;
-  flex-shrink: 0; 
+  flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
@@ -70,21 +67,21 @@ body {
 
 .expFill {
   height: 100%;
-  width: 0%; 
+  width: 0%;
   background: linear-gradient(90deg, #00e5ff, #00ff88);
   box-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #content {
-  flex: 1; 
-  overflow-y: auto; 
+  flex: 1;
+  overflow-y: auto;
   padding: 16px;
-  -webkit-overflow-scrolling: touch; 
+  -webkit-overflow-scrolling: touch;
 }
 
 .page {
-  display: none; 
+  display: none;
   flex-direction: column;
   height: 100%;
 }
@@ -102,14 +99,11 @@ h2 {
   text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* ==========================================
-   4. 傳統古典五線譜 (依據參考圖精確修正)
-   ========================================== */
 .note-container {
   width: 100%;
-  height: 180px; 
-  background: #fdfaf2; /* 古典優雅象牙白紙底 */
-  border: 3px solid #52526e; 
+  height: 190px;
+  background: #fdfaf2;
+  border: 3px solid #52526e;
   border-radius: 12px;
   margin: 10px 0 20px 0;
   position: relative;
@@ -117,69 +111,64 @@ h2 {
   overflow: hidden;
 }
 
-/* 譜線強制置頂：壓在音符上方 */
 .staff-line {
   position: absolute;
   width: 100%;
   height: 2px;
-  background: #1a1a1a !important; 
-  z-index: 10; 
+  background: #1a1a1a;
+  z-index: 10;
+  left: 0;
 }
 
-/* 譜號定位 (依據圖片微調，使其高大優雅) */
 #staffClef {
   position: absolute;
-  left: 12px;
+  left: 10px;
   color: #1a1a1a;
   z-index: 1;
-  font-family: "Bravura Text", serif;
-  user-select: none;
+  font-family: 'Bravura', serif;
   line-height: 1;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* 傳統全音符定位（依據圖片：略帶傾斜的優美空心圓） */
 #noteNote {
   position: absolute;
-  left: 60%; 
+  left: 62%;
+  font-family: 'Bravura', serif;
+  font-size: 52px;
   color: #1a1a1a;
-  font-family: "Bravura Text", serif;
-  font-size: 54px; /* 放大字體，使其符合圖片中音符跨越線條的比例 */
   transform: translate(-50%, -50%);
+  z-index: 5;
+  width: 52px;
+  height: 52px;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2; /* 位於譜線下方，達成黑線穿心的物理效果 */
-  width: 50px;
-  height: 50px;
-  line-height: 50px;
+  line-height: 1;
   text-align: center;
   animation: pop 0.15s ease-out;
 }
 
-/* 動態加線樣式（寬度與圖片一致，完美置頂穿心） */
 .dynamic-ledger {
   position: absolute;
-  left: 60%;
-  width: 54px; 
+  left: 62%;
+  width: 58px;
   height: 2px;
-  background: #1a1a1a !important; 
-  transform: translateX(-50%); 
-  z-index: 10; 
+  background: #1a1a1a;
+  transform: translateX(-50%);
+  z-index: 10;
 }
 
-/* ==========================================
-   5. TT2 風格按鈕與其餘版面
-   ========================================== */
 button {
   width: 100%;
   padding: 15px;
   margin: 8px 0;
   font-size: 15px;
   font-weight: bold;
-  color: #ffcc00; 
+  color: #ffcc00;
   background: linear-gradient(180deg, #37374d 0%, #1c1c28 100%);
   border: 2px solid #52526e;
-  border-bottom: 5px solid #0c0c14; 
+  border-bottom: 5px solid #0c0c14;
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0,0,0,0.4);
@@ -187,8 +176,8 @@ button {
 }
 
 button:active {
-  transform: translateY(3px); 
-  border-bottom-width: 2px; 
+  transform: translateY(3px);
+  border-bottom-width: 2px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
@@ -209,7 +198,9 @@ button:active {
   font-size: 18px;
 }
 
-.menu-box, .stat-container, .item-card {
+.menu-box,
+.stat-container,
+.item-card {
   background: rgba(22, 22, 34, 0.8);
   padding: 14px;
   border-radius: 8px;
@@ -218,7 +209,7 @@ button:active {
 }
 
 .stat-container { border-left: 4px solid #00e5ff; }
-.item-card { border-left: 4px solid #ffe600; }
+.item-card      { border-left: 4px solid #ffe600; }
 
 .info {
   display: flex;
@@ -233,12 +224,12 @@ button:active {
   display: flex;
   background: #09090e;
   border-top: 2px solid #2a2a3a;
-  padding-bottom: env(safe-area-inset-bottom); 
-  flex-shrink: 0; 
+  padding-bottom: env(safe-area-inset-bottom);
+  flex-shrink: 0;
 }
 
 .bottomNav button {
-  flex: 1; 
+  flex: 1;
   margin: 0;
   padding: 16px 0;
   background: none;
@@ -257,7 +248,7 @@ button:active {
 }
 
 @keyframes pop {
-  0% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.12); }
+  0%   { transform: translate(-50%, -50%) scale(1); }
+  50%  { transform: translate(-50%, -50%) scale(1.15); }
   100% { transform: translate(-50%, -50%) scale(1); }
 }
