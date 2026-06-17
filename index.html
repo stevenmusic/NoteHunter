@@ -2,44 +2,27 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>音符獵人：百鬼刃與盾</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>音符獵人</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <div class="game-window">
-    
     <div class="global-header">
       <div class="header-top-row">
         <div id="playerName" class="player-name-badge">武者 · 樂之勇士</div>
         <div id="levelText" class="lv-badge">段位.1</div>
         <div id="goldDisplay" class="gold-badge">🪙 0</div>
       </div>
-      <div class="header-bottom-row">
-        <div class="exp-bar-container">
-          <div id="expFill" class="exp-bar-fill"></div>
-          <div id="expText" class="exp-bar-text">魂魄 0 / 100</div>
-        </div>
-      </div>
+      <div class="exp-bar-container"><div id="expFill" class="exp-bar-fill"></div><div id="expText" class="exp-bar-text">魂魄 0 / 100</div></div>
     </div>
 
     <div id="mainArena" class="arena-layer">
       <div class="battle-box">
         <div id="monsterName" class="monster-name">Lv.1 糰子暮泥</div>
-        <div class="hp-bar-container">
-          <div id="monsterHpFill" class="hp-bar-fill"></div>
-          <div id="monsterHpText" class="hp-bar-text">體力: 50 / 50</div>
-        </div>
+        <div class="hp-bar-container"><div id="monsterHpFill" class="hp-bar-fill"></div><div id="monsterHpText" class="hp-bar-text">體力: 50 / 50</div></div>
         <div class="monster-wrapper" id="monsterClickZone">
-          <div id="mainSlime" class="monster-slime">
-            <div id="mainMonsterIcon" class="monster-yokai-icon">💧</div>
-            <div class="slime-face">
-              <div class="slime-eye left"></div>
-              <div class="slime-eye right"></div>
-              <div class="slime-mouth"></div>
-            </div>
-          </div>
+          <div id="mainSlime" class="monster-slime"><div class="monster-yokai-icon">💧</div></div>
           <div id="slashFx" class="slash-line"></div> 
           <div id="autoFx" class="auto-spark">💥</div>   
         </div>
@@ -47,66 +30,33 @@
     </div>
 
     <div id="actionDrawer" class="drawer-layer">
-      
-      <div id="defaultTip" class="drawer-content default-tip-box">
-        <p>🏮 點擊下方選單展開冒險與裝備 🏮</p>
-        <p style="font-size: 11px; color: #7a6e65; margin-top: 5px;">史萊姆修練在中庭持續進行中...</p>
-      </div>
-
-      <div id="stageMenu" class="drawer-content menu-box">
-        <h3>🏮 進入百鬼夜行 (挑戰分頁)</h3>
+      <div id="stageMenu" class="drawer-content menu-box active-content">
+        <h3>🏮 進入百鬼夜行</h3>
         <button class="btn btn-blue" onclick="startGame('treble')">高音譜 · 斬妖卷</button>
         <button class="btn btn-blue" onclick="startGame('bass')">低音譜 · 鎮魔卷</button>
       </div>
-
       <div id="equipMenu" class="drawer-content character-container">
         <div id="stats"></div>
-        <div class="equipment-list">
-          <div id="weapon"></div>
-          <div id="shield"></div>
-        </div>
+        <div class="equipment-list"><div id="weapon"></div><div id="shield"></div></div>
       </div>
     </div>
 
     <div id="gamePlayLayer" class="game-play-layer">
       <div class="game-container">
-        <div class="game-header">
-          <span id="combo">連擊: 0</span>
-          <span id="gameModeTitle" style="font-size: 13px; color: #9c8f84;"></span>
-          <button class="btn-back" onclick="backToLobby()">歸陣</button>
-        </div>
-
-        <div class="staff-wrapper">
-          <div class="staff-lines">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-          <div id="staffClef"></div>
-          <div id="noteNote"></div>
-        </div>
-
+        <div class="game-header"><span id="combo">連擊: 0</span><span id="gameModeTitle"></span><button class="btn-back" onclick="backToLobby()">歸陣</button></div>
+        <div class="staff-wrapper"><div class="staff-lines"><div></div><div></div><div></div><div></div><div></div></div><div id="staffClef"></div><div id="noteNote"></div></div>
         <div class="answer-keyboard">
-          <button class="key-btn" onclick="answer('C')">C</button>
-          <button class="key-btn" onclick="answer('D')">D</button>
-          <button class="key-btn" onclick="answer('E')">E</button>
-          <button class="key-btn" onclick="answer('F')">F</button>
-          <button class="key-btn" onclick="answer('G')">G</button>
-          <button class="key-btn" onclick="answer('A')">A</button>
-          <button class="key-btn" onclick="answer('B')">B</button>
+          <button class="key-btn" onclick="answer('C')">C</button><button class="key-btn" onclick="answer('D')">D</button><button class="key-btn" onclick="answer('E')">E</button>
+          <button class="key-btn" onclick="answer('F')">F</button><button class="key-btn" onclick="answer('G')">G</button><button class="key-btn" onclick="answer('A')">A</button><button class="key-btn" onclick="answer('B')">B</button>
         </div>
       </div>
     </div>
 
     <div class="nav-bar">
-      <button id="navHomeBtn" class="nav-btn" onclick="toggleDrawer('stage')">首頁(關卡)</button>
-      <button id="navCharBtn" class="nav-btn" onclick="toggleDrawer('equip')">英雄裝備</button>
+      <button id="navHomeBtn" class="nav-btn active" onclick="toggleDrawer('stage')">關卡</button>
+      <button id="navCharBtn" class="nav-btn" onclick="toggleDrawer('equip')">裝備</button>
     </div>
-
   </div>
-
   <script src="questions.js"></script>
   <script src="game.js"></script>
 </body>
