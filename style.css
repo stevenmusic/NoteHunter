@@ -1,360 +1,224 @@
-/* 全域與基礎排版 */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  user-select: none;
-}
+* { box-sizing: border-box; }
 
 body {
-  background-color: #0d0f12;
-  color: #e3e8ee;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0; padding: 0;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  background: #060609;
+  color: #fff;
+  height: 100svh;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 10px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-#gameApp {
+.app {
   width: 100%;
-  max-width: 420px;
-  background-color: #161920;
-  border: 2px solid #2c3242;
-  border-radius: 16px;
-  box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+  max-width: 430px;
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  background: radial-gradient(circle at center, #161626 0%, #060609 100%);
   position: relative;
+  overflow: hidden;
 }
 
-/* 頂部全域狀態欄 */
-.global-header {
+.topHUD {
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #222230 0%, #10101a 100%);
+  border-bottom: 2px solid #36364a;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.nameRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px 6px;
-  font-weight: bold;
-}
-#levelText {
-  color: #00e5ff;
-  font-size: 18px;
-}
-#goldDisplay {
   color: #ffe600;
-  font-size: 16px;
+  font-weight: 800;
+  font-size: 15px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.7);
 }
-
-/* EXP 經驗值條 */
-.exp-container {
-  margin: 0 16px 10px;
-  height: 14px;
-  background: #222836;
-  border-radius: 7px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid #2d3548;
-}
-.exp-fill {
-  width: 0%;
-  height: 100%;
-  background: linear-gradient(90deg, #00ff88, #00e5ff);
-  transition: width 0.3s ease;
-}
-.exp-text {
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  font-size: 9px;
-  line-height: 12px;
-  color: #fff;
+.level {
+  color: #00e5ff;
+  background: #000;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid #00e5ff;
   font-weight: bold;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+.expBar {
+  height: 8px;
+  background: #1c1c24;
+  border-radius: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+  border: 1px solid #2a2a3a;
+}
+.expFill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00e5ff, #00ff88);
+  box-shadow: 0 0 10px rgba(0,229,255,0.7);
+  transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
-/* 內容區與分頁控制 */
 #content {
-  padding: 16px;
-  min-height: 380px;
+  flex: 1;
   overflow-y: auto;
-  max-height: calc(100vh - 160px);
+  padding: 16px;
+  -webkit-overflow-scrolling: touch;
 }
 .page {
   display: none;
+  flex-direction: column;
+  height: 100%;
 }
-.page.active {
-  display: block;
-}
+.page.active { display: flex; }
 
-h1, h2 {
-  text-align: center;
-  margin-bottom: 12px;
-  color: #fff;
-}
-.subtitle {
-  text-align: center;
-  font-size: 13px;
-  color: #707e94;
-  margin-bottom: 20px;
-}
-
-/* 按鈕風格 */
-button {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  background: #252b3a;
-  border: 1px solid #3d4761;
-  color: #fff;
-  font-size: 15px;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.1s ease;
-}
-button:active {
-  transform: scale(0.98);
-  background: #1f2431;
-}
-
-/* ==================== 🎼 五線譜戰場結構 ==================== */
-.game-status {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-weight: bold;
-  color: #00ff88;
+h2 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-top: 4px;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .note-container {
   width: 100%;
   height: 190px;
-  background-color: #f4f5f7;
+  background: #fdfaf2;
+  border: 3px solid #52526e;
   border-radius: 12px;
+  margin: 10px 0 20px 0;
   position: relative;
-  border: 4px solid #3b4254;
-  overflow: visible;
-  box-shadow: inset 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 0 25px rgba(255,255,255,0.15);
+  overflow: hidden;
 }
 
 .staff-line {
   position: absolute;
-  left: 0;
   width: 100%;
   height: 2px;
-  background-color: #333;
+  background: #1a1a1a;
+  z-index: 10;
+  left: 0;
 }
 
-/* 臨時上下加線 */
+#staffClef {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  line-height: 0;
+}
+
+#noteNote {
+  position: absolute;
+  left: 62%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  line-height: 0;
+  animation: pop 0.15s ease-out;
+}
+
 .dynamic-ledger {
   position: absolute;
-  left: calc(65% - 22px);
-  width: 44px;
+  left: 62%;
+  width: 54px;
   height: 2px;
-  background-color: #1a1a1a;
-  z-index: 2;
+  background: #1a1a1a;
+  transform: translateX(-50%);
+  z-index: 10;
 }
 
-/* 音符目標定位 */
-.note-target {
-  position: absolute;
-  left: 65%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
+button {
+  width: 100%;
+  padding: 15px;
+  margin: 8px 0;
+  font-size: 15px;
+  font-weight: bold;
+  color: #ffcc00;
+  background: linear-gradient(180deg, #37374d 0%, #1c1c28 100%);
+  border: 2px solid #52526e;
+  border-bottom: 5px solid #0c0c14;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+  transition: all 0.05s ease;
+}
+button:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
-@keyframes pop {
-  0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0.5; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-/* 音樂輸入鍵盤 */
-.keyboard {
+.btnGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 5px;
 }
-.keyboard button {
+.btnGrid button {
+  padding: 16px 0;
   margin: 0;
-  padding: 14px 0;
-  background: linear-gradient(180deg, #323b52 0%, #212738 100%);
-  border-bottom: 3px solid #11151e;
+  background: linear-gradient(180deg, #ff8c00 0%, #cc5200 100%);
+  border-color: #ffa333;
+  border-bottom-color: #5c2600;
+  color: #fff;
   font-size: 18px;
 }
 
-.exit-btn {
-  background: #441d25;
-  border-color: #662632;
-  margin-top: 16px;
-}
-
-/* ==================== ⚔️ 人物面板與裝備卡牌 ==================== */
-.stats-box {
-  background: #1f2431;
-  border: 1px solid #2d3548;
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 16px;
-}
-
-.equip-slots {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-/* 核心裝備卡片卡槽 (防禦 Class 覆蓋之核心基底) */
-.item-card {
-  position: relative;
-  width: 100%;
+.menu-box, .stat-container, .item-card {
+  background: rgba(22,22,34,0.8);
   padding: 14px;
-  background: #1c202c;
-  border-radius: 10px;
-  border: 1px solid #2d3548;
-  overflow: hidden;
-}
-
-/* ==================== 🛒 裝備商店樣式 ==================== */
-.shop-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #1f2431;
-  padding: 10px 14px;
   border-radius: 8px;
-  margin-bottom: 14px;
-  border: 1px solid #2d3548;
+  border: 1px solid #2d2d3f;
+  margin-bottom: 12px;
 }
+.stat-container { border-left: 4px solid #00e5ff; }
+.item-card      { border-left: 4px solid #ffe600; }
 
-.shop-grid {
+.info {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-bottom: 20px;
-}
-
-.shop-item {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 10px;
-}
-
-.shop-item-info {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.buy-btn {
-  width: auto;
-  min-width: 95px;
-  padding: 10px 12px;
-  margin: 0;
-  font-size: 13px;
-  background: linear-gradient(180deg, #00e5ff 0%, #008ca3 100%);
-  border: 1px solid #00e5ff;
-  border-bottom: 3px solid #004c57;
-  border-radius: 6px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-}
-.buy-btn:active {
-  transform: translateY(2px);
-  border-bottom-width: 1px;
-}
-.buy-btn.owned {
-  background: #2a2a3a;
-  border-color: #4a4a5a;
-  border-bottom: 2px solid #1a1a24;
+  margin-top: 15px;
+  font-weight: bold;
   color: #8a8a9e;
-  cursor: not-allowed;
-  pointer-events: none;
+  font-size: 15px;
 }
 
-/* ==================== ✨ 五大裝備稀有度特效系統 ==================== */
-
-/* 1. 普通 (Common) — 灰色 */
-.item-card.common {
-  border-left: 5px solid #8a8a9e;
-}
-
-/* 2. 精良 (Uncommon) — 綠色 */
-.item-card.uncommon {
-  border-left: 5px solid #00ff88;
-  box-shadow: inset 0 0 8px rgba(0, 255, 136, 0.1);
-}
-
-/* 3. 稀有 (Rare) — 藍色 */
-.item-card.rare {
-  border-left: 5px solid #00e5ff;
-  border-color: rgba(0, 229, 255, 0.3);
-  box-shadow: inset 0 0 12px rgba(0, 229, 255, 0.15);
-}
-
-/* 4. 傳奇 (Legendary) — 金色流光 */
-.item-card.legendary {
-  border: 1px solid #ffcc00;
-  border-left: 5px solid #ffcc00;
-  box-shadow: 0 0 10px rgba(255, 204, 0, 0.2), inset 0 0 15px rgba(255, 204, 0, 0.1);
-}
-/* 雷射流光掃掠層 */
-.item-card.legendary::after, .item-card.mythic::after {
-  content: "";
-  position: absolute;
-  top: 0; left: -150%;
-  width: 50%; height: 100%;
-  transform: skewX(-25deg);
-  pointer-events: none;
-}
-.item-card.legendary::after {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,204,0,0.3) 50%, rgba(255,255,255,0) 100%);
-  animation: sweep 4s infinite linear;
-}
-
-/* 5. 神話 (Mythic) — 紅光虛空能量脈衝 */
-.item-card.mythic {
-  border: 1px solid #ff0055;
-  border-left: 5px solid #ff0055;
-  animation: mythicPulse 2.5s infinite alternate ease-in-out;
-}
-.item-card.mythic::after {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(245, 0, 82, 0.4) 50%, rgba(255,255,255,0) 100%);
-  animation: sweep 3s infinite linear;
-}
-
-/* 動態特效動畫 */
-@keyframes sweep {
-  0% { left: -150%; }
-  30% { left: 150%; }
-  100% { left: 150%; }
-}
-@keyframes mythicPulse {
-  0% { box-shadow: 0 0 4px rgba(255, 0, 85, 0.2), inset 0 0 8px rgba(255, 0, 85, 0.1); }
-  100% { box-shadow: 0 0 16px rgba(255, 0, 85, 0.5), inset 0 0 20px rgba(255, 0, 85, 0.25); border-color: #ff3377; }
-}
-
-/* 底部全域導覽列 */
 .bottomNav {
   display: flex;
-  background: #1a1e29;
-  border-top: 2px solid #2c3242;
+  background: #09090e;
+  border-top: 2px solid #2a2a3a;
+  padding-bottom: env(safe-area-inset-bottom);
+  flex-shrink: 0;
 }
 .bottomNav button {
   flex: 1;
   margin: 0;
   padding: 16px 0;
+  background: none;
   border: none;
   border-radius: 0;
-  background: transparent;
+  box-shadow: none;
+  color: #8a8a9e;
   font-size: 14px;
-}
-.bottomNav button:not(:last-child) {
-  border-right: 1px solid #252b3a;
+  font-weight: 500;
 }
 .bottomNav button:active {
-  background: #13161f;
+  background: #141420;
+  color: #00e5ff;
+  transform: none;
+}
+
+@keyframes pop {
+  0%   { transform: translate(-50%,-50%) scale(1); }
+  50%  { transform: translate(-50%,-50%) scale(1.18); }
+  100% { transform: translate(-50%,-50%) scale(1); }
 }
