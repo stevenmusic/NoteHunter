@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NoteHunter </title>
+  <title>NoteHunter</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -30,9 +30,12 @@
       <h2>🏠 首頁基地</h2>
       
       <div class="menu-box" id="monsterBattleBox">
-        <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+        <div class="monster-header">
           <span id="monsterName" style="font-weight:bold;">Lv.1 史萊姆</span>
-          <span id="monsterHpText">HP: 50 / 50</span>
+          <div class="monster-hp-bar">
+            <div id="monsterHpFill" style="width:100%;"></div>
+            <span id="monsterHpText">HP: 50 / 50</span>
+          </div>
         </div>
         
         <div class="monster-wrapper">
@@ -43,11 +46,8 @@
           </div>
           <div id="homeHitEffect" class="hit-effect">💥</div>
         </div>
-
-        <div class="expBar" style="height:15px; background:#1c1c24; border:1px solid #555; margin-top: 10px;">
-          <div id="monsterHpFill" class="expFill" style="width:100%; background:linear-gradient(90deg, #ff416c, #ff4b2b);"></div>
-        </div>
       </div>
+    </div>
 
     <div id="characterPage" class="page">
       <h2>👤 英雄狀態</h2>
@@ -80,7 +80,6 @@
     </div>
 
     <div id="gamePage" class="page">
-      
       <div class="monster-wrapper game-battle-zone">
         <div id="gameMonster" class="monster-slime">
           <div class="monster-eye left"></div>
@@ -96,9 +95,7 @@
         <div class="staff-line" style="top: 90px;"></div>
         <div class="staff-line" style="top: 70px;"></div>
         <div class="staff-line" style="top: 50px;"></div>
-
         <div id="staffClef"></div>
-
         <div id="noteNote"></div>
       </div>
 
@@ -121,16 +118,13 @@
 
   </div>
 
-      <div class="bottomNav">
+  <div class="bottomNav">
     <button onclick="switchPage('homePage')">🏠 基地</button> 
-    
     <button onclick="switchPage('characterPage')">👤 人物</button>
     <button onclick="switchPage('playPage')">🎮 遊玩</button>
     <button onclick="switchPage('rankPage')">🏆 排行</button>
     <button onclick="switchPage('settingPage')">⚙️ 設定</button>
   </div>
-
-
 
 </div>
 <script src="game.js"></script>
