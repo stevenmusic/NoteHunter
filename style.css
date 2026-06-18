@@ -1,100 +1,543 @@
-:root {
-    --gold: #d4af37;
-    --gold-light: #f3e5ab;
-    --crimson: #bc002d;
-    --lacquer-black: #1a1a1a;
-    --paper-white: #fdfaf6;
+/* ============================================================
+   🎨 1. 全域重設與炫彩霓虹流動背景
+   ============================================================ */
+* { 
+    box-sizing: border-box; 
 }
 
-body, html {
-    margin: 0; padding: 0; height: 100%;
-    background: #000;
-    font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+html, body {
+    margin: 0; 
+    padding: 0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, 'Microsoft JhengHei', sans-serif;
+    background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 30%, #76daff 70%, #8ebdff 100%) !important;
+    background-size: 400% 400% !important;
+    animation: gradientBG 12s ease infinite !important;
+    height: 100svh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 💡 遊戲主容器：滿版全螢幕 + 輕透磨砂玻璃感 */
+.app {
+    width: 100vw;       
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 4px solid #ff2a6d !important;
+    box-shadow: 0 15px 35px rgba(255, 42, 109, 0.35), 
+                inset 0 0 20px rgba(255, 117, 140, 0.15) !important;
+    position: relative;
     overflow: hidden;
 }
 
-.app-wrapper {
-    height: 100vh;
-    display: flex; justify-content: center; align-items: center;
-    background: radial-gradient(circle, #333 0%, #000 100%);
+/* ============================================================
+   📊 2. 頂部玩家狀態欄 (HUD)
+   ============================================================ */
+.topHUD {
+    padding: 14px 18px;
+    background: linear-gradient(180deg, #fff0f3 0%, #ffe3e8 100%) !important;
+    border-bottom: 3px solid #ff477e !important;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(255, 71, 126, 0.15);
 }
 
-.game-container {
-    width: 100%; height: 100%;
-    max-width: 500px;
-    background: var(--paper-white);
-    display: flex; flex-direction: column;
-    position: relative;
-    border: 2px solid var(--gold);
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
-}
-
-/* 華麗邊框裝飾 */
-.frame-decor {
-    position: absolute; width: 40px; height: 40px;
-    border: 2px solid var(--gold); z-index: 10;
-}
-.top-left { top: 10px; left: 10px; border-right: none; border-bottom: none; }
-.top-right { top: 10px; right: 10px; border-left: none; border-bottom: none; }
-.bottom-left { bottom: 10px; left: 10px; border-right: none; border-top: none; }
-.bottom-right { bottom: 10px; right: 10px; border-left: none; border-top: none; }
-
-/* Header - 漆器風格 */
-.header {
-    background: linear-gradient(180deg, #2d2d2d 0%, #000 100%);
-    padding: 20px;
-    border-bottom: 4px double var(--gold);
-    color: var(--gold-light);
-}
-
-.stats-row { display: flex; justify-content: space-between; font-size: 1.1rem; margin-bottom: 10px; }
-
-.hp-bar-bg { 
-    height: 12px; background: #000; border: 1px solid var(--gold);
-    position: relative; overflow: hidden;
-}
-
-.hp-bar-fill { 
-    height: 100%; background: linear-gradient(90deg, var(--crimson), #ff4d4d);
-    transition: width 0.3s ease; box-shadow: 0 0 10px var(--crimson);
-}
-
-/* 戰鬥區 - 浮世繪配色 */
-.main-content {
-    flex: 1;
-    background: #e6e0d0; /* 模擬舊紙張 */
-    background-image: radial-gradient(var(--gold) 0.5px, transparent 0.5px);
-    background-size: 20px 20px;
-    display: flex; justify-content: center; align-items: center;
-}
-
-.slime-wrapper {
-    position: relative; width: 140px; height: 140px;
-    cursor: pointer;
-}
-
-.slime-body {
-    width: 100%; height: 100%;
-    background: radial-gradient(circle at 30% 30%, #555, #000);
-    border: 3px solid var(--gold);
-    border-radius: 45% 55% 60% 40% / 50% 50% 50% 50%;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-/* 導航 - 像木札一樣的按鈕 */
-.nav-bar {
+.nameRow {
     display: flex;
-    border-top: 4px double var(--gold);
-    background: var(--lacquer-black);
+    justify-content: space-between;
+    align-items: center;
+    color: #d60052; 
+    font-weight: 900;
+    font-size: 16px;
 }
 
-.nav-btn {
-    flex: 1; padding: 15px;
-    background: linear-gradient(to bottom, #444, #111);
-    border: none;
-    color: var(--gold); font-size: 1.2rem;
-    font-weight: bold; cursor: pointer;
-    text-shadow: 1px 1px 2px #000;
+.level {
+    color: #ffffff !important; 
+    background: #ff2a6d;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    border: 1px solid #ffffff;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(255, 42, 109, 0.3);
 }
 
-.nav-btn:active { background: var(--crimson); color: white; }
+.expBar {
+    height: 10px;
+    background: #fff0f3;
+    border-radius: 6px;
+    margin-top: 10px;
+    overflow: hidden;
+    border: 2px solid #ffccd5;
+}
+
+.expFill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00b4db, #00d2ff) !important;
+    box-shadow: 0 0 8px rgba(0, 210, 255, 0.6) !important;
+    transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ============================================================
+   🕹️ 3. 核心主排版區域與分頁設定
+   ============================================================ */
+#content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px; 
+    padding-bottom: 110px !important; 
+    -webkit-overflow-scrolling: touch;
+}
+
+.page {
+    display: none;
+    flex-direction: column;
+    height: auto !important;     
+    min-height: 100%;
+    gap: 16px !important;        
+    justify-content: flex-start; 
+}
+.page.active { 
+    display: flex; 
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: 900;
+    color: #ff2a6d;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0px #fff;
+}
+
+/* 🔥【核心修正】終極全面顯形雷達：強制讓其他介面的文字與選項 100% 現形（精準排除按鈕與血條） */
+.page *:not(button):not(button *):not(svg):not(path):not(.expFill):not(#monsterHpFill):not(.hp-fill) {
+    color: #2c3e50 !important;
+}
+
+/* ============================================================
+   🎼 樂譜五線譜容器
+   ============================================================ */
+.note-container {
+    width: 100%;
+    height: 190px;
+    background: #fdfaf2;
+    border: 3px solid #52526e;
+    border-radius: 12px;
+    margin: 10px 0;
+    position: relative;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+
+.staff-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: #1a1a1a;
+    z-index: 10;
+    left: 0;
+}
+
+#staffClef {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    line-height: 0;
+}
+
+#noteNote {
+    position: absolute;
+    left: 62%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    line-height: 0;
+    animation: pop 0.15s ease-out;
+}
+
+.dynamic-ledger {
+    position: absolute;
+    left: 62%;
+    width: 54px;
+    height: 2px;
+    background: #1a1a1a;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+/* ============================================================
+   👾 4. 戰鬥核心：【大重構】名字與血條並排 ➔ 史萊姆在下方
+   ============================================================ */
+#monsterBattleBox, .game-battle-zone {
+    display: flex !important;
+    flex-direction: row !important;       /* 💡 修正：改為橫向排列 */
+    flex-wrap: wrap !important;           /* 💡 修正：允許折行，讓史萊姆掉到下方 */
+    align-items: center !important;       /* 💡 修正：上下對齊置中 */
+    justify-content: space-between !important; /* 💡 修正：名字靠左，血條靠右 */
+    width: 100% !important;
+    padding: 12px 6px !important;
+    margin: 0 auto !important;
+    height: auto !important;
+    border: none !important;              /* 💡 修正：防禦性刪除任何莫名雜線 */
+}
+
+/* 🟢 左側：史萊姆名字與等級（不換行，靠左對齊） */
+#monsterName, .monster-name, #monsterLevel, .monster-level {
+    order: 1 !important;
+    flex: 1 !important;                   /* 自動伸展佔據左側空間 */
+    text-align: left !important;          /* 強制靠左 */
+    font-size: 20px !important;           /* 微調字型大小完美配合並排 */
+    font-weight: 900 !important;
+    margin: 0 !important;
+    padding-right: 10px !important;
+    text-shadow: 1px 1px 0px #fff;
+    white-space: nowrap !important;       /* 防止名字自己折行 */
+}
+
+/* 🟡 右側：【重大修正】血條容器（高對比、不換行、加厚防止數字被切） */
+[id*="monsterHp"], .monster-hp, .hp-bar-container {
+    order: 2 !important;
+    flex: 0 0 160px !important;           /* 💡 修正：固定寬度 160px 鎖死在右側不換行 */
+    height: 26px !important;              /* 💡 修正：加厚至 26px，給數字充足的容納空間 */
+    background-color: #e2e8f0 !important; 
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 13px !important;
+    margin: 0 !important; 
+    overflow: hidden !important;
+    position: relative !important;
+    display: flex !important;             /* 💡 修正：改用 flex 讓內部數字精準置中 */
+    align-items: center !important;       /* 💡 修正：垂直絕對置中 */
+    justify-content: center !important;   /* 💡 修正：水平絕對置中 */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+
+/* 💡 血條桃紅漸層填色 */
+#monsterHpFill, .hp-fill {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, #ff0055 0%, #ff5a79 100%) !important;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.3) !important;
+    z-index: 1 !important;
+}
+
+/* 💡 【重大修正】血條內的文字/數字（強制顯形、防切邊、置頂於填色層之上） */
+[id*="monsterHp"] *, .monster-hp *, .hp-bar-container * {
+    color: #ffffff !important;            /* 💡 修正：高對比雪白字體 */
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;            /* 💡 修正：消除任何預設行高擠壓 */
+    z-index: 10 !important;               /* 💡 修正：確保數字壓在血量條最上方 */
+    position: relative !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7) !important; /* 加深陰影，極其清晰 */
+    white-space: nowrap !important;       /* 💡 修正：強制數字絕對不折行、不被切掉 */
+}
+
+/* 🔴 下方：史萊姆外框（100% 寬度強制換行落到最下方） */
+.monster-wrapper {
+    order: 3 !important; 
+    width: 100% !important;               /* 💡 修正：寬度 100% 強制將自己推到下一行 */
+    position: relative !important;
+    width: 240px !important;
+    height: 170px !important;
+    margin: 20px auto 0 auto !important;  /* 💡 修正：與上方的名字血條拉開和諧間距 */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* 史萊姆本體 */
+.monster-slime {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important; 
+    width: 170px !important;
+    height: 130px !important;
+    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), inset 0 -10px 20px rgba(0,0,0,0.1) !important;
+    margin: 0 !important;
+    z-index: 6;
+    animation: monsterFloat 2s ease-in-out infinite;
+}
+
+.monster-eye {
+    width: 14px !important;
+    height: 14px !important;
+    background-color: #2c3e50 !important;
+    border-radius: 50% !important;
+    position: absolute !important;
+    top: 38% !important;
+}
+.monster-eye.left { left: 28% !important; }
+.monster-eye.right { right: 28% !important; }
+
+.monster-mouth {
+    width: 22px !important;
+    height: 10px !important;
+    border-bottom: 4px solid #2c3e50 !important;
+    border-radius: 0 0 11px 11px !important;
+    position: absolute !important;
+    top: 52% !important;
+    left: 44% !important;
+    transform: none !important;
+}
+
+.hit-effect {
+    position: absolute;
+    font-size: 54px !important;
+    font-weight: 900;
+    color: #ff0055;
+    text-shadow: 2px 2px 0px #fff;
+    left: 38% !important;
+    top: -10% !important;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 15;
+}
+
+/* ============================================================
+   💢 5. 史萊姆受擊特殊表情包與動態
+   ============================================================ */
+.monster-slime.damaged {
+    background: linear-gradient(180deg, #ff3333 0%, #aa0000 100%) !important;
+    box-shadow: 0 0 25px #ff3333 !important;
+    animation: slimeHitAnim 0.15s ease-in-out infinite alternate !important;
+}
+
+@keyframes slimeHitAnim {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    100% { transform: translate(-50%, -50%) scale(0.86); filter: brightness(1.2); }
+}
+
+@keyframes monsterFloat {
+    0%, 100% { transform: translate(-50%, -50%) scaleX(1) translateY(0); }
+    50% { transform: translate(-50%, -50%) scaleX(1.04) scaleY(0.96) translateY(-6px); }
+}
+
+.monster-slime.angry .monster-eye.left {
+    transform: rotate(20deg);
+    border-radius: 2px;
+    height: 5px !important;
+}
+.monster-slime.angry .monster-eye.right {
+    transform: rotate(-20deg);
+    border-radius: 2px;
+    height: 5px !important;
+}
+.monster-slime.angry .monster-mouth {
+    border-bottom: none !important;
+    border-top: 4px solid #2c3e50 !important;
+    border-radius: 6px 6px 0 0 !important;
+    top: 56% !important;
+}
+
+.monster-slime.crying .monster-eye {
+    height: 5px !important;
+    transform: translateY(2px);
+}
+.monster-slime.crying .monster-mouth {
+    width: 22px !important;
+    height: 14px !important;
+    border: 4px solid #2c3e50 !important;
+    background-color: #742323 !important;
+    border-radius: 50% !important;
+    top: 50% !important;
+}
+
+.hit-effect.animate {
+    animation: explosionPop 0.3s ease-out forwards;
+}
+@keyframes explosionPop {
+    0% { opacity: 0; transform: scale(0.5) translateY(0); }
+    50% { opacity: 1; transform: scale(1.3) translateY(-15px); }
+    100% { opacity: 0; transform: scale(1) translateY(-30px); }
+}
+
+/* ============================================================
+   🕹️ 6. 按鈕與街機繽紛卡片美化
+   ============================================================ */
+button {
+    width: 100%;
+    padding: 15px;
+    margin: 8px 0;
+    font-size: 15px;
+    font-weight: bold;
+    color: #ffcc00;
+    background: linear-gradient(180deg, #37374d 0%, #1c1c28 100%);
+    border: 2px solid #52526e;
+    border-bottom: 5px solid #0c0c14;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:active {
+    transform: none !important;
+    border-bottom-width: 5px !important; 
+    filter: brightness(0.85);
+}
+
+.btnGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 5px;
+}
+.btnGrid button {
+    padding: 16px 0;
+    margin: 0;
+    background: linear-gradient(180deg, #ff8c00 0%, #cc5200 100%);
+    border-color: #ffa333;
+    border-bottom-color: #5c2600;
+    font-size: 18px;
+}
+
+/* 🌈 高質感明亮撞色卡片外殼 */
+.menu-box, .stat-container, .item-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fffbfd 100%) !important;
+    padding: 14px;
+    border-radius: 16px !important;
+    border: 2px solid #ffccd5 !important;
+    box-shadow: 4px 4px 0px #ff477e !important; 
+    margin-bottom: 4px; 
+    touch-action: manipulation !important;
+}
+.stat-container { border-left: 6px solid #00b4db !important; }
+.item-card      { border-left: 6px solid #ffcc00 !important; }
+
+.info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.item-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+}
+.item-card svg {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.15));
+}
+#weapon { border-left: 6px solid #ffcc00 !important; }
+#armor  { border-left: 6px solid #00b4db !important; }
+#shield { border-left: 6px solid #00ff88 !important; }
+
+.rarity-common { box-shadow: 4px 4px 0px #ff477e !important; }
+.rarity-rare { box-shadow: 4px 4px 0px #00b4db !important; }
+.rarity-legendary { box-shadow: 4px 4px 0px #ffcc00 !important; }
+.rarity-mythic {
+    box-shadow: 4px 4px 0px #ff0078 !important;
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    from { filter: brightness(1); }
+    to   { filter: brightness(1.2); }
+}
+
+/* ============================================================
+   📱 7. 底欄選單「底部絕對鎖死」系統
+   ============================================================ */
+.bottomNav {
+    position: fixed !important; 
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 70px !important;
+    z-index: 99999 !important; 
+    
+    display: flex !important;
+    background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%) !important;
+    box-shadow: 0 -4px 20px rgba(214, 0, 82, 0.25) !important;
+    border-top: 3px solid #ffffff !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
+.bottomNav button {
+    flex: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100% !important;
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+}
+
+.bottomNav button:active {
+    background: rgba(255, 255, 255, 0.25) !important;
+    transform: none !important;
+}
+
+/* ============================================================
+   🖥️ 8. 大螢幕響應式優化
+   ============================================================ */
+@media (min-width: 768px) {
+    .app {
+        max-width: 100%; 
+        border-left: none;
+        border-right: none;
+    }
+
+    #content {
+        padding: 24px 60px; 
+        padding-bottom: 120px !important;
+    }
+
+    .btnGrid {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 12px;
+        margin-top: 15px;
+    }
+    
+    .btnGrid button {
+        padding: 22px 0; 
+        font-size: 24px;  
+    }
+
+    .note-container {
+        height: 220px;
+        margin: 20px 0;
+    }
+}
+
+/* ============================================================
+   ❌ 9. 防禦性 CSS 隱藏歡迎標題
+   ============================================================ */
+#homePage h1, .welcome-title, #homePage h2:first-of-type {
+    display: none !important;
+}
+
+@keyframes pop {
+    0%   { transform: translate(-50%,-50%) scale(1); }
+    50%  { transform: translate(-50%,-50%) scale(1.18); }
+    100% { transform: translate(-50%,-50%) scale(1); }
+}
