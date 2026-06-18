@@ -1,21 +1,19 @@
 let isAttacking = false;
-let state = {
-    gold: 0,
-    hp: 100,
-    maxHp: 100
-};
+let state = { gold: 0, hp: 100, maxHp: 100 };
 
 const slime = document.getElementById('slime');
 const hpFill = document.getElementById('hpFill');
-const hpText = document.getElementById('hpText');
 const goldDisplay = document.getElementById('goldDisplay');
 
 slime.addEventListener('click', () => {
-    // 防連點機制
     if (isAttacking) return;
     isAttacking = true;
 
-    // 邏輯處理
+    // 1. 打擊視覺：瞬間放大與變色
+    slime.style.transform = "scale(0.85) rotate(-5deg)";
+    slime.style.filter = "brightness(2) drop-shadow(0 0 10px gold)";
+
+    // 2. 邏輯
     state.hp -= 10;
     if (state.hp <= 0) {
         state.hp = state.maxHp;
@@ -23,16 +21,13 @@ slime.addEventListener('click', () => {
         goldDisplay.innerText = state.gold;
     }
 
-    // UI 更新
-    const percent = (state.hp / state.maxHp) * 100;
-    hpFill.style.width = percent + '%';
-    hpText.innerText = `${state.hp} / ${state.maxHp}`;
+    // 3. UI 更新
+    hpFill.style.width = (state.hp / state.maxHp) * 100 + '%';
 
-    // 視覺回饋
-    slime.style.filter = "brightness(2)";
-    
+    // 4. 重置動畫
     setTimeout(() => {
+        slime.style.transform = "scale(1) rotate(0deg)";
+        slime.style.filter = "brightness(1) drop-shadow(0 0 0 transparent)";
         isAttacking = false;
-        slime.style.filter = "brightness(1)";
-    }, 200);
+    }, 150);
 });
