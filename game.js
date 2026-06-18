@@ -404,6 +404,112 @@ setInterval(() => {
   }
 }, 1000);
 
+/* ============================================================
+   🎇 TT2 風格高級砍痕特效 (Canvas Particle)
+   ============================================================ */
+const slashCanvas = document.getElementById('slashCanvas');
+const slashCtx = slashCanvas.getContext('2d');
+let slashes = [];
+
+class Slash {
+  constructor(x, y, angle) {
+    this.x = x;
+    this.y = y;
+    this.angle = angle;
+    this.life = 28;           // 持續幀數
+    this.maxLife = 28;
+    this.width = 6 + Math.random() * 8;
+    this.length = 80 + Math.random() * 60;
+    this.alpha = 1;
+    this.trail = [];
+  }
+  
+  update() {
+    this.life--;
+    this.alpha = this.life / this.maxLife;
+    this.trail.push({x: this.x, y: this.y});
+    if (this.trail.length > 8) this.trail.shift();
+  }
+  
+  draw() {
+    slashCtx.save();
+    slashCtx.translate(this.x, this.y);
+    slashCtx.rotate(this.angle);
+    
+    // 主刀光
+    slashCtx.strokeStyle = `rgba(255, 255, 240, ${this.alpha})`;
+    slashCtx.lineWidth = this.width;
+    slashCtx.shadowBlur = 25;
+    slashCtx.shadowColor = '#fff7c0';
+    slashCtx.beginPath();
+    slashCtx.moveTo(0, 0);
+    slashCtx.lineTo(this.length, 0);
+    slashCtx.stroke();
+    
+    // 亮核心
+    slashCtx.strokeStyle = `rgba(255, 240, 180, ${this.alpha * 0.9})`;
+    slashCtx.lineWidth = this.width * 0.45;
+    slashCtx.shadowBlur = 40;
+    slashCtx.shadowColor = '#ffffa0';
+    slashCtx.beginPath();
+    slashCtx.moveTo(0, 0);
+    slashCtx.lineTo(this.length, 0);
+    slashCtx.stroke();
+    
+    // 殘影拖尾
+    for (let i = 0; i < this.trail.length; i++) {
+      const a = (i / this.trail.length) * this.alpha * 0.6;
+      slashCtx.strokeStyle = `rgba(255, 220, 140, ${a})`;
+      slashCtx.lineWidth = this.width * 0.6 * (i / this.trail.length);
+      slashCtx.beginPath();
+      slashCtx.moveTo(this.trail[i].x - this.x, this.trail[i].y - this.y);
+      slashCtx.lineTo(this.trail[i].x - this.x + this.length * 0.6, this.trail[i].y - this.y);
+      slashCtx.stroke();
+    }
+    
+    slashCtx.restore();
+  }
+}
+
+function createSlashBurst(x, y, count = 5) {
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.random() - 0.5) * 1.8 + (Math.random() > 0.5 ? 0 : Math.PI);
+    slashes.push(new Slash(x + (Math.random()-0.5)*60, y + (Math.random()-0.5)*60, angle));
+  }
+}
+
+function animateSlashes() {
+  slashCtx.clearRect(0, 0, slashCanvas.width, slashCanvas.height);
+  
+  for (let i = slashes.length - 1; i >= 0; i--) {
+    slashes[i].update();
+    slashes[i].draw();
+    if (slashes[i].life <= 0) slashes.splice(i, 1);
+  }
+  
+  requestAnimationFrame(animateSlashes);
+}
+animateSlashes();
+
+/* 在答題正確和點擊妖怪時觸發特效 */
+function triggerSlashEffect(isBig = false) {
+  const rect = document.getElementById('gameMonster').getBoundingClientRect();
+  const gameContainer = document.querySelector('.game-container');
+  const containerRect = gameContainer.getBoundingClientRect();
+  
+  const centerX = rect.left - containerRect.left + rect.width / 2;
+  const centerY = rect.top - containerRect.top + rect.height / 2 - 30;
+  
+  createSlashBurst(centerX, centerY, isBig ? 8 : 5);
+  
+  // 額外畫面震動
+  if (isBig) {
+    const monster = document.getElementById('gameMonster');
+    monster.style.transition = 'transform 0.08s';
+    monster.style.transform = 'scale(0.85) rotate(8deg)';
+    setTimeout(() => { monster.style.transform = 'scale(1) rotate(0)'; }, 80);
+  }
+}
 // 確保全部 DOM 載入完成後安全運行初始化
 window.addEventListener("DOMContentLoaded", () => {
   loadGameData();
