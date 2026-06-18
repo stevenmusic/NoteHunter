@@ -8,13 +8,12 @@
 </head>
 <body>
 
-  <!-- 遊戲直屏總外殼 -->
   <div class="game-window">
     
-    <!-- 👑 上方全域永久置頂：人物資訊面板 -->
+    <!-- 上方全域永久置頂 -->
     <div class="global-header">
       <div class="header-top-row">
-        <div id="playerName" class="player-name-badge">武者 · 樂之勇士</div>
+        <div id="playerName" class="player-name-badge">武者 · 雷恩</div>
         <div id="levelText" class="lv-badge">段位.1</div>
         <div id="goldDisplay" class="gold-badge">🪙 0</div>
       </div>
@@ -26,12 +25,11 @@
       </div>
     </div>
 
-    <!-- ==================== 主頁基地（神社結界） ==================== -->
+    <!-- 主頁基地 -->
     <div id="homePage" class="page active">
       <div class="lobby-container">
         <h2>畳 · 驅魔結界中</h2>
         
-        <!-- 妖怪展示區 -->
         <div class="battle-box">
           <div id="monsterName" class="monster-name">Lv.1 糰子暮泥</div>
           <div class="hp-bar-container">
@@ -51,14 +49,12 @@
           </div>
         </div>
 
-        <!-- 模式選擇（已刪除御靈修煉選項） -->
         <div class="menu-box">
           <h3>🏮 進入百鬼夜行 (闖關)</h3>
           <button class="btn btn-blue" onclick="startGame('treble')">高音譜 · 斬妖卷</button>
           <button class="btn btn-blue" onclick="startGame('bass')">低音譜 · 鎮魔卷</button>
         </div>
 
-        <!-- 導覽底欄 -->
         <div class="nav-bar">
           <button id="navHomeBtn" class="nav-btn active" onclick="switchPage('homePage')">首頁</button>
           <button id="navCharBtn" class="nav-btn" onclick="switchPage('characterPage')">英雄裝備</button>
@@ -66,7 +62,7 @@
       </div>
     </div>
 
-    <!-- ==================== 遊戲戰鬥頁 ==================== -->
+    <!-- 遊戲戰鬥頁 -->
     <div id="gamePage" class="page">
       <div class="game-container">
         <div class="game-header">
@@ -75,7 +71,6 @@
           <button class="btn-back" onclick="backHome()">歸陣</button>
         </div>
 
-        <!-- 戰鬥區妖怪 -->
         <div class="battle-box" id="monsterBattleBox">
           <div class="monster-wrapper">
             <div id="gameMonster" class="monster-slime">
@@ -87,17 +82,17 @@
               </div>
             </div>
             <div id="gameHitEffect" class="hit-effect">⚔️</div>
+            <!-- TT2砍痕 Canvas -->
+            <canvas id="slashCanvas" width="400" height="300" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); pointer-events:none; z-index:20;"></canvas>
           </div>
         </div>
 
-        <!-- 五線譜顯示區 -->
         <div class="staff-wrapper">
           <div class="staff-lines"><div></div><div></div><div></div><div></div><div></div></div>
           <div id="staffClef"></div>
           <div id="noteNote"></div>
         </div>
 
-        <!-- 答題按鈕 -->
         <div class="answer-keyboard">
           <button class="key-btn" onclick="answer('C')">C</button>
           <button class="key-btn" onclick="answer('D')">D</button>
@@ -110,28 +105,21 @@
       </div>
     </div>
 
-    <!-- ==================== 角色裝備頁 ==================== -->
+    <!-- 角色裝備頁 -->
     <div id="characterPage" class="page">
       <div class="character-container">
         <h2>👤 武者狀態與御道具</h2>
-        
-        <!-- 總屬性面板 -->
         <div id="stats"></div>
-
-        <!-- 裝備卡片容器 -->
         <div class="equipment-list">
           <div id="weapon"></div>
           <div id="shield"></div>
         </div>
-
-        <!-- 導覽底欄 -->
         <div class="nav-bar">
           <button id="navHomeBtnChar" class="nav-btn" onclick="switchPage('homePage')">首頁</button>
           <button id="navCharBtnChar" class="nav-btn active" onclick="switchPage('characterPage')">英雄裝備</button>
         </div>
       </div>
     </div>
-
   </div>
 
   <script src="game.js"></script>
