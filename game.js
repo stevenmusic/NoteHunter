@@ -23,7 +23,6 @@ let player = {
 
 let monster = { stage: 1, maxHp: 60, currentHp: 60, typeIndex: 0 };
 
-/* 🏮 設計十種精緻日式妖怪資料庫 */
 const YOKAI_DATABASE = [
   { name: "糰子暮泥", icon: "💧", bg: "radial-gradient(circle at 35% 35%, #9ae5f3, #4eaec5)" }, 
   { name: "古剎提燈", icon: "🏮", bg: "radial-gradient(circle at 35% 35%, #ffb366, #d96600)" },
@@ -62,16 +61,13 @@ const notePositions = {
 
 function getWeaponAtk() { return player.atk + (player.weapon.atkBonus || 0); }
 function getTotalCritChance() { return player.critChance + (player.shield.critBonus || 0); }
-
-function getUpgradeCost(level) {
-  return Math.floor(25 * Math.pow(1.65, (level || 1) - 1));
-}
+function getUpgradeCost(level) { return Math.floor(25 * Math.pow(1.65, (level || 1) - 1)); }
 
 function calculateDamage(isTap = false) {
   let base = getWeaponAtk();
   const isCrit = Math.random() < getTotalCritChance();
   let dmg = isCrit ? Math.floor(base * player.critMultiplier) : base;
-  if (isTap) dmg = Math.floor(dmg * (1 + Math.min(combo * 0.15, 4))); // Combo 上限
+  if (isTap) dmg = Math.floor(dmg * (1 + Math.min(combo * 0.15, 4)));
   return dmg;
 }
 
@@ -97,14 +93,9 @@ function damageMonster(amount, skipVisuals = false) {
     levelUp();
     applyYokaiVisuals(); 
   }
-  
   updateUI();
   updateExpUI();
   saveGameData();
-}
-
-function executeSpawnNextMonster() {
-  // 已整合到 damageMonster 中
 }
 
 function applyYokaiVisuals() {
@@ -115,13 +106,9 @@ function applyYokaiVisuals() {
   if(document.getElementById('gameMonsterIcon')) document.getElementById('gameMonsterIcon').innerText = currentYokai.icon;
 }
 
-/* ============================================================
-   💾 存檔與離線模擬
-   ============================================================ */
+/* 存檔 */
 function saveGameData(){
-  localStorage.setItem("noteHunter", JSON.stringify({ 
-    player, score, monster, totalGoldEarned, lastSavedTime: Date.now() 
-  }));
+  localStorage.setItem("noteHunter", JSON.stringify({ player, score, monster, totalGoldEarned, lastSavedTime: Date.now() }));
 }
 
 function loadGameData(){
@@ -149,9 +136,8 @@ function loadGameData(){
 
 function simulateOfflineProgress(seconds) {
   if (seconds > 86400) seconds = 86400; 
-  let dps = getWeaponAtk() * 1.5;
+  let dps = getWeaponAtk() * 1.6;
   let totalDmg = dps * seconds;
-  
   monster.currentHp -= totalDmg;
   let slimesDefeated = 0;
   while (monster.currentHp <= 0) {
@@ -161,20 +147,15 @@ function simulateOfflineProgress(seconds) {
     monster.currentHp += monster.maxHp;
   }
   monster.typeIndex = (monster.stage - 1) % YOKAI_DATABASE.length;
-  
-  let goldEarned = Math.floor(slimesDefeated * 15 * Math.pow(1.3, monster.stage/10));
+  let goldEarned = Math.floor(slimesDefeated * 18 * Math.pow(1.3, monster.stage/10));
   player.gold += goldEarned;
-  player.exp += slimesDefeated * 18;
-  
+  player.exp += slimesDefeated * 20;
   while (player.exp >= player.level * player.expToNextLevel) { levelUp(); }
-  
   updateUI(); updateExpUI(); applyYokaiVisuals(); saveGameData();
   setTimeout(() => { alert(`💤 歸陣報告！修練期間自動祓除 ${slimesDefeated} 隻妖怪！獲得 🪙 ${goldEarned} 財貨！`); }, 600);
 }
 
-/* ============================================================
-   📌 靜態裝備欄生成
-   ============================================================ */
+/* 裝備卡片 */
 function buildStaticEquipmentCards() {
   const wpContainer = document.getElementById("weapon");
   const sdContainer = document.getElementById("shield");
@@ -258,9 +239,7 @@ function updateCharacter() {
   if(document.getElementById("sdCostText")) document.getElementById("sdCostText").innerText = `🪙${getUpgradeCost(player.shield.level)}`;
 }
 
-/* ============================================================
-   🎵 分頁控管與連動狀態
-   ============================================================ */
+/* 分頁與遊戲邏輯 */
 function switchPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
@@ -304,6 +283,7 @@ function answer(n){
     score += dmg;
     player.gold += 18; 
     damageMonster(dmg); 
+    triggerSlashEffect(true);
   } else {
     combo = Math.max(0, combo - 3);
   }
@@ -371,23 +351,110 @@ function triggerMonsterHit() {
 
 function backHome() { switchPage('homePage'); }
 
-/* ============================================================
-   🕹️ 點擊怪獸處理
-   ============================================================ */
+/* 點擊處理 */
 function handleMonsterClick(e) {
   e.stopPropagation(); 
   const now = Date.now();
   if (now - lastClickTime < 200) return; 
   lastClickTime = now;
-  
   const dmg = calculateDamage(true);
   damageMonster(dmg);
+  triggerSlashEffect(false);
 }
 
-document.getElementById("monsterBattleBox")?.addEventListener("click", handleMonsterClick);
-document.getElementById("homeMonsterWrapper")?.addEventListener("click", handleMonsterClick);
+/* TT2 砍痕特效 */
+const slashCanvas = document.getElementById('slashCanvas');
+const slashCtx = slashCanvas.getContext('2d');
+let slashes = [];
 
-/* 每秒鐘安全掛機計算 */
+class Slash {
+  constructor(x, y, angle) {
+    this.x = x;
+    this.y = y;
+    this.angle = angle;
+    this.life = 28;
+    this.maxLife = 28;
+    this.width = 6 + Math.random() * 8;
+    this.length = 80 + Math.random() * 60;
+    this.alpha = 1;
+    this.trail = [];
+  }
+  update() {
+    this.life--;
+    this.alpha = this.life / this.maxLife;
+    this.trail.push({x: this.x, y: this.y});
+    if (this.trail.length > 8) this.trail.shift();
+  }
+  draw() {
+    slashCtx.save();
+    slashCtx.translate(this.x, this.y);
+    slashCtx.rotate(this.angle);
+    
+    slashCtx.strokeStyle = `rgba(255, 255, 240, ${this.alpha})`;
+    slashCtx.lineWidth = this.width;
+    slashCtx.shadowBlur = 25;
+    slashCtx.shadowColor = '#fff7c0';
+    slashCtx.beginPath();
+    slashCtx.moveTo(0, 0);
+    slashCtx.lineTo(this.length, 0);
+    slashCtx.stroke();
+    
+    slashCtx.strokeStyle = `rgba(255, 240, 180, ${this.alpha * 0.9})`;
+    slashCtx.lineWidth = this.width * 0.45;
+    slashCtx.shadowBlur = 40;
+    slashCtx.shadowColor = '#ffffa0';
+    slashCtx.beginPath();
+    slashCtx.moveTo(0, 0);
+    slashCtx.lineTo(this.length, 0);
+    slashCtx.stroke();
+    
+    for (let i = 0; i < this.trail.length; i++) {
+      const a = (i / this.trail.length) * this.alpha * 0.6;
+      slashCtx.strokeStyle = `rgba(255, 220, 140, ${a})`;
+      slashCtx.lineWidth = this.width * 0.6 * (i / this.trail.length);
+      slashCtx.beginPath();
+      slashCtx.moveTo(this.trail[i].x - this.x, this.trail[i].y - this.y);
+      slashCtx.lineTo(this.trail[i].x - this.x + this.length * 0.6, this.trail[i].y - this.y);
+      slashCtx.stroke();
+    }
+    slashCtx.restore();
+  }
+}
+
+function createSlashBurst(x, y, count = 5) {
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.random() - 0.5) * 1.8 + (Math.random() > 0.5 ? 0 : Math.PI);
+    slashes.push(new Slash(x + (Math.random()-0.5)*60, y + (Math.random()-0.5)*60, angle));
+  }
+}
+
+function animateSlashes() {
+  slashCtx.clearRect(0, 0, slashCanvas.width, slashCanvas.height);
+  for (let i = slashes.length - 1; i >= 0; i--) {
+    slashes[i].update();
+    slashes[i].draw();
+    if (slashes[i].life <= 0) slashes.splice(i, 1);
+  }
+  requestAnimationFrame(animateSlashes);
+}
+animateSlashes();
+
+function triggerSlashEffect(isBig = false) {
+  const rect = document.getElementById('gameMonster').getBoundingClientRect();
+  const containerRect = document.querySelector('.game-container').getBoundingClientRect();
+  const centerX = rect.left - containerRect.left + rect.width / 2;
+  const centerY = rect.top - containerRect.top + rect.height / 2 - 30;
+  createSlashBurst(centerX, centerY, isBig ? 8 : 5);
+  
+  if (isBig) {
+    const monster = document.getElementById('gameMonster');
+    monster.style.transition = 'transform 0.08s';
+    monster.style.transform = 'scale(0.85) rotate(8deg)';
+    setTimeout(() => { monster.style.transform = 'scale(1) rotate(0)'; }, 80);
+  }
+}
+
+/* 掛機 */
 setInterval(() => {
   const now = Date.now(); 
   let elapsedMs = now - lastHeartbeat;
@@ -404,113 +471,9 @@ setInterval(() => {
   }
 }, 1000);
 
-/* ============================================================
-   🎇 TT2 風格高級砍痕特效 (Canvas Particle)
-   ============================================================ */
-const slashCanvas = document.getElementById('slashCanvas');
-const slashCtx = slashCanvas.getContext('2d');
-let slashes = [];
+document.getElementById("monsterBattleBox")?.addEventListener("click", handleMonsterClick);
+document.getElementById("homeMonsterWrapper")?.addEventListener("click", handleMonsterClick);
 
-class Slash {
-  constructor(x, y, angle) {
-    this.x = x;
-    this.y = y;
-    this.angle = angle;
-    this.life = 28;           // 持續幀數
-    this.maxLife = 28;
-    this.width = 6 + Math.random() * 8;
-    this.length = 80 + Math.random() * 60;
-    this.alpha = 1;
-    this.trail = [];
-  }
-  
-  update() {
-    this.life--;
-    this.alpha = this.life / this.maxLife;
-    this.trail.push({x: this.x, y: this.y});
-    if (this.trail.length > 8) this.trail.shift();
-  }
-  
-  draw() {
-    slashCtx.save();
-    slashCtx.translate(this.x, this.y);
-    slashCtx.rotate(this.angle);
-    
-    // 主刀光
-    slashCtx.strokeStyle = `rgba(255, 255, 240, ${this.alpha})`;
-    slashCtx.lineWidth = this.width;
-    slashCtx.shadowBlur = 25;
-    slashCtx.shadowColor = '#fff7c0';
-    slashCtx.beginPath();
-    slashCtx.moveTo(0, 0);
-    slashCtx.lineTo(this.length, 0);
-    slashCtx.stroke();
-    
-    // 亮核心
-    slashCtx.strokeStyle = `rgba(255, 240, 180, ${this.alpha * 0.9})`;
-    slashCtx.lineWidth = this.width * 0.45;
-    slashCtx.shadowBlur = 40;
-    slashCtx.shadowColor = '#ffffa0';
-    slashCtx.beginPath();
-    slashCtx.moveTo(0, 0);
-    slashCtx.lineTo(this.length, 0);
-    slashCtx.stroke();
-    
-    // 殘影拖尾
-    for (let i = 0; i < this.trail.length; i++) {
-      const a = (i / this.trail.length) * this.alpha * 0.6;
-      slashCtx.strokeStyle = `rgba(255, 220, 140, ${a})`;
-      slashCtx.lineWidth = this.width * 0.6 * (i / this.trail.length);
-      slashCtx.beginPath();
-      slashCtx.moveTo(this.trail[i].x - this.x, this.trail[i].y - this.y);
-      slashCtx.lineTo(this.trail[i].x - this.x + this.length * 0.6, this.trail[i].y - this.y);
-      slashCtx.stroke();
-    }
-    
-    slashCtx.restore();
-  }
-}
-
-function createSlashBurst(x, y, count = 5) {
-  for (let i = 0; i < count; i++) {
-    const angle = (Math.random() - 0.5) * 1.8 + (Math.random() > 0.5 ? 0 : Math.PI);
-    slashes.push(new Slash(x + (Math.random()-0.5)*60, y + (Math.random()-0.5)*60, angle));
-  }
-}
-
-function animateSlashes() {
-  slashCtx.clearRect(0, 0, slashCanvas.width, slashCanvas.height);
-  
-  for (let i = slashes.length - 1; i >= 0; i--) {
-    slashes[i].update();
-    slashes[i].draw();
-    if (slashes[i].life <= 0) slashes.splice(i, 1);
-  }
-  
-  requestAnimationFrame(animateSlashes);
-}
-animateSlashes();
-
-/* 在答題正確和點擊妖怪時觸發特效 */
-function triggerSlashEffect(isBig = false) {
-  const rect = document.getElementById('gameMonster').getBoundingClientRect();
-  const gameContainer = document.querySelector('.game-container');
-  const containerRect = gameContainer.getBoundingClientRect();
-  
-  const centerX = rect.left - containerRect.left + rect.width / 2;
-  const centerY = rect.top - containerRect.top + rect.height / 2 - 30;
-  
-  createSlashBurst(centerX, centerY, isBig ? 8 : 5);
-  
-  // 額外畫面震動
-  if (isBig) {
-    const monster = document.getElementById('gameMonster');
-    monster.style.transition = 'transform 0.08s';
-    monster.style.transform = 'scale(0.85) rotate(8deg)';
-    setTimeout(() => { monster.style.transform = 'scale(1) rotate(0)'; }, 80);
-  }
-}
-// 確保全部 DOM 載入完成後安全運行初始化
 window.addEventListener("DOMContentLoaded", () => {
   loadGameData();
 });
