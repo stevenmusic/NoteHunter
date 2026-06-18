@@ -2,47 +2,52 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>音符獵人 - 和風錄</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="app-wrapper">
+        <div class="game-container">
+            <!-- 裝飾邊框 -->
+            <div class="frame-decor top-left"></div>
+            <div class="frame-decor top-right"></div>
+            <div class="frame-decor bottom-left"></div>
+            <div class="frame-decor bottom-right"></div>
 
-    <div class="game-container">
-        <!-- 頂部資訊欄：加上了裝飾性邊線 -->
-        <header class="header">
-            <div class="header-inner">
-                <div class="stats-row">
-                    <span>修行者</span>
-                    <span id="levelDisplay">Lv.1</span>
-                    <span>金：<span id="goldDisplay">0</span></span>
-                </div>
-                <div class="hp-bar-wrapper">
-                    <div class="monster-name">迷途小鬼</div>
-                    <div class="hp-bar-bg">
-                        <div class="hp-bar-fill" id="hpFill" style="width: 100%;"></div>
+            <header class="header">
+                <div class="header-content">
+                    <div class="stats-row">
+                        <span class="label">修行者</span>
+                        <span id="levelDisplay" class="value">Lv.1</span>
+                        <span class="gold-box">金：<span id="goldDisplay">0</span></span>
                     </div>
-                    <div class="hp-text" id="hpText">100 / 100</div>
+                    <div class="hp-bar-wrapper">
+                        <div class="monster-name">「 禍津之鬼 」</div>
+                        <div class="hp-bar-bg">
+                            <div class="hp-bar-fill" id="hpFill" style="width: 100%;"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </header>
+            </header>
 
-        <!-- 中間戰鬥區：確保史萊姆永遠置中 -->
-        <main class="main-content">
-            <div class="slime-wrapper" id="slime">
-                <div class="slime-body">
-                    <div class="slime-eye left"></div>
-                    <div class="slime-eye right"></div>
+            <main class="main-content">
+                <div class="battle-arena">
+                    <div class="slime-wrapper" id="slime">
+                        <div class="aura"></div>
+                        <div class="slime-body">
+                            <div class="slime-eye left"></div>
+                            <div class="slime-eye right"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
 
-        <!-- 底部導航：改用更有質感的按鈕樣式 -->
-        <nav class="nav-bar">
-            <button class="nav-btn">退魔</button>
-            <button class="nav-btn">商店</button>
-        </nav>
+            <nav class="nav-bar">
+                <button class="nav-btn">退魔之卷</button>
+                <button class="nav-btn">商店</button>
+            </nav>
+        </div>
     </div>
-
-    <script src="game.js"></script>
 </body>
 </html>
