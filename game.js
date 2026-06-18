@@ -5,24 +5,59 @@ const ICON_WEAPON = `<svg viewBox="0 0 64 64" width="44" height="44"><defs><line
 const ICON_SHIELD = `<svg viewBox="0 0 64 64" width="44" height="44"><defs><linearGradient id="s" x1="0" x2="1"><stop offset="0%" stop-color="#e6c280"/><stop offset="100%" stop-color="#aa851c"/></linearGradient></defs><path d="M32 6 C45 6 54 14 54 34 C54 50 32 60 32 60 C32 60 10 50 10 34 C10 14 19 6 32 6 Z" fill="url(#s)" stroke="#1c1b1a" stroke-width="2.5"/><circle cx="32" cy="32" r="10" fill="none" stroke="#bc002d" stroke-width="3"/></svg>`;
 
 /* ============================================================
-   🎵 音符位置
+   📥 載入音符題庫 (支援 questions.js)
    ============================================================ */
-const notePositions = {
-    treble: [
-        { note: "C", top: 150 }, { note: "D", top: 140 }, { note: "E", top: 130 },
-        { note: "F", top: 120 }, { note: "G", top: 110 }, { note: "A", top: 100 },
-        { note: "B", top: 90 }, { note: "C", top: 80 }, { note: "D", top: 70 },
-        { note: "E", top: 60 }, { note: "F", top: 50 }, { note: "G", top: 40 },
-        { note: "A", top: 30 }, { note: "B", top: 20 }, { note: "C", top: 12 }
-    ],
-    bass: [
-        { note: "C", top: 168 }, { note: "D", top: 158 }, { note: "E", top: 148 },
-        { note: "F", top: 138 }, { note: "G", top: 130 }, { note: "A", top: 120 },
-        { note: "B", top: 110 }, { note: "C", top: 100 }, { note: "D", top: 90 },
-        { note: "E", top: 80 }, { note: "F", top: 70 }, { note: "G", top: 60 },
-        { note: "A", top: 50 }, { note: "B", top: 40 }, { note: "C", top: 30 }
-    ]
-};
+let questionBank = null;
+try {
+    if (typeof NOTE_QUESTIONS !== 'undefined' && NOTE_QUESTIONS) {
+        questionBank = NOTE_QUESTIONS;
+        console.log('✅ 已載入 questions.js 題庫');
+    }
+} catch(e) {
+    console.warn('⚠️ 無法載入 questions.js');
+}
+
+// 備用題庫（如果外部檔案未載入）
+if (!questionBank) {
+    console.log('📝 使用內建備用題庫');
+    questionBank = {
+        treble: [
+            { id: "t_c4", answer: "C", name: "C4", img: "assets/notes/IMG_2528.jpeg" },
+            { id: "t_d4", answer: "D", name: "D4", img: "assets/notes/IMG_2529.jpeg" },
+            { id: "t_e4", answer: "E", name: "E4", img: "assets/notes/IMG_2530.jpeg" },
+            { id: "t_f4", answer: "F", name: "F4", img: "assets/notes/IMG_2531.jpeg" },
+            { id: "t_g4", answer: "G", name: "G4", img: "assets/notes/IMG_2532.jpeg" },
+            { id: "t_a4", answer: "A", name: "A4", img: "assets/notes/IMG_2533.jpeg" },
+            { id: "t_b4", answer: "B", name: "B4", img: "assets/notes/IMG_2534.jpeg" },
+            { id: "t_c5", answer: "C", name: "C5", img: "assets/notes/IMG_2535.jpeg" },
+            { id: "t_d5", answer: "D", name: "D5", img: "assets/notes/IMG_2536.jpeg" },
+            { id: "t_e5", answer: "E", name: "E5", img: "assets/notes/IMG_2537.jpeg" },
+            { id: "t_f5", answer: "F", name: "F5", img: "assets/notes/IMG_2538.jpeg" },
+            { id: "t_g5", answer: "G", name: "G5", img: "assets/notes/IMG_2539.jpeg" },
+            { id: "t_a5", answer: "A", name: "A5", img: "assets/notes/IMG_2540.jpeg" },
+            { id: "t_b5", answer: "B", name: "B5", img: "assets/notes/IMG_2541.jpeg" },
+            { id: "t_c6", answer: "C", name: "C6", img: "assets/notes/IMG_2542.jpeg" }
+        ],
+        bass: [
+            // 低音譜號可後續補充
+            { id: "b_c2", answer: "C", name: "C2", img: "assets/notes/bass_c2.jpeg" },
+            { id: "b_d2", answer: "D", name: "D2", img: "assets/notes/bass_d2.jpeg" },
+            { id: "b_e2", answer: "E", name: "E2", img: "assets/notes/bass_e2.jpeg" },
+            { id: "b_f2", answer: "F", name: "F2", img: "assets/notes/bass_f2.jpeg" },
+            { id: "b_g2", answer: "G", name: "G2", img: "assets/notes/bass_g2.jpeg" },
+            { id: "b_a2", answer: "A", name: "A2", img: "assets/notes/bass_a2.jpeg" },
+            { id: "b_b2", answer: "B", name: "B2", img: "assets/notes/bass_b2.jpeg" },
+            { id: "b_c3", answer: "C", name: "C3", img: "assets/notes/bass_c3.jpeg" },
+            { id: "b_d3", answer: "D", name: "D3", img: "assets/notes/bass_d3.jpeg" },
+            { id: "b_e3", answer: "E", name: "E3", img: "assets/notes/bass_e3.jpeg" },
+            { id: "b_f3", answer: "F", name: "F3", img: "assets/notes/bass_f3.jpeg" },
+            { id: "b_g3", answer: "G", name: "G3", img: "assets/notes/bass_g3.jpeg" },
+            { id: "b_a3", answer: "A", name: "A3", img: "assets/notes/bass_a3.jpeg" },
+            { id: "b_b3", answer: "B", name: "B3", img: "assets/notes/bass_b3.jpeg" },
+            { id: "b_c4", answer: "C", name: "C4", img: "assets/notes/bass_c4.jpeg" }
+        ]
+    };
+}
 
 /* ============================================================
    🎯 音效引擎
@@ -123,6 +158,7 @@ const YOKAI_DATABASE = [
 ];
 
 let currentNote = "";
+let currentQuestion = null;
 let currentMode = "treble";
 let score = 0;
 let combo = 0;
@@ -161,7 +197,7 @@ function getComboMultiplier() {
 }
 
 /* ============================================================
-   ✅ 修正 1: 史萊姆表情（全域版 - 確保顯示）
+   😊 史萊姆表情（全域版）
    ============================================================ */
 const SLIME_EXPRESSIONS = ['normal', 'happy', 'surprised', 'angry', 'crying'];
 
@@ -170,7 +206,6 @@ function getRandomExpression() {
 }
 
 function applySlimeExpression(monsterId, expression) {
-    // 支援 home、game、global
     const face = document.getElementById(monsterId + 'SlimeFace');
     if (!face) return;
 
@@ -201,7 +236,7 @@ function applySlimeExpression(monsterId, expression) {
 }
 
 /* ============================================================
-   ✅ 修正 2: 五種砍痕（確保顯示在 DOM 中）
+   🗡️ 五種砍痕
    ============================================================ */
 const SLASH_STYLES = [
     { id: 'slash1', label: '輕斬', rotation: -25, scale: 0.7, color: '#ff6b8a', duration: 0.3, icon: '⚔️' },
@@ -239,7 +274,7 @@ function applySlashEffect(monsterId, slashStyle) {
 }
 
 /* ============================================================
-   ✅ 修正 3: 顯示五種砍痕和表情在頁面上
+   ✅ 顯示五種砍痕和表情
    ============================================================ */
 function renderSlashMarks() {
     // 砍痕容器
@@ -272,25 +307,28 @@ function renderSlashMarks() {
 }
 
 /* ============================================================
-   🎨 顯示譜號（使用圖片）
+   🎨 顯示譜號與音符
    ============================================================ */
 function renderClef(mode) {
     const clefEl = document.getElementById("staffClef");
     if (!clefEl) return;
 
     const isTreble = mode === 'treble';
-    const imgPath = isTreble ? 'assets/notes/treble.png' : 'assets/notes/bass.png';
-
-    clefEl.innerHTML = `<img src="${imgPath}" alt="${isTreble ? '高音譜號' : '低音譜號'}" style="height:clamp(80px,14vh,110px);width:auto;filter:drop-shadow(0 4px 15px rgba(0,0,0,0.3));">`;
+    // 使用文字譜號（如果圖片不存在）
+    clefEl.innerHTML = `<span style="font-size:clamp(60px,10vh,80px);opacity:0.4;color:#f0e6d3;">${isTreble ? '𝄞' : '𝄢'}</span>`;
 }
 
-function renderNote(position) {
+function renderNote(question) {
     const noteEl = document.getElementById("noteNote");
     if (!noteEl) return;
 
-    const imgPath = 'assets/notes/note.png';
-    noteEl.innerHTML = `<img src="${imgPath}" alt="音符" style="height:clamp(28px,4.5vw,38px);width:auto;filter:drop-shadow(0 4px 15px rgba(255,215,0,0.2));">`;
-    noteEl.style.top = position + "px";
+    // ✅ 使用圖片顯示音符
+    if (question && question.img) {
+        noteEl.innerHTML = `<img src="${question.img}" alt="${question.name}" style="height:clamp(40px,6vw,55px);width:auto;filter:drop-shadow(0 4px 20px rgba(255,215,0,0.15));">`;
+    } else {
+        // 備用：顯示文字
+        noteEl.innerHTML = `<span style="font-size:clamp(32px,5vw,48px);color:#f1c40f;">🎵</span>`;
+    }
 }
 
 /* ============================================================
@@ -462,16 +500,8 @@ function updateCharacter() {
 }
 
 /* ============================================================
-   ✅ 修正 4: 分頁控管 + 底部導航（無三角形）
+   📱 分頁控管 + 底部導航
    ============================================================ */
-let navCollapsed = false;
-
-// ✅ 移除 toggleNav 中的三角形邏輯
-function toggleNav() {
-    // 此功能已停用 - 導航永遠展開
-    console.log('導航固定顯示，無需切換');
-}
-
 function switchPage(id) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     document.getElementById(id).classList.add("active");
@@ -501,7 +531,6 @@ function startGame(mode) {
     renderClef(mode);
     nextNote();
     startTimer();
-    // 確保表情正常
     setTimeout(() => {
         applySlimeExpression('global', 'normal');
     }, 100);
@@ -512,11 +541,25 @@ function startGame(mode) {
    ============================================================ */
 function nextNote() {
     const lookupMode = currentMode.replace('_practice', '');
-    const pool = notePositions[lookupMode] || notePositions['treble'];
+    
+    // ✅ 從 questionBank 讀取題庫
+    const pool = questionBank[lookupMode] || questionBank['treble'];
+    if (!pool || pool.length === 0) {
+        console.warn('⚠️ 題庫為空，使用預設');
+        // 使用預設音符
+        const defaultNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+        const randomNote = defaultNotes[Math.floor(Math.random() * defaultNotes.length)];
+        currentNote = randomNote;
+        currentQuestion = null;
+        renderNote(null);
+        return;
+    }
+    
     const q = pool[Math.floor(Math.random() * pool.length)];
-    currentNote = q.note;
+    currentNote = q.answer;
+    currentQuestion = q;
 
-    renderNote(q.top);
+    renderNote(q);
 
     timeLeft = MAX_TIME;
     updateTimerDisplay();
@@ -731,7 +774,7 @@ function updateTimerDisplay() {
 }
 
 /* ============================================================
-   😊 史萊姆受擊動畫（全域版）
+   😊 史萊姆受擊動畫
    ============================================================ */
 function triggerMonsterHit() {
     const globalMonster = document.getElementById('globalMonster');
@@ -757,7 +800,7 @@ function triggerMonsterHit() {
 }
 
 /* ============================================================
-   🕹️ 點擊怪獸（有冷卻限制）
+   🕹️ 點擊怪獸
    ============================================================ */
 function handleMonsterClick(e) {
     e.stopPropagation();
@@ -777,7 +820,7 @@ function handleMonsterClick(e) {
 }
 
 /* ============================================================
-   📊 UI 更新（全域版）
+   📊 UI 更新
    ============================================================ */
 function updateUI() {
     const scoreEl = document.getElementById("score");
@@ -860,7 +903,7 @@ setInterval(() => {
 }, 1000);
 
 /* ============================================================
-   ✅ 修正 5: 初始化 - 確保砍痕和表情顯示
+   🚀 初始化
    ============================================================ */
 document.addEventListener("DOMContentLoaded", function() {
     const globalWrapper = document.getElementById("globalMonsterWrapper");
@@ -879,4 +922,5 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log('🎮 音符獵人已啟動！');
     console.log('✅ 修正：史萊姆不擋等級、導航固定、無三角形、恢復砍痕/表情');
+    console.log('📚 題庫載入狀態:', questionBank ? '✅ 已載入' : '⚠️ 使用備用');
 });
