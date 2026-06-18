@@ -39,7 +39,6 @@ if (!questionBank) {
             { id: "t_c6", answer: "C", name: "C6", img: "assets/notes/IMG_2542.jpeg" }
         ],
         bass: [
-            // 低音譜號可後續補充
             { id: "b_c2", answer: "C", name: "C2", img: "assets/notes/bass_c2.jpeg" },
             { id: "b_d2", answer: "D", name: "D2", img: "assets/notes/bass_d2.jpeg" },
             { id: "b_e2", answer: "E", name: "E2", img: "assets/notes/bass_e2.jpeg" },
@@ -197,14 +196,8 @@ function getComboMultiplier() {
 }
 
 /* ============================================================
-   😊 史萊姆表情（全域版）
+   😊 史萊姆永遠微笑
    ============================================================ */
-const SLIME_EXPRESSIONS = ['normal', 'happy', 'surprised', 'angry', 'crying'];
-
-function getRandomExpression() {
-    return SLIME_EXPRESSIONS[Math.floor(Math.random() * SLIME_EXPRESSIONS.length)];
-}
-
 function applySlimeExpression(monsterId, expression) {
     const face = document.getElementById(monsterId + 'SlimeFace');
     if (!face) return;
@@ -213,97 +206,51 @@ function applySlimeExpression(monsterId, expression) {
     const leftEye = face.querySelector('.slime-eye.left');
     const rightEye = face.querySelector('.slime-eye.right');
 
+    // ✅ 永遠保持微笑
     if (mouth) {
-        mouth.className = 'slime-mouth';
-        mouth.classList.add(expression);
+        mouth.className = 'slime-mouth normal';
     }
-
     if (leftEye) {
         leftEye.className = 'slime-eye left';
-        if (expression === 'happy') leftEye.classList.add('happy');
-        else if (expression === 'surprised') leftEye.classList.add('surprised');
-        else if (expression === 'angry') leftEye.classList.add('angry');
-        else if (expression === 'crying') leftEye.classList.add('crying');
     }
-
     if (rightEye) {
         rightEye.className = 'slime-eye right';
-        if (expression === 'happy') rightEye.classList.add('happy');
-        else if (expression === 'surprised') rightEye.classList.add('surprised');
-        else if (expression === 'angry') rightEye.classList.add('angry');
-        else if (expression === 'crying') rightEye.classList.add('crying');
     }
 }
 
 /* ============================================================
-   🗡️ 五種砍痕
+   🗡️ 五種砍痕特效（顯示在史萊姆身上）
    ============================================================ */
-const SLASH_STYLES = [
-    { id: 'slash1', label: '輕斬', rotation: -25, scale: 0.7, color: '#ff6b8a', duration: 0.3, icon: '⚔️' },
-    { id: 'slash2', label: '斜劈', rotation: 15, scale: 1.0, color: '#ff2a6d', duration: 0.35, icon: '🗡️' },
-    { id: 'slash3', label: '重斬', rotation: -45, scale: 1.3, color: '#ff0055', duration: 0.4, icon: '💢' },
-    { id: 'slash4', label: '逆襲', rotation: 60, scale: 1.1, color: '#ff4488', duration: 0.3, icon: '🔥' },
-    { id: 'slash5', label: '絕殺', rotation: -70, scale: 1.5, color: '#ff0044', duration: 0.45, icon: '💥' }
-];
-
-function getRandomSlash() {
-    return SLASH_STYLES[Math.floor(Math.random() * SLASH_STYLES.length)];
-}
-
-function applySlashEffect(monsterId, slashStyle) {
+function applySlashEffect(monsterId, slashType) {
     const slash = document.getElementById(monsterId + 'SlashEffect');
     if (!slash) return;
 
-    slash.className = 'slash-effect active';
-    slash.style.setProperty('--slash-rotation', slashStyle.rotation + 'deg');
-    slash.style.setProperty('--slash-scale', slashStyle.scale);
-    slash.style.setProperty('--slash-color', slashStyle.color);
-    slash.style.setProperty('--slash-duration', slashStyle.duration + 's');
-
-    slash.textContent = slashStyle.icon;
-
-    slash.style.animation = 'none';
+    // 清除所有砍痕類別
+    slash.className = 'slash-effect';
+    
+    // 強制重繪
     void slash.offsetHeight;
-    slash.style.animation = `slashAnim ${slashStyle.duration}s ease-out forwards`;
-
+    
+    // 根據類型添加不同砍痕 (0-4)
+    const types = ['slash-1', 'slash-2', 'slash-3', 'slash-4', 'slash-5'];
+    const type = types[slashType % types.length];
+    slash.classList.add(type);
+    
+    // 自動清除
     setTimeout(() => {
-        slash.classList.remove('active');
-        slash.style.animation = '';
-        slash.textContent = '';
-    }, slashStyle.duration * 1000 + 100);
+        slash.className = 'slash-effect';
+    }, 600);
 }
 
-/* ============================================================
-   ✅ 顯示五種砍痕和表情
-   ============================================================ */
-function renderSlashMarks() {
-    // 砍痕容器
-    const slashContainer = document.getElementById('slashContainer');
-    if (slashContainer) {
-        slashContainer.innerHTML = '';
-        const slashIcons = ['⚔️', '🗡️', '💢', '🔥', '💥'];
-        slashIcons.forEach((icon, index) => {
-            const span = document.createElement('span');
-            span.className = 'slash-mark';
-            span.textContent = icon;
-            span.dataset.slash = index + 1;
-            span.title = ['輕斬', '斜劈', '重斬', '逆襲', '絕殺'][index];
-            slashContainer.appendChild(span);
-        });
-    }
+// 隨機砍痕
+function getRandomSlashType() {
+    return Math.floor(Math.random() * 5);
+}
 
-    // 表情容器
-    const faceContainer = document.getElementById('faceContainer');
-    if (faceContainer) {
-        faceContainer.innerHTML = '';
-        const faces = ['😊', '😮', '😡', '😢', '😈'];
-        faces.forEach((emoji) => {
-            const span = document.createElement('span');
-            span.className = 'face-mark';
-            span.textContent = emoji;
-            faceContainer.appendChild(span);
-        });
-    }
+// 觸發隨機砍痕
+function triggerRandomSlash() {
+    const type = getRandomSlashType();
+    applySlashEffect('global', type);
 }
 
 /* ============================================================
@@ -314,7 +261,6 @@ function renderClef(mode) {
     if (!clefEl) return;
 
     const isTreble = mode === 'treble';
-    // 使用文字譜號（如果圖片不存在）
     clefEl.innerHTML = `<span style="font-size:clamp(60px,10vh,80px);opacity:0.4;color:#f0e6d3;">${isTreble ? '𝄞' : '𝄢'}</span>`;
 }
 
@@ -322,11 +268,9 @@ function renderNote(question) {
     const noteEl = document.getElementById("noteNote");
     if (!noteEl) return;
 
-    // ✅ 使用圖片顯示音符
     if (question && question.img) {
         noteEl.innerHTML = `<img src="${question.img}" alt="${question.name}" style="height:clamp(40px,6vw,55px);width:auto;filter:drop-shadow(0 4px 20px rgba(255,215,0,0.15));">`;
     } else {
-        // 備用：顯示文字
         noteEl.innerHTML = `<span style="font-size:clamp(32px,5vw,48px);color:#f1c40f;">🎵</span>`;
     }
 }
@@ -542,11 +486,9 @@ function startGame(mode) {
 function nextNote() {
     const lookupMode = currentMode.replace('_practice', '');
     
-    // ✅ 從 questionBank 讀取題庫
     const pool = questionBank[lookupMode] || questionBank['treble'];
     if (!pool || pool.length === 0) {
         console.warn('⚠️ 題庫為空，使用預設');
-        // 使用預設音符
         const defaultNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
         const randomNote = defaultNotes[Math.floor(Math.random() * defaultNotes.length)];
         currentNote = randomNote;
@@ -774,26 +716,28 @@ function updateTimerDisplay() {
 }
 
 /* ============================================================
-   😊 史萊姆受擊動畫
+   😊 史萊姆受擊動畫 + 砍痕特效
    ============================================================ */
 function triggerMonsterHit() {
     const globalMonster = document.getElementById('globalMonster');
     const globalHit = document.getElementById('globalHitEffect');
 
-    const expression = getRandomExpression();
-    const slashStyle = getRandomSlash();
-
+    // ✅ 隨機選擇一種砍痕 (0-4)
+    const slashType = getRandomSlashType();
+    
     if (globalMonster) {
         globalMonster.classList.add('damaged');
-        applySlimeExpression('global', expression);
-        applySlashEffect('global', slashStyle);
+        // ✅ 顯示砍痕特效
+        applySlashEffect('global', slashType);
     }
     if (globalHit) globalHit.classList.add('animate');
 
     setTimeout(() => {
         if (globalMonster) {
             globalMonster.classList.remove('damaged');
-            applySlimeExpression('global', 'normal');
+            // ✅ 清除砍痕
+            const slash = document.getElementById('globalSlashEffect');
+            if (slash) slash.className = 'slash-effect';
         }
         if (globalHit) globalHit.classList.remove('animate');
     }, 500);
@@ -909,18 +853,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const globalWrapper = document.getElementById("globalMonsterWrapper");
     if (globalWrapper) globalWrapper.addEventListener("click", handleMonsterClick);
 
-    // ✅ 渲染砍痕和表情
-    renderSlashMarks();
-
     loadGameData();
     renderClef('treble');
     updateUI();
 
-    setTimeout(() => {
-        applySlimeExpression('global', 'normal');
-    }, 100);
+    // ✅ 史萊姆永遠微笑
+    applySlimeExpression('global', 'normal');
 
     console.log('🎮 音符獵人已啟動！');
-    console.log('✅ 修正：史萊姆不擋等級、導航固定、無三角形、恢復砍痕/表情');
+    console.log('✅ 史萊姆置中放大 + 永遠微笑');
+    console.log('✅ 五種砍痕特效：斜劈、反劈、十字斬、弧形斬、爆破斬');
     console.log('📚 題庫載入狀態:', questionBank ? '✅ 已載入' : '⚠️ 使用備用');
 });
