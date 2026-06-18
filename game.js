@@ -12,18 +12,76 @@ const BASS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="60"
 const WHOLE_NOTE_SVG = `<svg width="30" height="22" viewBox="-15 -11 30 22"><ellipse cx="0" cy="0" rx="12" ry="7.5" fill="none" stroke="#1a1a1a" stroke-width="3.5"/></svg>`;
 
 /* ============================================================
-   👤 核心資料結構
+   🎯 【新增】音效引擎（Web Audio API）
+   ============================================================ */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new AudioCtx();
+  }
+}
+
+function playTone(frequency, duration = 0.15, type = 'sine', volume = 0.3) {
+  try {
+    initAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch(e) { /* 靜默處理 */ }
+}
+
+function playCorrectSound() {
+  playTone(523.25, 0.1, 'sine', 0.3); // C5
+  setTimeout(() => playTone(659.25, 0.1, 'sine', 0.3), 100); // E5
+  setTimeout(() => playTone(783.99, 0.15, 'sine', 0.3), 200); // G5
+}
+
+function playWrongSound() {
+  playTone(200, 0.3, 'sawtooth', 0.2);
+}
+
+function playComboSound(comboCount) {
+  if (comboCount >= 10) playTone(880, 0.1, 'square', 0.2);
+  else if (comboCount >= 5) playTone(659.25, 0.1, 'square', 0.2);
+}
+
+/* ============================================================
+   🗣️ 【新增】語音朗讀（Web Speech API）
+   ============================================================ */
+function speakNote(noteName) {
+  try {
+    const utterance = new SpeechSynthesisUtterance(noteName);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.8;
+    utterance.pitch = 1.0;
+    utterance.volume = 0.8;
+    window.speechSynthesis.speak(utterance);
+  } catch(e) { /* 靜默處理 */ }
+}
+
+/* ============================================================
+   👤 核心資料結構（擴充）
    ============================================================ */
 let player = {
   name: "Steven", level: 1, exp: 0, expToNextLevel: 100, gold: 0,
-  hp: 100, atk: 10, def: 5, critChance: 0.12, critMultiplier: 1.5,
+  hp: 100, maxHp: 100, atk: 10, def: 5, critChance: 0.12, critMultiplier: 1.5,
+  lives: 5, maxLives: 5, // ❤️ 新增生命值
   weapon: { name:"武者打刀", atkBonus:2, level: 1 }, 
   shield: { name:"御神木盾", defBonus:1, critBonus: 0, level: 1 }
 };
 
 let monster = { level: 1, maxHp: 50, currentHp: 50, typeIndex: 0 };
 
-/* 🏮 設計十種精緻日式妖怪資料庫 */
+/* 🏮 妖怪資料庫 */
 const YOKAI_DATABASE = [
   { name: "糰子暮泥", icon: "💧", bg: "radial-gradient(circle at 35% 35%, #9ae5f3, #4eaec5)" }, 
   { name: "古剎提燈", icon: "🏮", bg: "radial-gradient(circle at 35% 35%, #ffb366, #d96600)" },
@@ -37,8 +95,27 @@ const YOKAI_DATABASE = [
   { name: "遠古八岐大蛇", icon: "🐉", bg: "radial-gradient(circle at 35% 35%, #ffd700, #b8860b)" }
 ];
 
-let currentNote = ""; let currentMode = "treble";
-let score = 0; let combo = 0; let lastClickTime = 0; let lastHeartbeat = Date.now();
+let currentNote = ""; 
+let currentMode = "treble";
+let score = 0; 
+let combo = 0; 
+let maxCombo = 0; // 🔥 新增：最高連擊紀錄
+let monstersDefeated = 0; // 🔥 新增：擊敗怪物數
+let lastClickTime = 0; 
+let lastHeartbeat = Date.now();
+
+// ⏱️ 【新增】計時器相關
+let timerInterval = null;
+let timeLeft = 10;
+const MAX_TIME = 10;
+
+// 🎯 【新增】Combo 倍率計算
+function getComboMultiplier() {
+  if (combo >= 10) return 3;
+  if (combo >= 5) return 2;
+  if (combo >= 3) return 1.5;
+  return 1;
+}
 
 const notePositions = {
   treble: [
@@ -50,7 +127,7 @@ const notePositions = {
   bass: [
     { note:"C", top:168 }, { note:"D", top:158 }, { note:"E", top:148 }, { note:"F", top:138 },
     { note:"G", top:130 }, { note:"A", top:120 }, { note:"B", top:110 }, { note:"C", top:100 },
-    { note:"D", top:90 },  { note:"E", top:80 },  { note:"F", top:70 },  { note:"G", stroke:60, top:60 },
+    { note:"D", top:90 },  { note:"E", top:80 },  { note:"F", top:70 },  { note:"G", top:60 },
     { note:"A", top:50 },  { note:"B", top:40 },  { note:"C", top:30 }
   ]
 };
@@ -58,61 +135,138 @@ const notePositions = {
 function getWeaponAtk() { return player.atk + (player.weapon.atkBonus || 0); }
 function getTotalCritChance() { return player.critChance + (player.shield.critBonus || 0); }
 
-function damageMonster(amount, skipVisuals = false) {
-  monster.currentHp -= amount;
-  if (!skipVisuals) triggerMonsterHit();
+/* ============================================================
+   ❤️ 【新增】生命值系統
+   ============================================================ */
+function loseLife() {
+  player.lives--;
+  if (player.lives < 0) player.lives = 0;
+  updateUI();
   
-  while (monster.currentHp <= 0) {
-    executeSpawnNextMonster();
+  // 震動回饋（如果有）
+  if (navigator.vibrate) navigator.vibrate(50);
+  
+  if (player.lives <= 0) {
+    gameOver();
   }
+}
+
+function gameOver() {
+  // 停止計時器
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  
+  // 顯示遊戲結束訊息
+  const scoreDisplay = document.getElementById("score");
+  if (scoreDisplay) {
+    const finalScore = score;
+    setTimeout(() => {
+      alert(`💀 魂魄消散...\n\n🏆 最終戰功: ${finalScore}\n🔥 最高連擊: ${maxCombo}\n👹 擊敗妖怪: ${monstersDefeated}\n\n返回神社重新修煉吧！`);
+    }, 300);
+  }
+  
+  // 重置生命值
+  player.lives = player.maxLives;
+  score = 0;
+  combo = 0;
+  monstersDefeated = 0;
+  
+  // 重置怪物
+  monster.level = 1;
+  monster.maxHp = 50;
+  monster.currentHp = 50;
+  monster.typeIndex = 0;
   
   updateUI();
   updateExpUI();
+  applyYokaiVisuals();
   saveGameData();
-}
-
-function executeSpawnNextMonster() {
-  monster.level++;
-  monster.maxHp = Math.floor(50 * Math.pow(1.25, monster.level - 1));
-  monster.currentHp += monster.maxHp; 
-  monster.typeIndex = (monster.level - 1) % YOKAI_DATABASE.length;
-  
-  player.gold += 10; 
-  player.exp += 15;
-  
-  levelUp();
-  applyYokaiVisuals(); 
-}
-
-function applyYokaiVisuals() {
-  const currentYokai = YOKAI_DATABASE[monster.typeIndex] || YOKAI_DATABASE[0];
-  if(document.getElementById('homeMonster')) document.getElementById('homeMonster').style.background = currentYokai.bg;
-  if(document.getElementById('gameMonster')) document.getElementById('gameMonster').style.background = currentYokai.bg;
-  if(document.getElementById('homeMonsterIcon')) document.getElementById('homeMonsterIcon').innerText = currentYokai.icon;
-  if(document.getElementById('gameMonsterIcon')) document.getElementById('gameMonsterIcon').innerText = currentYokai.icon;
+  backHome();
 }
 
 /* ============================================================
-   💾 存檔與離線模擬
+   ⏱️ 【新增】計時器系統
+   ============================================================ */
+function startTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  
+  timeLeft = MAX_TIME;
+  updateTimerDisplay();
+  
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    
+    if (timeLeft <= 0) {
+      // 時間到！扣血並換題
+      playWrongSound();
+      loseLife();
+      combo = 0;
+      updateUI();
+      nextNote();
+      // 重置計時器
+      timeLeft = MAX_TIME;
+      updateTimerDisplay();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const timerEl = document.getElementById("timerDisplay");
+  if (timerEl) {
+    timerEl.textContent = `⏱️ ${timeLeft}s`;
+    // 顏色變化提示
+    if (timeLeft <= 3) {
+      timerEl.style.color = "#ff0055";
+    } else if (timeLeft <= 5) {
+      timerEl.style.color = "#ff9900";
+    } else {
+      timerEl.style.color = "#00b4db";
+    }
+  }
+}
+
+/* ============================================================
+   💾 存檔與離線模擬（擴充）
    ============================================================ */
 function saveGameData(){
-  localStorage.setItem("noteHunter", JSON.stringify({ player, score, monster, lastSavedTime: Date.now() }));
+  localStorage.setItem("noteHunter", JSON.stringify({ 
+    player, 
+    score, 
+    monster, 
+    maxCombo, 
+    monstersDefeated,
+    lastSavedTime: Date.now() 
+  }));
 }
 
 function loadGameData(){
   const data = JSON.parse(localStorage.getItem("noteHunter"));
   let offlineSeconds = 0;
   if(data){
-    player = data.player || player; score = data.score || 0; if(data.monster) monster = data.monster;
+    player = data.player || player; 
+    score = data.score || 0; 
+    if(data.monster) monster = data.monster;
+    if(data.maxCombo) maxCombo = data.maxCombo;
+    if(data.monstersDefeated) monstersDefeated = data.monstersDefeated;
     if (data.lastSavedTime) offlineSeconds = Math.floor((Date.now() - data.lastSavedTime) / 1000);
   }
+  
+  // 確保生命值存在
+  if (!player.lives) player.lives = player.maxLives || 5;
+  if (!player.maxLives) player.maxLives = 5;
+  
   if(monster.currentHp === undefined || monster.currentHp <= 0) monster.currentHp = monster.maxHp;
   if(!player.name) player.name = "雷恩";
   if(!player.weapon.level) player.weapon.level = 1; 
   if(!player.shield.level) player.shield.level = 1;
   if(player.shield.critBonus === undefined) player.shield.critBonus = 0;
 
-  // 渲染裝備卡片骨架
   buildStaticEquipmentCards();
   
   updateUI();
@@ -131,6 +285,7 @@ function simulateOfflineProgress(seconds) {
   while (monster.currentHp <= 0) {
     monster.level++;
     slimesDefeated++;
+    monstersDefeated += slimesDefeated;
     monster.maxHp = Math.floor(50 * Math.pow(1.25, monster.level - 1));
     monster.currentHp += monster.maxHp;
   }
@@ -143,11 +298,13 @@ function simulateOfflineProgress(seconds) {
   while (player.exp >= player.level * player.expToNextLevel) { levelUp(); }
   
   updateUI(); updateExpUI(); applyYokaiVisuals(); saveGameData();
-  setTimeout(() => { alert(`💤 歸陣報告！修練期間自動祓除 ${slimesDefeated} 隻妖怪！獲得 🪙 ${goldEarned} 財貨！`); }, 600);
+  setTimeout(() => { 
+    alert(`💤 歸陣報告！修練期間自動祓除 ${slimesDefeated} 隻妖怪！獲得 🪙 ${goldEarned} 財貨！`); 
+  }, 600);
 }
 
 /* ============================================================
-   📌 靜態裝備欄生成 (完美確保武器、盾牌同步渲染)
+   📌 靜態裝備欄生成
    ============================================================ */
 function buildStaticEquipmentCards() {
   const wpContainer = document.getElementById("weapon");
@@ -192,6 +349,7 @@ function upgradeWeapon() {
     updateCharacter();
     updateUI();
     saveGameData();
+    playTone(880, 0.1, 'sine', 0.2);
   }
 }
 
@@ -204,6 +362,7 @@ function upgradeShield() {
     updateCharacter();
     updateUI();
     saveGameData();
+    playTone(659.25, 0.1, 'sine', 0.2);
   }
 }
 
@@ -229,13 +388,12 @@ function updateCharacter() {
 }
 
 /* ============================================================
-   🎵 分頁控管與連動狀態修復
+   🎵 分頁控管
    ============================================================ */
 function switchPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   
-  // 同步更新底下所有導覽列按鈕的高亮狀態
   const isHome = id === "homePage";
   document.getElementById("navHomeBtn").classList.toggle("active", isHome);
   document.getElementById("navCharBtn").classList.toggle("active", !isHome);
@@ -243,16 +401,31 @@ function switchPage(id){
   document.getElementById("navCharBtnChar").classList.toggle("active", !isHome);
 
   if(id==="characterPage") updateCharacter();
-  if(id==="homePage") applyYokaiVisuals(); 
+  if(id==="homePage") {
+    applyYokaiVisuals();
+    // 停止計時器
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
 }
 
 function startGame(mode){
   currentMode = mode;
+  // 重置生命值
+  player.lives = player.maxLives;
+  combo = 0;
   switchPage("gamePage");
   nextNote();
+  // 啟動計時器
+  startTimer();
   setTimeout(applyYokaiVisuals, 50); 
 }
 
+/* ============================================================
+   🎵 核心遊戲邏輯（擴充）
+   ============================================================ */
 function nextNote(){
   const lookupMode = currentMode.replace('_practice', '');
   const pool = notePositions[lookupMode] || notePositions['treble'];
@@ -266,36 +439,157 @@ function nextNote(){
   }
   const clef = document.getElementById("staffClef");
   if(clef) clef.innerHTML = lookupMode==="treble" ? TREBLE_SVG : BASS_SVG;
+  
+  // 🔥 重置計時器
+  timeLeft = MAX_TIME;
+  updateTimerDisplay();
+  
+  // 🔥 自動朗讀音符
+  speakNote(currentNote);
 }
 
 function answer(n){
+  // 初始化音頻上下文（用戶手勢觸發）
+  initAudio();
+  
+  // 🔥 點擊時重置計時器（讓玩家有喘息空間）
+  timeLeft = Math.min(timeLeft + 2, MAX_TIME);
+  updateTimerDisplay();
+  
   if(n === currentNote){
+    const multiplier = getComboMultiplier();
     const isCrit = Math.random() < getTotalCritChance();
     const baseAtk = getWeaponAtk();
-    const finalDmg = isCrit ? Math.floor(baseAtk * player.critMultiplier) : baseAtk;
+    const finalDmg = isCrit ? Math.floor(baseAtk * player.critMultiplier * multiplier) : Math.floor(baseAtk * multiplier);
 
-    score += finalDmg;
+    score += Math.floor(finalDmg);
     combo++;
-    player.gold += 20; 
+    if (combo > maxCombo) maxCombo = combo;
+    player.gold += Math.floor(10 * multiplier);
+    
+    // ✅ 正確音效
+    playCorrectSound();
+    if (combo >= 3) playComboSound(combo);
+    
     damageMonster(finalDmg); 
+    
+    // 🔥 Combo 顯示特效提示
+    showComboEffect();
   } else {
     combo = 0;
+    // ❌ 錯誤音效 + 扣命
+    playWrongSound();
+    loseLife();
+    
+    // 怪物反擊動畫
+    triggerMonsterHit();
   }
-  updateUI(); updateExpUI(); saveGameData(); nextNote();
+  updateUI(); 
+  updateExpUI(); 
+  saveGameData(); 
+  nextNote();
+}
+
+/* ============================================================
+   🔥 【新增】Combo 特效顯示
+   ============================================================ */
+function showComboEffect() {
+  const comboEl = document.getElementById("combo");
+  if (comboEl && combo >= 3) {
+    comboEl.style.transition = "transform 0.1s";
+    comboEl.style.transform = "scale(1.5)";
+    comboEl.style.color = "#ffcc00";
+    setTimeout(() => {
+      comboEl.style.transform = "scale(1)";
+      comboEl.style.color = "";
+    }, 200);
+  }
+}
+
+function damageMonster(amount, skipVisuals = false) {
+  monster.currentHp -= amount;
+  if (!skipVisuals) triggerMonsterHit();
+  
+  while (monster.currentHp <= 0) {
+    executeSpawnNextMonster();
+  }
+  
+  updateUI();
+  updateExpUI();
+  saveGameData();
+}
+
+function executeSpawnNextMonster() {
+  monster.level++;
+  monstersDefeated++;
+  monster.maxHp = Math.floor(50 * Math.pow(1.25, monster.level - 1));
+  monster.currentHp += monster.maxHp; 
+  monster.typeIndex = (monster.level - 1) % YOKAI_DATABASE.length;
+  
+  player.gold += 10; 
+  player.exp += 15;
+  
+  // ✨ 擊敗音效
+  playTone(523.25, 0.15, 'sine', 0.2);
+  setTimeout(() => playTone(659.25, 0.15, 'sine', 0.2), 150);
+  setTimeout(() => playTone(783.99, 0.2, 'sine', 0.2), 300);
+  
+  levelUp();
+  applyYokaiVisuals(); 
+}
+
+function applyYokaiVisuals() {
+  const currentYokai = YOKAI_DATABASE[monster.typeIndex] || YOKAI_DATABASE[0];
+  if(document.getElementById('homeMonster')) document.getElementById('homeMonster').style.background = currentYokai.bg;
+  if(document.getElementById('gameMonster')) document.getElementById('gameMonster').style.background = currentYokai.bg;
+  if(document.getElementById('homeMonsterIcon')) document.getElementById('homeMonsterIcon').innerText = currentYokai.icon;
+  if(document.getElementById('gameMonsterIcon')) document.getElementById('gameMonsterIcon').innerText = currentYokai.icon;
 }
 
 function levelUp(){
   if(player.exp >= player.level * player.expToNextLevel){
     player.exp -= (player.level * player.expToNextLevel);
-    player.level++; player.atk += 2; player.hp += 10;
+    player.level++; 
+    player.atk += 2; 
+    player.hp += 10;
+    player.maxHp = player.hp;
+    
+    // 🎉 升級音效
+    playTone(523.25, 0.1, 'sine', 0.2);
+    setTimeout(() => playTone(659.25, 0.1, 'sine', 0.2), 100);
+    setTimeout(() => playTone(783.99, 0.1, 'sine', 0.2), 200);
+    setTimeout(() => playTone(1046.5, 0.2, 'sine', 0.2), 300);
+    
+    // 升級通知
+    setTimeout(() => {
+      alert(`🎉 段位晉升！你已達到 ${player.level} 段！\n攻擊力 +2，體力 +10！`);
+    }, 400);
   }
 }
 
 function updateUI(){
   if(document.getElementById("score")) document.getElementById("score").innerText = "戰功: " + score;
-  if(document.getElementById("combo")) document.getElementById("combo").innerText = "連擊: " + combo;
+  
+  // 🔥 顯示 Combo 倍率
+  const comboEl = document.getElementById("combo");
+  if(comboEl) {
+    const multiplier = getComboMultiplier();
+    const comboText = combo >= 3 ? `連擊: ${combo} ✖${multiplier}` : `連擊: ${combo}`;
+    comboEl.innerText = comboText;
+  }
+  
   if(document.getElementById("goldDisplay")) document.getElementById("goldDisplay").innerText = "🪙 " + player.gold;
   if(document.getElementById("playerName")) document.getElementById("playerName").innerText = "武者 · " + player.name;
+  
+  // ❤️ 顯示生命值
+  const livesEl = document.getElementById("livesDisplay");
+  if (livesEl) {
+    let hearts = "";
+    for (let i = 0; i < player.maxLives; i++) {
+      hearts += i < player.lives ? "❤️" : "🖤";
+    }
+    livesEl.innerText = hearts;
+  }
   
   const mName = document.getElementById("monsterName");
   const mHpText = document.getElementById("monsterHpText");
@@ -340,10 +634,17 @@ function triggerMonsterHit() {
   }, 250);
 }
 
-function backHome() { switchPage('homePage'); }
+function backHome() { 
+  // 停止計時器
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  switchPage('homePage'); 
+}
 
 /* ============================================================
-   🕹️ 點擊怪獸處理（全面改為雙倍傷害）
+   🕹️ 點擊怪獸處理
    ============================================================ */
 function handleMonsterClick(e) {
   e.stopPropagation(); 
@@ -351,17 +652,22 @@ function handleMonsterClick(e) {
   if (now - lastClickTime < 200) return; 
   lastClickTime = now;
   
+  initAudio();
   const isCrit = Math.random() < getTotalCritChance();
-  // ⚡ 點擊時強制造成基礎數值或爆擊數值的「雙倍傷害」(* 2)
   const clickDmg = isCrit ? Math.floor(getWeaponAtk() * player.critMultiplier * 2) : (getWeaponAtk() * 2);
   damageMonster(clickDmg);
+  
+  // 點擊音效
+  playTone(440, 0.05, 'sine', 0.1);
 }
 
-// 綁定本陣與戰鬥分頁中的怪獸點擊事件
+// 綁定事件
 document.getElementById("monsterBattleBox")?.addEventListener("click", handleMonsterClick);
 document.getElementById("homeMonsterWrapper")?.addEventListener("click", handleMonsterClick);
 
-/* 每秒鐘安全掛機計算 */
+/* ============================================================
+   ⏱️ 掛機計算（優化）
+   ============================================================ */
 setInterval(() => {
   const now = Date.now(); 
   let elapsedMs = now - lastHeartbeat;
@@ -378,7 +684,33 @@ setInterval(() => {
   }
 }, 1000);
 
-// 確保全部 DOM 載入完成後安全運行初始化
+/* ============================================================
+   🚀 初始化
+   ============================================================ */
 window.addEventListener("DOMContentLoaded", () => {
   loadGameData();
+  
+  // 🔥 建立生命值顯示元素（如果不存在）
+  const gameHeader = document.querySelector(".game-header");
+  if (gameHeader && !document.getElementById("livesDisplay")) {
+    const livesSpan = document.createElement("span");
+    livesSpan.id = "livesDisplay";
+    livesSpan.style.fontSize = "1.2rem";
+    livesSpan.style.marginLeft = "10px";
+    gameHeader.appendChild(livesSpan);
+  }
+  
+  // 🔥 建立計時器顯示元素（如果不存在）
+  const gameHeader2 = document.querySelector(".game-header");
+  if (gameHeader2 && !document.getElementById("timerDisplay")) {
+    const timerSpan = document.createElement("span");
+    timerSpan.id = "timerDisplay";
+    timerSpan.style.fontSize = "1.2rem";
+    timerSpan.style.marginLeft = "10px";
+    timerSpan.style.fontWeight = "bold";
+    timerSpan.style.color = "#00b4db";
+    gameHeader2.appendChild(timerSpan);
+  }
+  
+  updateUI();
 });
