@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -51,7 +51,7 @@
           </div>
         </div>
 
-        <!-- 模式選擇（已刪除御靈修煉選項） -->
+        <!-- 模式選擇 -->
         <div class="menu-box">
           <h3>🏮 進入百鬼夜行 (闖關)</h3>
           <button class="btn btn-blue" onclick="startGame('treble')">高音譜 · 斬妖卷</button>
@@ -60,8 +60,8 @@
 
         <!-- 導覽底欄 -->
         <div class="nav-bar">
-          <button id="navHomeBtn" class="nav-btn active" onclick="switchPage('homePage')">首頁</button>
-          <button id="navCharBtn" class="nav-btn" onclick="switchPage('characterPage')">英雄裝備</button>
+          <button id="navHomeBtn" class="nav-btn active" onclick="switchPage('homePage')">🏠 首頁</button>
+          <button id="navCharBtn" class="nav-btn" onclick="switchPage('characterPage')">⚔️ 英雄裝備</button>
         </div>
       </div>
     </div>
@@ -70,9 +70,11 @@
     <div id="gamePage" class="page">
       <div class="game-container">
         <div class="game-header">
-          <span id="score">戰功: 0</span>
-          <span id="combo">連擊: 0</span>
-          <button class="btn-back" onclick="backHome()">歸陣</button>
+          <span id="score">🏆 戰功: 0</span>
+          <span id="combo">🔥 連擊: 0</span>
+          <span id="livesDisplay">❤️❤️❤️❤️❤️</span>
+          <span id="timerDisplay">⏱️ 10s</span>
+          <button class="btn-back" onclick="backHome()">🏮 歸陣</button>
         </div>
 
         <!-- 戰鬥區妖怪 -->
@@ -92,7 +94,9 @@
 
         <!-- 五線譜顯示區 -->
         <div class="staff-wrapper">
-          <div class="staff-lines"><div></div><div></div><div></div><div></div><div></div></div>
+          <div class="staff-lines">
+            <div></div><div></div><div></div><div></div><div></div>
+          </div>
           <div id="staffClef"></div>
           <div id="noteNote"></div>
         </div>
@@ -126,8 +130,8 @@
 
         <!-- 導覽底欄 -->
         <div class="nav-bar">
-          <button id="navHomeBtnChar" class="nav-btn" onclick="switchPage('homePage')">首頁</button>
-          <button id="navCharBtnChar" class="nav-btn active" onclick="switchPage('characterPage')">英雄裝備</button>
+          <button id="navHomeBtnChar" class="nav-btn" onclick="switchPage('homePage')">🏠 首頁</button>
+          <button id="navCharBtnChar" class="nav-btn active" onclick="switchPage('characterPage')">⚔️ 英雄裝備</button>
         </div>
       </div>
     </div>
