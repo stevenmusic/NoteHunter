@@ -3,6 +3,8 @@
    ============================================================ */
 * { 
     box-sizing: border-box; 
+    margin: 0;
+    padding: 0;
 }
 
 html, body {
@@ -27,8 +29,8 @@ html, body {
     100% { background-position: 0% 50%; }
 }
 
-/* 💡 遊戲主容器：滿版全螢幕 + 輕透磨砂玻璃感 */
-.app {
+/* 💡 遊戲主容器 */
+.game-window {
     width: 100vw;       
     height: 100svh;
     display: flex;
@@ -44,44 +46,66 @@ html, body {
 /* ============================================================
    📊 2. 頂部玩家狀態欄 (HUD)
    ============================================================ */
-.topHUD {
-    padding: 14px 18px;
+.global-header {
+    padding: 12px 16px;
     background: linear-gradient(180deg, #fff0f3 0%, #ffe3e8 100%) !important;
     border-bottom: 3px solid #ff477e !important;
     flex-shrink: 0;
     box-shadow: 0 4px 15px rgba(255, 71, 126, 0.15);
 }
 
-.nameRow {
+.header-top-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: #d60052; 
     font-weight: 900;
-    font-size: 16px;
+    font-size: 14px;
+    gap: 6px;
 }
 
-.level {
+.player-name-badge {
+    font-size: 15px;
+    color: #d60052;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.lv-badge {
     color: #ffffff !important; 
     background: #ff2a6d;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 13px;
-    border: 1px solid #ffffff;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    border: 2px solid #ffffff;
     font-weight: bold;
     box-shadow: 0 2px 5px rgba(255, 42, 109, 0.3);
+    white-space: nowrap;
 }
 
-.expBar {
-    height: 10px;
+.gold-badge {
+    color: #d60052;
+    font-weight: 900;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.header-bottom-row {
+    margin-top: 8px;
+}
+
+.exp-bar-container {
+    height: 12px;
     background: #fff0f3;
-    border-radius: 6px;
-    margin-top: 10px;
+    border-radius: 20px;
     overflow: hidden;
     border: 2px solid #ffccd5;
+    position: relative;
 }
 
-.expFill {
+.exp-bar-fill {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, #00b4db, #00d2ff) !important;
@@ -89,72 +113,92 @@ html, body {
     transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
+.exp-bar-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 9px;
+    font-weight: 900;
+    color: #2c3e50 !important;
+    text-shadow: 0 0 4px rgba(255,255,255,0.8);
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+
 /* ============================================================
    🕹️ 3. 核心主排版區域與分頁設定
    ============================================================ */
-#content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px 16px; 
-    padding-bottom: 110px !important; 
-    -webkit-overflow-scrolling: touch;
-}
-
 .page {
     display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 16px 80px 16px;
+    -webkit-overflow-scrolling: touch;
     flex-direction: column;
-    height: auto !important;     
-    min-height: 100%;
-    gap: 16px !important;        
-    justify-content: flex-start; 
+    gap: 12px;
 }
 .page.active { 
     display: flex; 
 }
 
 h2 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 900;
     color: #ff2a6d;
-    margin-top: 4px;
-    margin-bottom: 8px;
+    margin: 0 0 4px 0;
     letter-spacing: 1px;
     text-shadow: 1px 1px 0px #fff;
 }
 
-/* 🔥【核心修正】終極全面顯形雷達：強制讓其他介面的文字與選項 100% 現形（精準排除按鈕與血條） */
-.page *:not(button):not(button *):not(svg):not(path):not(.expFill):not(#monsterHpFill):not(.hp-fill) {
+h3 {
+    font-size: 15px;
+    font-weight: 700;
     color: #2c3e50 !important;
+    margin: 0 0 8px 0;
 }
 
 /* ============================================================
    🎼 樂譜五線譜容器
    ============================================================ */
-.note-container {
+.staff-wrapper {
     width: 100%;
-    height: 190px;
+    height: 180px;
     background: #fdfaf2;
     border: 3px solid #52526e;
     border-radius: 12px;
-    margin: 10px 0;
+    margin: 4px 0;
     position: relative;
     box-shadow: 0 6px 15px rgba(0,0,0,0.06);
     overflow: hidden;
+    flex-shrink: 0;
 }
 
-.staff-line {
+.staff-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.staff-lines div {
     position: absolute;
     width: 100%;
     height: 2px;
     background: #1a1a1a;
-    z-index: 10;
     left: 0;
 }
 
+.staff-lines div:nth-child(1) { top: 20%; }
+.staff-lines div:nth-child(2) { top: 35%; }
+.staff-lines div:nth-child(3) { top: 50%; }
+.staff-lines div:nth-child(4) { top: 65%; }
+.staff-lines div:nth-child(5) { top: 80%; }
+
 #staffClef {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: 8px;
+    top: 10px;
     z-index: 2;
     line-height: 0;
 }
@@ -168,64 +212,48 @@ h2 {
     animation: pop 0.15s ease-out;
 }
 
-.dynamic-ledger {
-    position: absolute;
-    left: 62%;
-    width: 54px;
-    height: 2px;
-    background: #1a1a1a;
-    transform: translateX(-50%);
-    z-index: 10;
-}
-
 /* ============================================================
-   👾 4. 戰鬥核心：【大重構】名字與血條並排 ➔ 史萊姆在下方
+   👾 4. 戰鬥核心
    ============================================================ */
-#monsterBattleBox, .game-battle-zone {
-    display: flex !important;
-    flex-direction: row !important;       /* 💡 修正：改為橫向排列 */
-    flex-wrap: wrap !important;           /* 💡 修正：允許折行，讓史萊姆掉到下方 */
-    align-items: center !important;       /* 💡 修正：上下對齊置中 */
-    justify-content: space-between !important; /* 💡 修正：名字靠左，血條靠右 */
-    width: 100% !important;
-    padding: 12px 6px !important;
-    margin: 0 auto !important;
-    height: auto !important;
-    border: none !important;              /* 💡 修正：防禦性刪除任何莫名雜線 */
+.battle-box {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    padding: 12px 16px;
+    border: 2px solid #ffccd5;
+    box-shadow: 0 4px 12px rgba(255, 71, 126, 0.15);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
 }
 
-/* 🟢 左側：史萊姆名字與等級（不換行，靠左對齊） */
-#monsterName, .monster-name, #monsterLevel, .monster-level {
-    order: 1 !important;
-    flex: 1 !important;                   /* 自動伸展佔據左側空間 */
-    text-align: left !important;          /* 強制靠左 */
-    font-size: 20px !important;           /* 微調字型大小完美配合並排 */
+.monster-name {
+    font-size: 18px !important;
     font-weight: 900 !important;
-    margin: 0 !important;
-    padding-right: 10px !important;
+    color: #2c3e50 !important;
     text-shadow: 1px 1px 0px #fff;
-    white-space: nowrap !important;       /* 防止名字自己折行 */
+    white-space: nowrap;
+    flex: 1;
+    min-width: 100px;
 }
 
-/* 🟡 右側：【重大修正】血條容器（高對比、不換行、加厚防止數字被切） */
-[id*="monsterHp"], .monster-hp, .hp-bar-container {
-    order: 2 !important;
-    flex: 0 0 160px !important;           /* 💡 修正：固定寬度 160px 鎖死在右側不換行 */
-    height: 26px !important;              /* 💡 修正：加厚至 26px，給數字充足的容納空間 */
+.hp-bar-container {
+    flex: 0 0 140px !important;
+    height: 24px !important;
     background-color: #e2e8f0 !important; 
     border: 2px solid #cbd5e1 !important;
-    border-radius: 13px !important;
-    margin: 0 !important; 
+    border-radius: 12px !important;
     overflow: hidden !important;
     position: relative !important;
-    display: flex !important;             /* 💡 修正：改用 flex 讓內部數字精準置中 */
-    align-items: center !important;       /* 💡 修正：垂直絕對置中 */
-    justify-content: center !important;   /* 💡 修正：水平絕對置中 */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
 }
 
-/* 💡 血條桃紅漸層填色 */
-#monsterHpFill, .hp-fill {
+.hp-bar-fill {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
@@ -233,28 +261,25 @@ h2 {
     background: linear-gradient(90deg, #ff0055 0%, #ff5a79 100%) !important;
     box-shadow: inset 0 2px 4px rgba(255,255,255,0.3) !important;
     z-index: 1 !important;
+    transition: width 0.2s ease;
 }
 
-/* 💡 【重大修正】血條內的文字/數字（強制顯形、防切邊、置頂於填色層之上） */
-[id*="monsterHp"] *, .monster-hp *, .hp-bar-container * {
-    color: #ffffff !important;            /* 💡 修正：高對比雪白字體 */
-    font-size: 12px !important;
+.hp-bar-text {
+    position: relative !important;
+    z-index: 10 !important;
+    color: #ffffff !important;
+    font-size: 11px !important;
     font-weight: 900 !important;
-    line-height: 1 !important;            /* 💡 修正：消除任何預設行高擠壓 */
-    z-index: 10 !important;               /* 💡 修正：確保數字壓在血量條最上方 */
-    position: relative !important;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.7) !important; /* 加深陰影，極其清晰 */
-    white-space: nowrap !important;       /* 💡 修正：強制數字絕對不折行、不被切掉 */
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8) !important;
+    white-space: nowrap !important;
 }
 
-/* 🔴 下方：史萊姆外框（100% 寬度強制換行落到最下方） */
+/* 史萊姆外框 */
 .monster-wrapper {
-    order: 3 !important; 
-    width: 100% !important;               /* 💡 修正：寬度 100% 強制將自己推到下一行 */
+    width: 100% !important;
     position: relative !important;
-    width: 240px !important;
-    height: 170px !important;
-    margin: 20px auto 0 auto !important;  /* 💡 修正：與上方的名字血條拉開和諧間距 */
+    height: 140px !important;
+    margin: 8px auto 0 auto !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
@@ -266,29 +291,48 @@ h2 {
     left: 50% !important;
     top: 50% !important;
     transform: translate(-50%, -50%) !important; 
-    width: 170px !important;
-    height: 130px !important;
+    width: 150px !important;
+    height: 115px !important;
     border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), inset 0 -10px 20px rgba(0,0,0,0.1) !important;
     margin: 0 !important;
     z-index: 6;
     animation: monsterFloat 2s ease-in-out infinite;
+    background: radial-gradient(circle at 35% 35%, #9ae5f3, #4eaec5);
 }
 
-.monster-eye {
-    width: 14px !important;
-    height: 14px !important;
+.monster-yokai-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    z-index: 7;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.slime-face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.slime-eye {
+    width: 12px !important;
+    height: 12px !important;
     background-color: #2c3e50 !important;
     border-radius: 50% !important;
     position: absolute !important;
     top: 38% !important;
 }
-.monster-eye.left { left: 28% !important; }
-.monster-eye.right { right: 28% !important; }
+.slime-eye.left { left: 28% !important; }
+.slime-eye.right { right: 28% !important; }
 
-.monster-mouth {
-    width: 22px !important;
-    height: 10px !important;
+.slime-mouth {
+    width: 20px !important;
+    height: 8px !important;
     border-bottom: 4px solid #2c3e50 !important;
     border-radius: 0 0 11px 11px !important;
     position: absolute !important;
@@ -299,7 +343,7 @@ h2 {
 
 .hit-effect {
     position: absolute;
-    font-size: 54px !important;
+    font-size: 48px !important;
     font-weight: 900;
     color: #ff0055;
     text-shadow: 2px 2px 0px #fff;
@@ -311,7 +355,7 @@ h2 {
 }
 
 /* ============================================================
-   💢 5. 史萊姆受擊特殊表情包與動態
+   💢 5. 史萊姆受擊表情
    ============================================================ */
 .monster-slime.damaged {
     background: linear-gradient(180deg, #ff3333 0%, #aa0000 100%) !important;
@@ -329,28 +373,28 @@ h2 {
     50% { transform: translate(-50%, -50%) scaleX(1.04) scaleY(0.96) translateY(-6px); }
 }
 
-.monster-slime.angry .monster-eye.left {
+.monster-slime.angry .slime-eye.left {
     transform: rotate(20deg);
     border-radius: 2px;
     height: 5px !important;
 }
-.monster-slime.angry .monster-eye.right {
+.monster-slime.angry .slime-eye.right {
     transform: rotate(-20deg);
     border-radius: 2px;
     height: 5px !important;
 }
-.monster-slime.angry .monster-mouth {
+.monster-slime.angry .slime-mouth {
     border-bottom: none !important;
     border-top: 4px solid #2c3e50 !important;
     border-radius: 6px 6px 0 0 !important;
     top: 56% !important;
 }
 
-.monster-slime.crying .monster-eye {
+.monster-slime.crying .slime-eye {
     height: 5px !important;
     transform: translateY(2px);
 }
-.monster-slime.crying .monster-mouth {
+.monster-slime.crying .slime-mouth {
     width: 22px !important;
     height: 14px !important;
     border: 4px solid #2c3e50 !important;
@@ -369,23 +413,24 @@ h2 {
 }
 
 /* ============================================================
-   🕹️ 6. 按鈕與街機繽紛卡片美化
+   🕹️ 6. 按鈕
    ============================================================ */
 button {
     width: 100%;
-    padding: 15px;
-    margin: 8px 0;
+    padding: 14px;
+    margin: 6px 0;
     font-size: 15px;
     font-weight: bold;
     color: #ffcc00;
     background: linear-gradient(180deg, #37374d 0%, #1c1c28 100%);
     border: 2px solid #52526e;
     border-bottom: 5px solid #0c0c14;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.15);
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent;
+    transition: filter 0.1s;
 }
 
 button:active {
@@ -394,81 +439,179 @@ button:active {
     filter: brightness(0.85);
 }
 
-.btnGrid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-top: 5px;
+.btn-blue {
+    background: linear-gradient(180deg, #4a7dff 0%, #1a4db8 100%) !important;
+    border-color: #6a9dff !important;
+    border-bottom-color: #0c2a6e !important;
+    color: #ffffff !important;
 }
-.btnGrid button {
-    padding: 16px 0;
+
+/* 答題按鈕 */
+.answer-keyboard {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+.key-btn {
+    padding: 14px 0;
     margin: 0;
     background: linear-gradient(180deg, #ff8c00 0%, #cc5200 100%);
     border-color: #ffa333;
     border-bottom-color: #5c2600;
     font-size: 18px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    border-radius: 10px;
 }
 
-/* 🌈 高質感明亮撞色卡片外殼 */
-.menu-box, .stat-container, .item-card {
-    background: linear-gradient(135deg, #ffffff 0%, #fffbfd 100%) !important;
-    padding: 14px;
-    border-radius: 16px !important;
-    border: 2px solid #ffccd5 !important;
-    box-shadow: 4px 4px 0px #ff477e !important; 
-    margin-bottom: 4px; 
-    touch-action: manipulation !important;
-}
-.stat-container { border-left: 6px solid #00b4db !important; }
-.item-card      { border-left: 6px solid #ffcc00 !important; }
-
-.info {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    font-weight: bold;
-    font-size: 15px;
+.key-btn:active {
+    transform: scale(0.95) !important;
+    border-bottom-width: 3px !important;
 }
 
-.item-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-}
-.item-card svg {
-    width: 56px;
-    height: 56px;
+/* 返回按鈕 */
+.btn-back {
+    background: linear-gradient(180deg, #ff6b6b 0%, #cc0000 100%) !important;
+    border-color: #ff9999 !important;
+    border-bottom-color: #660000 !important;
+    color: #ffffff !important;
+    padding: 8px 14px;
+    font-size: 13px;
+    width: auto;
+    margin: 0;
     flex-shrink: 0;
-    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.15));
-}
-#weapon { border-left: 6px solid #ffcc00 !important; }
-#armor  { border-left: 6px solid #00b4db !important; }
-#shield { border-left: 6px solid #00ff88 !important; }
-
-.rarity-common { box-shadow: 4px 4px 0px #ff477e !important; }
-.rarity-rare { box-shadow: 4px 4px 0px #00b4db !important; }
-.rarity-legendary { box-shadow: 4px 4px 0px #ffcc00 !important; }
-.rarity-mythic {
-    box-shadow: 4px 4px 0px #ff0078 !important;
-    animation: glow 1.5s infinite alternate;
-}
-
-@keyframes glow {
-    from { filter: brightness(1); }
-    to   { filter: brightness(1.2); }
 }
 
 /* ============================================================
-   📱 7. 底欄選單「底部絕對鎖死」系統
+   📱 7. 遊戲戰鬥頁面
    ============================================================ */
-.bottomNav {
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 8px;
+}
+
+.game-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 2px solid #ffccd5;
+    flex-shrink: 0;
+}
+
+.game-header span {
+    font-weight: 900;
+    font-size: 13px;
+    color: #2c3e50 !important;
+    white-space: nowrap;
+}
+
+#livesDisplay {
+    font-size: 16px !important;
+    letter-spacing: 1px;
+}
+
+#timerDisplay {
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    color: #00b4db !important;
+    min-width: 50px;
+}
+
+/* ============================================================
+   👤 8. 角色裝備頁
+   ============================================================ */
+.character-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.equipment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fffbfd 100%) !important;
+    padding: 12px 14px;
+    border-radius: 14px !important;
+    border: 2px solid #ffccd5 !important;
+    box-shadow: 0 4px 12px rgba(255, 71, 126, 0.12) !important;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item-card .card-title {
+    font-weight: 900;
+    color: #2c3e50 !important;
+    font-size: 14px;
+}
+
+.item-card .card-props {
+    font-size: 12px;
+    color: #555 !important;
+    font-weight: 600;
+}
+
+.up-btn {
+    padding: 8px 14px !important;
+    margin: 0 !important;
+    width: auto !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+    flex-shrink: 0;
+}
+
+.up-btn-weapon {
+    background: linear-gradient(180deg, #ffcc00 0%, #cc9900 100%) !important;
+    border-color: #ffdd44 !important;
+    border-bottom-color: #886600 !important;
+    color: #2c3e50 !important;
+}
+
+.up-btn-shield {
+    background: linear-gradient(180deg, #00ccff 0%, #0088cc 100%) !important;
+    border-color: #44ddff !important;
+    border-bottom-color: #005588 !important;
+    color: #ffffff !important;
+}
+
+#stats {
+    background: #f5eedf;
+    padding: 10px;
+    border-radius: 12px;
+    border: 2px solid #d4af37;
+    font-weight: bold;
+    color: #1c1b1a;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-size: 13px;
+}
+
+/* ============================================================
+   📱 9. 底欄導航
+   ============================================================ */
+.nav-bar {
     position: fixed !important; 
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    height: 70px !important;
+    height: 64px !important;
     z-index: 99999 !important; 
     
     display: flex !important;
@@ -478,7 +621,7 @@ button:active {
     padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
-.bottomNav button {
+.nav-bar button {
     flex: 1 !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -487,52 +630,80 @@ button:active {
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    font-size: 15px !important;
+    font-size: 14px !important;
     font-weight: 900 !important;
+    color: #ffffff !important;
     text-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
 }
 
-.bottomNav button:active {
+.nav-bar button:active {
     background: rgba(255, 255, 255, 0.25) !important;
     transform: none !important;
 }
 
+.nav-bar button.active {
+    background: rgba(255, 255, 255, 0.3) !important;
+    border-top: 3px solid #ffffff !important;
+}
+
 /* ============================================================
-   🖥️ 8. 大螢幕響應式優化
+   🖥️ 10. 響應式
    ============================================================ */
 @media (min-width: 768px) {
-    .app {
-        max-width: 100%; 
-        border-left: none;
-        border-right: none;
+    .game-window {
+        max-width: 480px;
+        border-radius: 24px;
+        max-height: 900px;
     }
 
-    #content {
-        padding: 24px 60px; 
-        padding-bottom: 120px !important;
+    .page {
+        padding: 20px 24px 80px 24px;
     }
 
-    .btnGrid {
-        grid-template-columns: repeat(7, 1fr);
-        gap: 12px;
-        margin-top: 15px;
+    .answer-keyboard {
+        gap: 10px;
     }
     
-    .btnGrid button {
-        padding: 22px 0; 
-        font-size: 24px;  
+    .key-btn {
+        padding: 18px 0;
+        font-size: 22px;
     }
 
-    .note-container {
-        height: 220px;
-        margin: 20px 0;
+    .staff-wrapper {
+        height: 210px;
+    }
+}
+
+@media (max-width: 420px) {
+    .header-top-row {
+        font-size: 12px;
+    }
+    .player-name-badge {
+        font-size: 13px;
+    }
+    .game-header span {
+        font-size: 11px;
+    }
+    .key-btn {
+        font-size: 15px;
+        padding: 12px 0;
+    }
+    .monster-slime {
+        width: 120px !important;
+        height: 95px !important;
+    }
+    .monster-yokai-icon {
+        font-size: 38px;
+    }
+    .staff-wrapper {
+        height: 150px;
     }
 }
 
 /* ============================================================
-   ❌ 9. 防禦性 CSS 隱藏歡迎標題
+   ❌ 11. 防禦性隱藏
    ============================================================ */
-#homePage h1, .welcome-title, #homePage h2:first-of-type {
+#homePage h1, .welcome-title {
     display: none !important;
 }
 
@@ -540,4 +711,18 @@ button:active {
     0%   { transform: translate(-50%,-50%) scale(1); }
     50%  { transform: translate(-50%,-50%) scale(1.18); }
     100% { transform: translate(-50%,-50%) scale(1); }
+}
+
+/* ============================================================
+   🎯 12. Combo 閃爍特效
+   ============================================================ */
+#combo.combo-high {
+    color: #ffcc00 !important;
+    animation: comboGlow 0.3s ease;
+}
+
+@keyframes comboGlow {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.6); color: #ff6600; }
+    100% { transform: scale(1); }
 }
