@@ -1,5 +1,5 @@
 /* ============================================================
-   🎨 1. 全域重設 - 大色塊背景設計
+   🎨 1. 全域重設 - 滿版設計
    ============================================================ */
 * { 
     box-sizing: border-box; 
@@ -11,28 +11,30 @@ html, body {
     margin: 0; 
     padding: 0;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, 'Microsoft JhengHei', sans-serif;
-    background: #1a1a2e !important;
-    height: 100svh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: #0d0d1a !important;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 
-/* 🎨 大色塊背景 - 動態幾何 */
+/* 🎨 滿版容器 */
 .game-window {
-    width: 100vw;       
-    height: 100svh;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
-    background: #16213e !important;
+    background: #0d0d1a !important;
     position: relative;
     overflow: hidden;
 }
 
-/* 背景大色塊裝飾 */
+/* 背景大色塊 */
 .game-window::before {
     content: '';
     position: absolute;
@@ -40,7 +42,7 @@ html, body {
     right: -20%;
     width: 60%;
     height: 60%;
-    background: radial-gradient(circle, rgba(255, 42, 109, 0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 42, 109, 0.12) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
     z-index: 0;
@@ -53,38 +55,39 @@ html, body {
     left: -20%;
     width: 50%;
     height: 50%;
-    background: radial-gradient(circle, rgba(0, 210, 255, 0.10) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 210, 255, 0.08) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
     z-index: 0;
 }
 
 /* ============================================================
-   📊 2. 頂部玩家狀態欄 - 半透明玻璃
+   📊 2. 頂部狀態欄
    ============================================================ */
 .global-header {
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.08) !important;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.05) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     flex-shrink: 0;
     position: relative;
     z-index: 1;
+    min-height: 60px;
 }
 
 .header-top-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #f0e6d3; 
+    color: #f0e6d3;
     font-weight: 900;
-    font-size: 14px;
+    font-size: clamp(11px, 2vw, 15px);
     gap: 6px;
 }
 
 .player-name-badge {
-    font-size: 15px;
+    font-size: clamp(12px, 2vw, 15px);
     color: #f0e6d3;
     white-space: nowrap;
     overflow: hidden;
@@ -94,35 +97,35 @@ html, body {
 }
 
 .lv-badge {
-    color: #ffffff !important; 
+    color: #ffffff !important;
     background: linear-gradient(135deg, #ff2a6d, #ff6b8a);
-    padding: 2px 12px;
+    padding: 2px 10px;
     border-radius: 20px;
-    font-size: 12px;
-    border: 1px solid rgba(255,255,255,0.2);
+    font-size: clamp(10px, 1.5vw, 12px);
+    border: 1px solid rgba(255,255,255,0.1);
     font-weight: bold;
-    box-shadow: 0 4px 15px rgba(255, 42, 109, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 42, 109, 0.2);
     white-space: nowrap;
 }
 
 .gold-badge {
     color: #ffd700;
     font-weight: 900;
-    font-size: 14px;
+    font-size: clamp(12px, 2vw, 14px);
     white-space: nowrap;
-    text-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
+    text-shadow: 0 2px 8px rgba(255, 215, 0, 0.15);
 }
 
 .header-bottom-row {
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .exp-bar-container {
-    height: 10px;
+    height: 8px;
     background: rgba(255, 255, 255, 0.06);
     border-radius: 20px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.04);
     position: relative;
 }
 
@@ -132,7 +135,7 @@ html, body {
     background: linear-gradient(90deg, #ff6b8a, #ff2a6d, #ff6b8a) !important;
     background-size: 200% 100% !important;
     animation: expShine 2s ease-in-out infinite;
-    box-shadow: 0 0 20px rgba(255, 42, 109, 0.3) !important;
+    box-shadow: 0 0 20px rgba(255, 42, 109, 0.2) !important;
     transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
@@ -146,25 +149,25 @@ html, body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 8px;
+    font-size: 7px;
     font-weight: 900;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.4);
     text-shadow: 0 1px 4px rgba(0,0,0,0.5);
     white-space: nowrap;
     letter-spacing: 0.5px;
 }
 
 /* ============================================================
-   🕹️ 3. 分頁設定 - 大色塊卡片
+   🕹️ 3. 分頁設定
    ============================================================ */
 .page {
     display: none;
     flex: 1;
     overflow-y: auto;
-    padding: 12px 14px 76px 14px;
+    padding: 10px 12px 64px 12px;
     -webkit-overflow-scrolling: touch;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     position: relative;
     z-index: 1;
 }
@@ -173,29 +176,29 @@ html, body {
 }
 
 .section-card {
-    background: rgba(255, 255, 255, 0.05) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
 h2 {
-    font-size: 18px;
+    font-size: clamp(16px, 2.5vw, 20px);
     font-weight: 900;
     color: #f0e6d3;
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     letter-spacing: 1px;
     text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 h3 {
-    font-size: 15px;
+    font-size: clamp(13px, 2vw, 16px);
     font-weight: 700;
     color: #f0e6d3 !important;
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
 }
 
 /* ============================================================
@@ -203,14 +206,15 @@ h3 {
    ============================================================ */
 .staff-wrapper {
     width: 100%;
-    height: 170px;
-    background: rgba(255, 248, 240, 0.08);
-    border-radius: 16px;
-    margin: 4px 0;
+    height: clamp(140px, 25vh, 200px);
+    background: rgba(255, 248, 240, 0.05);
+    border-radius: 14px;
+    margin: 2px 0;
     position: relative;
     box-shadow: inset 0 4px 30px rgba(0,0,0,0.3);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    flex-shrink: 0;
 }
 
 .staff-lines {
@@ -224,7 +228,7 @@ h3 {
     position: absolute;
     width: 100%;
     height: 1.5px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
     left: 0;
 }
 
@@ -236,7 +240,7 @@ h3 {
 
 .staff-clef {
     position: absolute;
-    left: 8px;
+    left: 6px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
@@ -244,14 +248,14 @@ h3 {
 }
 
 .staff-clef img {
-    height: 130px;
+    height: clamp(90px, 16vh, 130px);
     width: auto;
     filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3));
 }
 
 .note-display {
     position: absolute;
-    left: 62%;
+    left: 60%;
     transform: translate(-50%, -50%);
     z-index: 5;
     line-height: 0;
@@ -259,53 +263,55 @@ h3 {
 }
 
 .note-display svg {
-    filter: drop-shadow(0 4px 15px rgba(255, 215, 0, 0.3));
+    filter: drop-shadow(0 4px 15px rgba(255, 215, 0, 0.2));
+    width: clamp(24px, 4vw, 30px);
+    height: auto;
 }
 
 @keyframes pop {
     0%   { transform: translate(-50%,-50%) scale(0.5); opacity: 0; }
-    70%  { transform: translate(-50%,-50%) scale(1.2); opacity: 1; }
+    70%  { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
     100% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
 }
 
 /* ============================================================
-   👾 4. 戰鬥核心 - 大色塊風格
+   👾 4. 戰鬥核心
    ============================================================ */
 .battle-box {
     background: rgba(0, 0, 0, 0.2);
-    border-radius: 16px;
-    padding: 12px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
 }
 
 .monster-info-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
     flex-wrap: wrap;
 }
 
 .monster-name {
-    font-size: 17px !important;
+    font-size: clamp(14px, 2.2vw, 18px) !important;
     font-weight: 900 !important;
     color: #f0e6d3 !important;
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     white-space: nowrap;
     flex: 1;
-    min-width: 80px;
+    min-width: 60px;
 }
 
 .hp-bar-container {
-    flex: 0 0 130px !important;
-    height: 22px !important;
+    flex: 0 0 clamp(100px, 25vw, 150px) !important;
+    height: clamp(18px, 3vh, 24px) !important;
     background: rgba(255, 255, 255, 0.06) !important;
-    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
     border-radius: 12px !important;
     overflow: hidden !important;
     position: relative !important;
@@ -321,7 +327,7 @@ h3 {
     top: 0 !important;
     height: 100% !important;
     background: linear-gradient(90deg, #ff2a6d, #ff6b8a) !important;
-    box-shadow: 0 0 20px rgba(255, 42, 109, 0.3) !important;
+    box-shadow: 0 0 20px rgba(255, 42, 109, 0.2) !important;
     z-index: 1 !important;
     transition: width 0.3s ease;
 }
@@ -330,7 +336,7 @@ h3 {
     position: relative !important;
     z-index: 10 !important;
     color: #ffffff !important;
-    font-size: 10px !important;
+    font-size: clamp(9px, 1.2vw, 11px) !important;
     font-weight: 900 !important;
     text-shadow: 0 2px 8px rgba(0,0,0,0.8) !important;
     white-space: nowrap !important;
@@ -340,8 +346,8 @@ h3 {
 .monster-wrapper {
     width: 100% !important;
     position: relative !important;
-    height: 150px !important;
-    margin: 4px auto 0 auto !important;
+    height: clamp(110px, 25vh, 170px) !important;
+    margin: 2px auto 0 auto !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
@@ -352,16 +358,16 @@ h3 {
     position: absolute !important;
     left: 50% !important;
     top: 50% !important;
-    transform: translate(-50%, -50%) !important; 
-    width: 140px !important;
-    height: 110px !important;
+    transform: translate(-50%, -50%) !important;
+    width: clamp(100px, 22vw, 150px) !important;
+    height: clamp(80px, 18vw, 120px) !important;
     border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), inset 0 -10px 30px rgba(0,0,0,0.1) !important;
     margin: 0 !important;
     z-index: 6;
     animation: monsterFloat 2s ease-in-out infinite;
     background: radial-gradient(circle at 35% 35%, #9ae5f3, #4eaec5);
-    border: 2px solid rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.06);
     transition: all 0.15s ease;
 }
 
@@ -370,13 +376,13 @@ h3 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 44px;
+    font-size: clamp(30px, 6vw, 48px);
     z-index: 7;
     filter: drop-shadow(0 4px 15px rgba(0,0,0,0.2));
 }
 
 /* ============================================================
-   😊 5. 史萊姆五種表情 + 五種砍痕
+   😊 5. 史萊姆表情 - 修正版
    ============================================================ */
 .slime-face {
     position: absolute;
@@ -389,9 +395,9 @@ h3 {
 }
 
 .slime-eye {
-    width: 11px !important;
-    height: 11px !important;
-    background-color: #1a1a2e !important;
+    width: clamp(8px, 1.8vw, 12px) !important;
+    height: clamp(8px, 1.8vw, 12px) !important;
+    background: #1a1a2e !important;
     border-radius: 50% !important;
     position: absolute !important;
     top: 38% !important;
@@ -403,49 +409,51 @@ h3 {
 
 .slime-mouth {
     position: absolute !important;
-    top: 52% !important;
-    left: 44% !important;
-    transform: none !important;
+    top: 55% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
     transition: all 0.15s ease;
 }
 
-/* 表情1: 正常 😊 */
+/* 正常 😊 */
 .slime-mouth.normal {
-    width: 20px !important;
-    height: 10px !important;
+    width: clamp(14px, 3vw, 22px) !important;
+    height: clamp(7px, 1.5vw, 11px) !important;
     border-bottom: 3px solid #1a1a2e !important;
-    border-radius: 0 0 12px 12px !important;
+    border-radius: 0 0 50% 50% !important;
 }
 
-/* 表情2: 微笑 😄 */
+/* 微笑 😄 */
 .slime-mouth.happy {
-    width: 24px !important;
-    height: 12px !important;
+    width: clamp(18px, 4vw, 26px) !important;
+    height: clamp(8px, 1.8vw, 13px) !important;
     border-bottom: 3px solid #1a1a2e !important;
-    border-radius: 0 0 20px 20px !important;
+    border-radius: 0 0 50% 50% !important;
+    transform: translateX(-50%) scaleX(1.2) !important;
 }
 
-/* 表情3: 驚訝 😮 */
+/* 驚訝 😮 */
 .slime-mouth.surprised {
-    width: 14px !important;
-    height: 14px !important;
+    width: clamp(10px, 2.2vw, 16px) !important;
+    height: clamp(10px, 2.2vw, 16px) !important;
     border: 3px solid #1a1a2e !important;
     border-radius: 50% !important;
     background: #ff6b8a !important;
 }
 
-/* 表情4: 憤怒 😠 */
+/* 憤怒 😠 */
 .slime-mouth.angry {
-    width: 22px !important;
-    height: 10px !important;
+    width: clamp(16px, 3.5vw, 24px) !important;
+    height: clamp(7px, 1.5vw, 11px) !important;
     border-top: 3px solid #1a1a2e !important;
-    border-radius: 12px 12px 0 0 !important;
+    border-radius: 50% 50% 0 0 !important;
+    transform: translateX(-50%) !important;
 }
 
-/* 表情5: 哭泣 😢 */
+/* 哭泣 😢 */
 .slime-mouth.crying {
-    width: 18px !important;
-    height: 12px !important;
+    width: clamp(12px, 2.5vw, 18px) !important;
+    height: clamp(8px, 1.8vw, 13px) !important;
     border: 3px solid #1a1a2e !important;
     border-radius: 50% !important;
     background: #4eaec5 !important;
@@ -454,25 +462,25 @@ h3 {
 
 /* 👁️ 眼睛變化 */
 .slime-eye.happy {
-    transform: scale(0.7) translateY(-2px);
+    transform: scale(0.7) translateY(-2px) !important;
 }
 .slime-eye.surprised {
-    transform: scale(1.3);
+    transform: scale(1.3) !important;
 }
 .slime-eye.angry {
-    transform: rotate(15deg) scale(0.6);
+    transform: rotate(15deg) scale(0.6) !important;
     border-radius: 2px !important;
-    height: 6px !important;
+    height: clamp(4px, 1vw, 6px) !important;
 }
 .slime-eye.angry.right {
-    transform: rotate(-15deg) scale(0.6);
+    transform: rotate(-15deg) scale(0.6) !important;
 }
 .slime-eye.crying {
-    transform: translateY(3px) scale(0.7);
+    transform: translateY(3px) scale(0.7) !important;
 }
 
 /* ============================================================
-   🗡️ 五種砍痕效果
+   🗡️ 五種砍痕
    ============================================================ */
 .slash-effect {
     position: absolute;
@@ -484,7 +492,6 @@ h3 {
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.1s;
-    font-size: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -497,29 +504,20 @@ h3 {
 }
 
 @keyframes slashAnim {
-    0% { opacity: 0; transform: scale(0.5) rotate(-20deg); }
-    30% { opacity: 1; transform: scale(1.3) rotate(0deg); }
+    0% { opacity: 0; transform: scale(0.3) rotate(-30deg); }
+    30% { opacity: 1; transform: scale(1.4) rotate(0deg); }
     70% { opacity: 1; transform: scale(1) rotate(5deg); }
     100% { opacity: 0; transform: scale(1.2) rotate(0deg); }
 }
 
-/* 砍痕1: 十字斬 ✚ */
 .slash-effect.type1::after { content: '✚'; }
-
-/* 砍痕2: 斜斬 ╳ */
 .slash-effect.type2::after { content: '╳'; }
-
-/* 砍痕3: 閃電 ⚡ */
 .slash-effect.type3::after { content: '⚡'; }
-
-/* 砍痕4: 火焰 🔥 */
 .slash-effect.type4::after { content: '🔥'; }
-
-/* 砍痕5: 星爆 ✦ */
 .slash-effect.type5::after { content: '✦'; }
 
 .slash-effect::after {
-    font-size: 70px;
+    font-size: clamp(40px, 10vw, 70px);
     color: #ff2a6d;
     text-shadow: 0 0 30px rgba(255, 42, 109, 0.6), 0 0 60px rgba(255, 42, 109, 0.3);
 }
@@ -527,26 +525,26 @@ h3 {
 /* 史萊姆被打閃紅 */
 .monster-slime.damaged {
     background: linear-gradient(180deg, #ff2a6d 0%, #aa0000 100%) !important;
-    box-shadow: 0 0 40px rgba(255, 42, 109, 0.4) !important;
+    box-shadow: 0 0 40px rgba(255, 42, 109, 0.3) !important;
     animation: slimeHit 0.2s ease-in-out infinite alternate !important;
 }
 
 @keyframes slimeHit {
     0% { transform: translate(-50%, -50%) scale(1); }
-    100% { transform: translate(-50%, -50%) scale(0.85); filter: brightness(1.3); }
+    100% { transform: translate(-50%, -50%) scale(0.88); filter: brightness(1.2); }
 }
 
 @keyframes monsterFloat {
     0%, 100% { transform: translate(-50%, -50%) scaleX(1) translateY(0); }
-    50% { transform: translate(-50%, -50%) scaleX(1.04) scaleY(0.96) translateY(-8px); }
+    50% { transform: translate(-50%, -50%) scaleX(1.03) scaleY(0.97) translateY(-6px); }
 }
 
 .hit-effect {
     position: absolute;
-    font-size: 40px !important;
+    font-size: clamp(30px, 6vw, 44px) !important;
     font-weight: 900;
     color: #ffd700;
-    text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+    text-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
     left: 38% !important;
     top: -10% !important;
     opacity: 0;
@@ -559,28 +557,28 @@ h3 {
 }
 @keyframes explosionPop {
     0% { opacity: 0; transform: scale(0.3) translateY(0); }
-    40% { opacity: 1; transform: scale(1.5) translateY(-20px); }
-    100% { opacity: 0; transform: scale(1) translateY(-40px); }
+    40% { opacity: 1; transform: scale(1.4) translateY(-15px); }
+    100% { opacity: 0; transform: scale(1) translateY(-35px); }
 }
 
 /* ============================================================
-   🕹️ 6. 按鈕 - 大色塊風格
+   🕹️ 6. 按鈕
    ============================================================ */
 button {
     width: 100%;
-    padding: 14px;
-    margin: 4px 0;
-    font-size: 15px;
+    padding: clamp(10px, 1.8vh, 15px);
+    margin: 3px 0;
+    font-size: clamp(13px, 2vw, 16px);
     font-weight: bold;
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent;
-    transition: all 0.15s ease;
+    transition: all 0.1s ease;
 }
 
 button:active {
@@ -591,60 +589,56 @@ button:active {
 .btn-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .btn-treble {
     background: linear-gradient(135deg, #ff2a6d, #ff6b8a) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 4px 25px rgba(255, 42, 109, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 25px rgba(255, 42, 109, 0.2) !important;
 }
 
 .btn-bass {
     background: linear-gradient(135deg, #00b4db, #00d2ff) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 4px 25px rgba(0, 210, 255, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 25px rgba(0, 210, 255, 0.2) !important;
 }
 
 /* 答題按鈕 */
 .answer-keyboard {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    margin-top: 6px;
+    gap: 4px;
+    margin-top: 4px;
     flex-shrink: 0;
 }
 
 .key-btn {
-    padding: 14px 0;
+    padding: clamp(10px, 1.8vh, 16px) 0;
     margin: 0;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: clamp(14px, 2.5vw, 20px);
     font-weight: 900;
     color: #f0e6d3;
-    border-radius: 12px;
+    border-radius: 10px;
     text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    transition: all 0.1s ease;
+    transition: all 0.08s ease;
 }
 
 .key-btn:active {
     transform: scale(0.92) !important;
-    background: rgba(255, 42, 109, 0.2) !important;
-    border-color: rgba(255, 42, 109, 0.3) !important;
-}
-
-.key-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 42, 109, 0.15) !important;
+    border-color: rgba(255, 42, 109, 0.2) !important;
 }
 
 /* 返回按鈕 */
 .btn-back {
-    background: rgba(255, 42, 109, 0.2) !important;
-    border: 1px solid rgba(255, 42, 109, 0.2) !important;
+    background: rgba(255, 42, 109, 0.15) !important;
+    border: 1px solid rgba(255, 42, 109, 0.15) !important;
     color: #ff6b8a !important;
-    padding: 6px 14px;
-    font-size: 12px;
+    padding: 4px 12px;
+    font-size: clamp(10px, 1.5vw, 13px);
     width: auto;
     margin: 0;
     flex-shrink: 0;
@@ -658,7 +652,7 @@ button:active {
     display: flex;
     flex-direction: column;
     height: 100%;
-    gap: 8px;
+    gap: 6px;
 }
 
 .game-header {
@@ -666,29 +660,29 @@ button:active {
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 4px;
-    padding: 6px 4px;
+    gap: 3px;
+    padding: 4px 2px;
     flex-shrink: 0;
 }
 
 .game-header span {
     font-weight: 900;
-    font-size: 12px;
+    font-size: clamp(10px, 1.5vw, 13px);
     color: #f0e6d3 !important;
     white-space: nowrap;
     text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 #livesDisplay {
-    font-size: 15px !important;
+    font-size: clamp(12px, 2vw, 16px) !important;
     letter-spacing: 1px;
 }
 
 #timerDisplay {
-    font-size: 14px !important;
+    font-size: clamp(12px, 2vw, 15px) !important;
     font-weight: 900 !important;
     color: #00d2ff !important;
-    min-width: 45px;
+    min-width: 40px;
 }
 
 /* ============================================================
@@ -697,87 +691,87 @@ button:active {
 .character-container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     height: 100%;
 }
 
 .equipment-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .item-card {
-    background: rgba(255, 255, 255, 0.04) !important;
-    padding: 12px 14px;
-    border-radius: 14px !important;
-    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    padding: 10px 12px;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .item-card .card-title {
     font-weight: 900;
     color: #f0e6d3 !important;
-    font-size: 14px;
+    font-size: clamp(12px, 1.8vw, 15px);
 }
 
 .item-card .card-props {
-    font-size: 12px;
-    color: rgba(255,255,255,0.6) !important;
+    font-size: clamp(10px, 1.5vw, 13px);
+    color: rgba(255,255,255,0.5) !important;
     font-weight: 600;
 }
 
 .up-btn {
-    padding: 6px 14px !important;
+    padding: 4px 12px !important;
     margin: 0 !important;
     width: auto !important;
-    font-size: 11px !important;
+    font-size: clamp(10px, 1.5vw, 12px) !important;
     border-radius: 10px !important;
     flex-shrink: 0;
 }
 
 .up-btn-weapon {
     background: linear-gradient(135deg, #ffd700, #f0a500) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     color: #1a1a2e !important;
 }
 
 .up-btn-shield {
     background: linear-gradient(135deg, #00b4db, #0088cc) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     color: #ffffff !important;
 }
 
 #stats {
-    background: rgba(255, 255, 255, 0.04);
-    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.04);
     font-weight: bold;
     color: #f0e6d3;
     text-align: center;
-    font-size: 13px;
+    font-size: clamp(11px, 1.5vw, 14px);
 }
 
 /* ============================================================
-   📱 9. 底欄導航 - 大色塊
+   📱 9. 底欄導航
    ============================================================ */
 .nav-bar {
-    position: fixed !important; 
+    position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    height: 60px !important;
-    z-index: 99999 !important; 
+    height: clamp(50px, 8vh, 64px) !important;
+    z-index: 99999 !important;
     
     display: flex !important;
-    background: rgba(0, 0, 0, 0.4) !important;
+    background: rgba(0, 0, 0, 0.5) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
@@ -790,97 +784,26 @@ button:active {
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    font-size: 13px !important;
+    font-size: clamp(11px, 1.8vw, 14px) !important;
     font-weight: 900 !important;
-    color: rgba(255, 255, 255, 0.4) !important;
+    color: rgba(255, 255, 255, 0.3) !important;
     text-shadow: none !important;
     transition: all 0.2s ease;
 }
 
 .nav-bar button:active {
     transform: scale(0.95) !important;
-    background: rgba(255, 255, 255, 0.05) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
 }
 
 .nav-bar button.active {
     color: #ffffff !important;
     border-top: 2px solid #ff2a6d !important;
-    background: rgba(255, 42, 109, 0.05) !important;
+    background: rgba(255, 42, 109, 0.04) !important;
 }
 
 /* ============================================================
-   🖥️ 10. 響應式
-   ============================================================ */
-@media (min-width: 768px) {
-    .game-window {
-        max-width: 440px;
-        border-radius: 28px;
-        max-height: 860px;
-        border: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .page {
-        padding: 16px 20px 72px 20px;
-    }
-
-    .answer-keyboard {
-        gap: 8px;
-    }
-    
-    .key-btn {
-        padding: 16px 0;
-        font-size: 20px;
-    }
-
-    .staff-wrapper {
-        height: 190px;
-    }
-    
-    .slime-mouth.normal { width: 22px !important; }
-    .slime-mouth.happy { width: 26px !important; }
-    .slime-mouth.angry { width: 24px !important; }
-}
-
-@media (max-width: 420px) {
-    .header-top-row {
-        font-size: 12px;
-    }
-    .player-name-badge {
-        font-size: 12px;
-    }
-    .game-header span {
-        font-size: 10px;
-    }
-    .key-btn {
-        font-size: 14px;
-        padding: 10px 0;
-    }
-    .monster-slime {
-        width: 110px !important;
-        height: 88px !important;
-    }
-    .monster-yokai-icon {
-        font-size: 34px;
-    }
-    .staff-wrapper {
-        height: 130px;
-    }
-    .slash-effect::after {
-        font-size: 50px !important;
-    }
-    .slime-eye {
-        width: 9px !important;
-        height: 9px !important;
-    }
-    .slime-mouth.normal { width: 16px !important; height: 8px !important; }
-    .slime-mouth.happy { width: 20px !important; height: 10px !important; }
-    .slime-mouth.surprised { width: 12px !important; height: 12px !important; }
-    .slime-mouth.angry { width: 18px !important; height: 8px !important; }
-    .slime-mouth.crying { width: 14px !important; height: 10px !important; }
-}
-
-/* ============================================================
-   🎯 11. Combo 閃爍特效
+   🎯 10. Combo 閃爍
    ============================================================ */
 #combo.combo-high {
     color: #ffd700 !important;
@@ -889,6 +812,91 @@ button:active {
 
 @keyframes comboGlow {
     0% { transform: scale(1); }
-    50% { transform: scale(1.5); color: #ff6b8a; }
+    50% { transform: scale(1.4); color: #ff6b8a; }
     100% { transform: scale(1); }
+}
+
+/* ============================================================
+   🖥️ 11. 滿版響應式
+   ============================================================ */
+/* 平板 */
+@media (min-width: 600px) and (max-width: 1024px) {
+    .page {
+        padding: 14px 20px 70px 20px;
+    }
+    .answer-keyboard {
+        gap: 6px;
+    }
+    .key-btn {
+        padding: 14px 0;
+        font-size: 18px;
+    }
+    .staff-wrapper {
+        height: clamp(170px, 28vh, 220px);
+    }
+    .monster-slime {
+        width: clamp(130px, 20vw, 170px) !important;
+        height: clamp(100px, 16vw, 135px) !important;
+    }
+}
+
+/* 桌面大螢幕 */
+@media (min-width: 1025px) {
+    .game-window {
+        max-width: 480px;
+        max-height: 900px;
+        border-radius: 24px;
+        border: 1px solid rgba(255,255,255,0.04);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .page {
+        padding: 16px 24px 74px 24px;
+    }
+    .answer-keyboard {
+        gap: 8px;
+    }
+    .key-btn {
+        padding: 18px 0;
+        font-size: 22px;
+    }
+    .staff-wrapper {
+        height: 200px;
+    }
+}
+
+/* 小手機 */
+@media (max-width: 380px) {
+    .header-top-row {
+        font-size: 10px;
+    }
+    .game-header span {
+        font-size: 9px;
+    }
+    .key-btn {
+        font-size: 12px;
+        padding: 8px 0;
+    }
+    .monster-slime {
+        width: 90px !important;
+        height: 72px !important;
+    }
+    .monster-yokai-icon {
+        font-size: 28px;
+    }
+    .staff-wrapper {
+        height: 120px;
+    }
+    .slash-effect::after {
+        font-size: 40px !important;
+    }
+}
+
+/* 安全區域 */
+@supports (padding: max(0px)) {
+    .nav-bar {
+        padding-bottom: max(env(safe-area-inset-bottom), 4px) !important;
+    }
+    .page {
+        padding-bottom: max(70px, env(safe-area-inset-bottom) + 50px) !important;
+    }
 }
