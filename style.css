@@ -33,276 +33,6 @@ html, body {
     overflow: hidden;
 }
 
-/* ============================================================
-   ✅ 修正 1: 頂部全域狀態欄 - 提高 z-index 不被史萊姆擋住
-   ============================================================ */
-.global-header {
-    padding: 8px 12px 6px 12px;
-    background: rgba(255, 255, 255, 0.05) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    flex-shrink: 0;
-    position: relative;
-    z-index: 100 !important;  /* ✅ 提高，確保不被史萊姆擋住 */
-    min-height: 70px;
-}
-
-/* ============================================================
-   ✅ 修正 2: 史萊姆 - 降低 z-index，不擋住上下層
-   ============================================================ */
-.global-monster-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 4px;
-    padding: 2px 0;
-    position: relative;
-    z-index: 10 !important;   /* ✅ 降低，低於 header (100) 和底部導航 (99999) */
-}
-
-.global-monster-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    min-width: 0;
-}
-
-/* ============================================================
-   ✅ 修正 3: 新增砍痕容器 (五種砍痕 + 五種表情)
-   ============================================================ */
-.slash-container {
-    display: flex !important;
-    gap: 6px !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    padding: 4px 0 !important;
-    margin-top: 2px !important;
-    pointer-events: none !important;  /* 不干擾點擊 */
-    z-index: 10 !important;
-    position: relative !important;
-}
-
-.slash-mark {
-    font-size: clamp(16px, 2.5vw, 22px) !important;
-    filter: drop-shadow(0 0 10px rgba(255, 200, 50, 0.15)) !important;
-    background: rgba(0, 0, 0, 0.25) !important;
-    padding: 2px 8px !important;
-    border-radius: 12px !important;
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.04) !important;
-    transition: all 0.2s ease !important;
-    color: #f0e6d3 !important;
-    font-weight: 700 !important;
-    line-height: 1.4 !important;
-}
-
-.slash-mark:hover {
-    transform: scale(1.1) !important;
-    border-color: rgba(255, 42, 109, 0.2) !important;
-}
-
-/* 砍痕閃爍動畫 */
-.slash-mark.flash {
-    animation: slashFlash 0.3s ease !important;
-}
-
-@keyframes slashFlash {
-    0% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.3); filter: brightness(1.8); color: #ffd700; }
-    100% { transform: scale(1); filter: brightness(1); }
-}
-
-/* ✅ 表情容器 (與砍痕分開，方便管理) */
-.face-container {
-    display: flex !important;
-    gap: 6px !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    padding: 2px 0 !important;
-    pointer-events: none !important;
-    z-index: 10 !important;
-    position: relative !important;
-}
-
-.face-mark {
-    font-size: clamp(18px, 2.8vw, 24px) !important;
-    filter: drop-shadow(0 0 10px rgba(255, 200, 50, 0.1)) !important;
-    background: rgba(0, 0, 0, 0.2) !important;
-    padding: 2px 6px !important;
-    border-radius: 12px !important;
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.04) !important;
-    transition: all 0.2s ease !important;
-    line-height: 1.4 !important;
-}
-
-/* ============================================================
-   ✅ 修正 4: 底部導航 - 固定且無三角形按鈕
-   ============================================================ */
-.bottom-nav {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    z-index: 99999 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    padding-bottom: env(safe-area-inset-bottom) !important;
-    background: rgba(0, 0, 0, 0.75) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
-}
-
-/* ✅ 完全移除三角形按鈕 - 隱藏不顯示 */
-.nav-toggle {
-    display: none !important;   /* ✅ 直接隱藏，不再顯示三角形 */
-    visibility: hidden !important;
-    width: 0 !important;
-    height: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    position: absolute !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-/* ✅ 導航選單直接顯示，無需展開/收合 */
-.nav-menu {
-    display: flex !important;
-    width: 100% !important;
-    max-height: 60px !important;
-    padding: 6px 8px !important;
-    gap: 6px !important;
-    opacity: 1 !important;
-    overflow: visible !important;
-}
-
-/* 移除收合狀態 */
-.nav-menu.collapsed {
-    max-height: 60px !important;
-    opacity: 1 !important;
-    padding: 6px 8px !important;
-}
-
-.nav-menu button {
-    flex: 1 !important;
-    margin: 0 !important;
-    padding: 10px 8px !important;
-    height: 44px !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.04) !important;
-    border-radius: 12px !important;
-    box-shadow: none !important;
-    font-size: clamp(12px, 1.8vw, 15px) !important;
-    font-weight: 700 !important;
-    color: rgba(255, 255, 255, 0.4) !important;
-    text-shadow: none !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer !important;
-}
-
-.nav-menu button:active {
-    transform: scale(0.95) !important;
-    background: rgba(255, 255, 255, 0.06) !important;
-}
-
-.nav-menu button.active {
-    color: #ffffff !important;
-    background: rgba(255, 42, 109, 0.08) !important;
-    border-color: rgba(255, 42, 109, 0.15) !important;
-    box-shadow: 0 4px 20px rgba(255, 42, 109, 0.05) !important;
-}
-
-.nav-menu button.active::before {
-    content: '' !important;
-    position: absolute !important;
-    top: -1px !important;
-    left: 20% !important;
-    right: 20% !important;
-    height: 2px !important;
-    background: linear-gradient(90deg, transparent, #ff2a6d, transparent) !important;
-    border-radius: 0 0 4px 4px !important;
-}
-
-.nav-menu button {
-    position: relative !important;
-}
-
-/* ============================================================
-   🐙 全域史萊姆本體（調整 z-index）
-   ============================================================ */
-.global-monster-wrapper .monster-slime {
-    width: clamp(50px, 10vw, 70px) !important;
-    height: clamp(40px, 8vw, 56px) !important;
-    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), inset 0 -6px 20px rgba(0,0,0,0.1) !important;
-    margin: 0 !important;
-    z-index: 6 !important;    /* ✅ 低於 header 和底部導航 */
-    animation: monsterFloat 2s ease-in-out infinite;
-    background: radial-gradient(circle at 35% 35%, #9ae5f3, #4eaec5);
-    border: 1px solid rgba(255,255,255,0.06);
-    transition: all 0.15s ease;
-    flex-shrink: 0;
-    position: relative;
-}
-
-/* ============================================================
-   其餘樣式保持不變（但需要包含砍痕的顯示位置）
-   ============================================================ */
-
-/* ✅ 在頁面容器中插入砍痕和表情的顯示位置 */
-.page-container .slash-container {
-    margin: 4px 0 !important;
-}
-
-/* ✅ 確保砍痕在遊戲頁面顯示 */
-#gamePage .slash-container,
-#gamePage .face-container {
-    display: flex !important;
-}
-
-/* ============================================================
-   ✅ 修正 5: 砍痕特效 - 確保顯示
-   ============================================================ */
-.global-monster-wrapper .slash-effect {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.1s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.global-monster-wrapper .slash-effect.active {
-    opacity: 1;
-    animation: slashAnim 0.4s ease-out forwards;
-}
-
-.global-monster-wrapper .slash-effect::after {
-    content: '⚔️';  /* ✅ 預設砍痕圖示 */
-    font-size: clamp(25px, 5vw, 40px);
-    color: #ff2a6d;
-    text-shadow: 0 0 30px rgba(255, 42, 109, 0.6), 0 0 60px rgba(255, 42, 109, 0.3);
-}
-
-/* ============================================================
-   其他現有樣式（保持不變）
-   ============================================================ */
-
 /* 背景大色塊 */
 .game-window::before {
     content: '';
@@ -330,9 +60,6 @@ html, body {
     z-index: 0;
 }
 
-/* ===== 其餘保持您原本的樣式 ===== */
-
-/* ... 以下是您原本的其他樣式，保持不變 ... */
 /* ============================================================
    📊 2. 頂部全域狀態欄（含史萊姆）
    ============================================================ */
@@ -344,7 +71,7 @@ html, body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     flex-shrink: 0;
     position: relative;
-    z-index: 10;
+    z-index: 100 !important;
     min-height: 70px;
 }
 
@@ -430,23 +157,270 @@ html, body {
 }
 
 /* ============================================================
-   🐙 全域史萊姆（獨立於頁面）
+   🐙 史萊姆置中 + 放大
    ============================================================ */
 .global-monster-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 4px;
-    padding: 2px 0;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 6px 0 !important;
+    position: relative !important;
+    z-index: 10 !important;
+    gap: 0 !important;
+}
+
+.global-monster-wrapper .monster-slime {
+    width: clamp(70px, 14vw, 100px) !important;
+    height: clamp(56px, 11vw, 80px) !important;
+    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 -6px 20px rgba(0,0,0,0.1) !important;
+    margin: 0 auto !important;
+    z-index: 6 !important;
+    animation: monsterFloat 2s ease-in-out infinite;
+    background: radial-gradient(circle at 35% 35%, #9ae5f3, #4eaec5);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.15s ease;
+    flex-shrink: 0;
     position: relative;
 }
 
+.global-monster-wrapper .monster-yokai-icon {
+    font-size: clamp(28px, 5vw, 42px) !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 7;
+    filter: drop-shadow(0 2px 10px rgba(0,0,0,0.2));
+}
+
+.global-monster-wrapper .slime-face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 8;
+    pointer-events: none;
+}
+
+.global-monster-wrapper .slime-eye {
+    width: clamp(5px, 1.2vw, 8px) !important;
+    height: clamp(5px, 1.2vw, 8px) !important;
+    background: #1a1a2e !important;
+    border-radius: 50% !important;
+    position: absolute !important;
+    top: 38% !important;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.global-monster-wrapper .slime-eye.left { left: 28% !important; }
+.global-monster-wrapper .slime-eye.right { right: 28% !important; }
+
+.global-monster-wrapper .slime-mouth {
+    position: absolute !important;
+    top: 55% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    transition: all 0.15s ease;
+}
+
+.global-monster-wrapper .slime-mouth.normal {
+    width: clamp(10px, 2vw, 16px) !important;
+    height: clamp(5px, 1vw, 8px) !important;
+    border-bottom: 2.5px solid #1a1a2e !important;
+    border-radius: 0 0 50% 50% !important;
+}
+
+.global-monster-wrapper .hit-effect {
+    display: none !important;
+}
+
+/* ============================================================
+   🗡️ 五種砍痕特效（顯示在史萊姆身上）
+   ============================================================ */
+.slash-effect {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9 !important;
+    pointer-events: none !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    opacity: 0 !important;
+    transition: opacity 0.05s !important;
+    font-size: 0 !important;
+}
+
+/* 砍痕 1: 斜劈 - 左上到右下 */
+.slash-effect.slash-1 {
+    opacity: 1 !important;
+    animation: slash1 0.4s ease-out forwards !important;
+}
+.slash-effect.slash-1::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 80% !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, transparent, #ff2a6d, #ffd700, transparent) !important;
+    transform: rotate(-45deg) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 0 30px rgba(255, 42, 109, 0.6) !important;
+}
+
+@keyframes slash1 {
+    0% { transform: scaleX(0) rotate(-45deg); opacity: 0; }
+    40% { opacity: 1; }
+    100% { transform: scaleX(1) rotate(-45deg); opacity: 0; }
+}
+
+/* 砍痕 2: 反劈 - 右上到左下 */
+.slash-effect.slash-2 {
+    opacity: 1 !important;
+    animation: slash2 0.45s ease-out forwards !important;
+}
+.slash-effect.slash-2::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 80% !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, transparent, #ff6b8a, #ffd700, transparent) !important;
+    transform: rotate(45deg) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 0 40px rgba(255, 107, 138, 0.6) !important;
+}
+
+@keyframes slash2 {
+    0% { transform: scaleX(0) rotate(45deg); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: scaleX(1) rotate(45deg); opacity: 0; }
+}
+
+/* 砍痕 3: 十字斬 */
+.slash-effect.slash-3 {
+    opacity: 1 !important;
+    animation: slash3 0.5s ease-out forwards !important;
+}
+.slash-effect.slash-3::before {
+    content: '' !important;
+    position: absolute !important;
+    width: 80% !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, transparent, #ff2a6d, transparent) !important;
+    transform: rotate(0deg) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 0 30px rgba(255, 42, 109, 0.4) !important;
+}
+.slash-effect.slash-3::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 80% !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, transparent, #ff2a6d, transparent) !important;
+    transform: rotate(90deg) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 0 30px rgba(255, 42, 109, 0.4) !important;
+}
+
+@keyframes slash3 {
+    0% { transform: scale(0); opacity: 0; }
+    30% { transform: scale(1.3); opacity: 1; }
+    70% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+/* 砍痕 4: 弧形斬 */
+.slash-effect.slash-4 {
+    opacity: 1 !important;
+    animation: slash4 0.4s ease-out forwards !important;
+}
+.slash-effect.slash-4::after {
+    content: ')' !important;
+    position: absolute !important;
+    font-size: 70px !important;
+    color: #ff2a6d !important;
+    text-shadow: 0 0 50px rgba(255, 42, 109, 0.6) !important;
+    transform: rotate(20deg) !important;
+    font-weight: 900 !important;
+}
+
+@keyframes slash4 {
+    0% { transform: scale(0.3) rotate(-30deg); opacity: 0; }
+    40% { transform: scale(1.4) rotate(10deg); opacity: 1; }
+    100% { transform: scale(1) rotate(20deg); opacity: 0; }
+}
+
+/* 砍痕 5: 爆破斬 */
+.slash-effect.slash-5 {
+    opacity: 1 !important;
+    animation: slash5 0.5s ease-out forwards !important;
+}
+.slash-effect.slash-5::before {
+    content: '✦' !important;
+    position: absolute !important;
+    font-size: 50px !important;
+    color: #ffd700 !important;
+    text-shadow: 0 0 60px rgba(255, 215, 0, 0.6) !important;
+    animation: starBurst 0.5s ease-out forwards !important;
+}
+.slash-effect.slash-5::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%) !important;
+    animation: burstRing 0.5s ease-out forwards !important;
+}
+
+@keyframes slash5 {
+    0% { transform: scale(0); opacity: 0; }
+    30% { transform: scale(1.5); opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+@keyframes starBurst {
+    0% { transform: scale(0) rotate(0deg); opacity: 0; }
+    40% { transform: scale(1.8) rotate(180deg); opacity: 1; }
+    100% { transform: scale(1) rotate(360deg); opacity: 0; }
+}
+
+@keyframes burstRing {
+    0% { transform: scale(0); opacity: 0.8; }
+    100% { transform: scale(2); opacity: 0; }
+}
+
+/* ============================================================
+   😊 史萊姆受擊動畫
+   ============================================================ */
+.global-monster-wrapper .monster-slime.damaged {
+    background: linear-gradient(180deg, #ff2a6d 0%, #aa0000 100%) !important;
+    box-shadow: 0 0 30px rgba(255, 42, 109, 0.3) !important;
+    animation: slimeHit 0.2s ease-in-out infinite alternate !important;
+}
+
+@keyframes slimeHit {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    100% { transform: translate(-50%, -50%) scale(0.88); filter: brightness(1.2); }
+}
+
+@keyframes monsterFloat {
+    0%, 100% { transform: translate(-50%, -50%) scaleX(1) translateY(0); }
+    50% { transform: translate(-50%, -50%) scaleX(1.03) scaleY(0.97) translateY(-4px); }
+}
+
+/* ============================================================
+   🩸 怪物資訊（血條）
+   ============================================================ */
 .global-monster-info {
     display: flex;
     align-items: center;
     gap: 8px;
     flex: 1;
     min-width: 0;
+    padding: 2px 0;
 }
 
 .global-monster-info .monster-name {
@@ -493,196 +467,6 @@ html, body {
     white-space: nowrap !important;
 }
 
-/* 全域史萊姆本體（較小） */
-.global-monster-wrapper .monster-slime {
-    width: clamp(50px, 10vw, 70px) !important;
-    height: clamp(40px, 8vw, 56px) !important;
-    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35% !important;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), inset 0 -6px 20px rgba(0,0,0,0.1) !important;
-    margin: 0 !important;
-    z-index: 6;
-    animation: monsterFloat 2s ease-in-out infinite;
-    background: radial-gradient(circle at 35% 35%, #9ae5f3, #4eaec5);
-    border: 1px solid rgba(255,255,255,0.06);
-    transition: all 0.15s ease;
-    flex-shrink: 0;
-    position: relative;
-}
-
-.global-monster-wrapper .monster-yokai-icon {
-    font-size: clamp(18px, 3.5vw, 28px);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 7;
-    filter: drop-shadow(0 2px 10px rgba(0,0,0,0.2));
-}
-
-/* 全域史萊姆表情 */
-.global-monster-wrapper .slime-face {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 8;
-    pointer-events: none;
-}
-
-.global-monster-wrapper .slime-eye {
-    width: clamp(5px, 1.2vw, 8px) !important;
-    height: clamp(5px, 1.2vw, 8px) !important;
-    background: #1a1a2e !important;
-    border-radius: 50% !important;
-    position: absolute !important;
-    top: 38% !important;
-    transition: all 0.15s ease;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-}
-.global-monster-wrapper .slime-eye.left { left: 28% !important; }
-.global-monster-wrapper .slime-eye.right { right: 28% !important; }
-
-.global-monster-wrapper .slime-mouth {
-    position: absolute !important;
-    top: 55% !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    transition: all 0.15s ease;
-}
-
-.global-monster-wrapper .slime-mouth.normal {
-    width: clamp(8px, 1.8vw, 14px) !important;
-    height: clamp(4px, 1vw, 8px) !important;
-    border-bottom: 2px solid #1a1a2e !important;
-    border-radius: 0 0 50% 50% !important;
-}
-
-.global-monster-wrapper .slime-mouth.happy {
-    width: clamp(10px, 2.2vw, 16px) !important;
-    height: clamp(5px, 1.2vw, 9px) !important;
-    border-bottom: 2px solid #1a1a2e !important;
-    border-radius: 0 0 50% 50% !important;
-    transform: translateX(-50%) scaleX(1.2) !important;
-}
-
-.global-monster-wrapper .slime-mouth.surprised {
-    width: clamp(7px, 1.5vw, 11px) !important;
-    height: clamp(7px, 1.5vw, 11px) !important;
-    border: 2px solid #1a1a2e !important;
-    border-radius: 50% !important;
-    background: #ff6b8a !important;
-}
-
-.global-monster-wrapper .slime-mouth.angry {
-    width: clamp(9px, 2vw, 15px) !important;
-    height: clamp(4px, 1vw, 8px) !important;
-    border-top: 2px solid #1a1a2e !important;
-    border-radius: 50% 50% 0 0 !important;
-    transform: translateX(-50%) !important;
-}
-
-.global-monster-wrapper .slime-mouth.crying {
-    width: clamp(8px, 1.5vw, 12px) !important;
-    height: clamp(5px, 1.2vw, 9px) !important;
-    border: 2px solid #1a1a2e !important;
-    border-radius: 50% !important;
-    background: #4eaec5 !important;
-    border-bottom-color: #ff6b8a !important;
-}
-
-.global-monster-wrapper .slime-eye.happy {
-    transform: scale(0.7) translateY(-1px) !important;
-}
-.global-monster-wrapper .slime-eye.surprised {
-    transform: scale(1.3) !important;
-}
-.global-monster-wrapper .slime-eye.angry {
-    transform: rotate(15deg) scale(0.6) !important;
-    border-radius: 2px !important;
-    height: clamp(3px, 0.7vw, 5px) !important;
-}
-.global-monster-wrapper .slime-eye.angry.right {
-    transform: rotate(-15deg) scale(0.6) !important;
-}
-.global-monster-wrapper .slime-eye.crying {
-    transform: translateY(2px) scale(0.7) !important;
-}
-
-/* 砍痕 */
-.global-monster-wrapper .slash-effect {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.1s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.global-monster-wrapper .slash-effect.active {
-    opacity: 1;
-    animation: slashAnim 0.4s ease-out forwards;
-}
-
-.global-monster-wrapper .slash-effect::after {
-    font-size: clamp(25px, 5vw, 40px);
-    color: #ff2a6d;
-    text-shadow: 0 0 30px rgba(255, 42, 109, 0.6), 0 0 60px rgba(255, 42, 109, 0.3);
-}
-
-/* 受擊動畫 */
-.global-monster-wrapper .monster-slime.damaged {
-    background: linear-gradient(180deg, #ff2a6d 0%, #aa0000 100%) !important;
-    box-shadow: 0 0 30px rgba(255, 42, 109, 0.3) !important;
-    animation: slimeHit 0.2s ease-in-out infinite alternate !important;
-}
-
-.global-monster-wrapper .hit-effect {
-    position: absolute;
-    font-size: clamp(20px, 4vw, 32px) !important;
-    font-weight: 900;
-    color: #ffd700;
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-    left: 45% !important;
-    top: -20% !important;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 15;
-}
-
-.global-monster-wrapper .hit-effect.animate {
-    animation: explosionPop 0.4s ease-out forwards;
-}
-
-@keyframes explosionPop {
-    0% { opacity: 0; transform: scale(0.3) translateY(0); }
-    40% { opacity: 1; transform: scale(1.3) translateY(-10px); }
-    100% { opacity: 0; transform: scale(1) translateY(-25px); }
-}
-
-@keyframes slimeHit {
-    0% { transform: translate(-50%, -50%) scale(1); }
-    100% { transform: translate(-50%, -50%) scale(0.88); filter: brightness(1.2); }
-}
-
-@keyframes monsterFloat {
-    0%, 100% { transform: translate(-50%, -50%) scaleX(1) translateY(0); }
-    50% { transform: translate(-50%, -50%) scaleX(1.03) scaleY(0.97) translateY(-4px); }
-}
-
-@keyframes slashAnim {
-    0% { opacity: 0; transform: scale(0.3) rotate(-30deg); }
-    30% { opacity: 1; transform: scale(1.3) rotate(0deg); }
-    70% { opacity: 1; transform: scale(1) rotate(5deg); }
-    100% { opacity: 0; transform: scale(1.1) rotate(0deg); }
-}
-
 /* ============================================================
    📄 頁面內容區
    ============================================================ */
@@ -712,6 +496,20 @@ html, body {
     padding: 12px 14px;
     border: 1px solid rgba(255, 255, 255, 0.04);
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+/* ✅ 驅魔結界 - 滿版獨立區塊 */
+.section-card结界 {
+    background: rgba(255, 255, 255, 0.04) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 16px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box;
 }
 
 h2 {
@@ -776,10 +574,10 @@ h3 {
     line-height: 0;
 }
 
-.staff-clef img {
-    height: clamp(80px, 14vh, 110px);
-    width: auto;
-    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3));
+.staff-clef span {
+    font-size: clamp(60px, 10vh, 80px);
+    opacity: 0.4;
+    color: #f0e6d3;
 }
 
 .note-display {
@@ -792,9 +590,9 @@ h3 {
 }
 
 .note-display img {
-    height: clamp(28px, 4.5vw, 38px);
+    height: clamp(40px, 6vw, 55px);
     width: auto;
-    filter: drop-shadow(0 4px 15px rgba(255, 215, 0, 0.2));
+    filter: drop-shadow(0 4px 20px rgba(255, 215, 0, 0.15));
 }
 
 @keyframes pop {
@@ -986,7 +784,7 @@ button:active {
 }
 
 /* ============================================================
-   📱 底部導航（展開/收合）
+   📱 底部導航（固定顯示，無三角形）
    ============================================================ */
 .bottom-nav {
     position: fixed !important;
@@ -999,85 +797,61 @@ button:active {
     flex-direction: column !important;
     align-items: center !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
-    background: rgba(0, 0, 0, 0.6) !important;
+    background: rgba(0, 0, 0, 0.75) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
 }
 
-.nav-toggle {
-    width: 100% !important;
-    padding: 4px 0 !important;
-    margin: 0 !important;
-    background: none !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    color: rgba(255, 255, 255, 0.4) !important;
-    font-size: 16px !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    height: 28px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.nav-toggle:active {
-    transform: none !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-}
-
-#navToggleIcon {
-    transition: transform 0.3s ease;
-    display: inline-block;
-}
-
-#navToggleIcon.collapsed {
-    transform: rotate(180deg);
-}
-
 .nav-menu {
     display: flex !important;
     width: 100% !important;
-    overflow: hidden !important;
     max-height: 60px !important;
-    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease !important;
+    padding: 6px 8px !important;
+    gap: 6px !important;
     opacity: 1 !important;
-    padding: 4px 0 !important;
-}
-
-.nav-menu.collapsed {
-    max-height: 0 !important;
-    opacity: 0 !important;
-    padding: 0 !important;
+    overflow: visible !important;
 }
 
 .nav-menu button {
     flex: 1 !important;
     margin: 0 !important;
-    padding: 0 !important;
-    height: 48px !important;
-    background: none !important;
-    border: none !important;
-    border-radius: 0 !important;
+    padding: 10px 8px !important;
+    height: 44px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    border-radius: 12px !important;
     box-shadow: none !important;
     font-size: clamp(12px, 1.8vw, 15px) !important;
-    font-weight: 900 !important;
-    color: rgba(255, 255, 255, 0.3) !important;
+    font-weight: 700 !important;
+    color: rgba(255, 255, 255, 0.4) !important;
     text-shadow: none !important;
     transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    position: relative !important;
 }
 
 .nav-menu button:active {
     transform: scale(0.95) !important;
-    background: rgba(255, 255, 255, 0.03) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
 }
 
 .nav-menu button.active {
     color: #ffffff !important;
-    border-top: 2px solid #ff2a6d !important;
-    background: rgba(255, 42, 109, 0.04) !important;
+    background: rgba(255, 42, 109, 0.08) !important;
+    border-color: rgba(255, 42, 109, 0.15) !important;
+    box-shadow: 0 4px 20px rgba(255, 42, 109, 0.05) !important;
+}
+
+.nav-menu button.active::before {
+    content: '' !important;
+    position: absolute !important;
+    top: -1px !important;
+    left: 20% !important;
+    right: 20% !important;
+    height: 2px !important;
+    background: linear-gradient(90deg, transparent, #ff2a6d, transparent) !important;
+    border-radius: 0 0 4px 4px !important;
 }
 
 /* ============================================================
@@ -1151,11 +925,11 @@ button:active {
         height: 110px;
     }
     .global-monster-wrapper .monster-slime {
-        width: 40px !important;
-        height: 32px !important;
+        width: 50px !important;
+        height: 40px !important;
     }
     .global-monster-wrapper .monster-yokai-icon {
-        font-size: 16px !important;
+        font-size: 20px !important;
     }
 }
 
