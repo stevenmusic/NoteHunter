@@ -5,7 +5,7 @@ const ICON_WEAPON = `<svg viewBox="0 0 64 64" width="44" height="44"><defs><line
 const ICON_SHIELD = `<svg viewBox="0 0 64 64" width="44" height="44"><defs><linearGradient id="s" x1="0" x2="1"><stop offset="0%" stop-color="#e6c280"/><stop offset="100%" stop-color="#aa851c"/></linearGradient></defs><path d="M32 6 C45 6 54 14 54 34 C54 50 32 60 32 60 C32 60 10 50 10 34 C10 14 19 6 32 6 Z" fill="url(#s)" stroke="#1c1b1a" stroke-width="2.5"/><circle cx="32" cy="32" r="10" fill="none" stroke="#bc002d" stroke-width="3"/></svg>`;
 
 /* ============================================================
-   📥 載入音符題庫 (支援 questions.js)
+   📥 載入音符題庫
    ============================================================ */
 let questionBank = null;
 try {
@@ -17,7 +17,6 @@ try {
     console.warn('⚠️ 無法載入 questions.js');
 }
 
-// 備用題庫（如果外部檔案未載入）
 if (!questionBank) {
     console.log('📝 使用內建備用題庫');
     questionBank = {
@@ -56,62 +55,6 @@ if (!questionBank) {
             { id: "b_c4", answer: "C", name: "C4", img: "assets/notes/bass_c4.jpeg" }
         ]
     };
-}
-
-/* ============================================================
-   🎯 音效引擎
-   ============================================================ */
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-
-function initAudio() {
-    if (!audioCtx) {
-        audioCtx = new AudioCtx();
-    }
-}
-
-function playTone(frequency, duration = 0.15, type = 'sine', volume = 0.25) {
-    try {
-        initAudio();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.value = frequency;
-        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-    } catch(e) { /* 靜默處理 */ }
-}
-
-function playCorrectSound() {
-    playTone(523.25, 0.1, 'sine', 0.25);
-    setTimeout(() => playTone(659.25, 0.1, 'sine', 0.25), 100);
-    setTimeout(() => playTone(783.99, 0.15, 'sine', 0.25), 200);
-}
-
-function playWrongSound() {
-    playTone(200, 0.3, 'sawtooth', 0.15);
-}
-
-function playComboSound(comboCount) {
-    if (comboCount >= 10) playTone(880, 0.1, 'square', 0.15);
-    else if (comboCount >= 5) playTone(659.25, 0.1, 'square', 0.15);
-}
-
-function playDefeatSound() {
-    playTone(523.25, 0.15, 'sine', 0.2);
-    setTimeout(() => playTone(659.25, 0.15, 'sine', 0.2), 150);
-    setTimeout(() => playTone(783.99, 0.2, 'sine', 0.2), 300);
-}
-
-function playLevelUpSound() {
-    playTone(523.25, 0.1, 'sine', 0.2);
-    setTimeout(() => playTone(659.25, 0.1, 'sine', 0.2), 100);
-    setTimeout(() => playTone(783.99, 0.1, 'sine', 0.2), 200);
-    setTimeout(() => playTone(1046.5, 0.2, 'sine', 0.2), 300);
 }
 
 /* ============================================================
@@ -206,7 +149,6 @@ function applySlimeExpression(monsterId, expression) {
     const leftEye = face.querySelector('.slime-eye.left');
     const rightEye = face.querySelector('.slime-eye.right');
 
-    // ✅ 永遠保持微笑
     if (mouth) {
         mouth.className = 'slime-mouth normal';
     }
@@ -219,35 +161,28 @@ function applySlimeExpression(monsterId, expression) {
 }
 
 /* ============================================================
-   🗡️ 五種砍痕特效（顯示在史萊姆身上）
+   🗡️ 五種砍痕特效
    ============================================================ */
 function applySlashEffect(monsterId, slashType) {
     const slash = document.getElementById(monsterId + 'SlashEffect');
     if (!slash) return;
 
-    // 清除所有砍痕類別
     slash.className = 'slash-effect';
-    
-    // 強制重繪
     void slash.offsetHeight;
     
-    // 根據類型添加不同砍痕 (0-4)
     const types = ['slash-1', 'slash-2', 'slash-3', 'slash-4', 'slash-5'];
     const type = types[slashType % types.length];
     slash.classList.add(type);
     
-    // 自動清除
     setTimeout(() => {
         slash.className = 'slash-effect';
     }, 600);
 }
 
-// 隨機砍痕
 function getRandomSlashType() {
     return Math.floor(Math.random() * 5);
 }
 
-// 觸發隨機砍痕
 function triggerRandomSlash() {
     const type = getRandomSlashType();
     applySlashEffect('global', type);
@@ -403,7 +338,6 @@ function upgradeWeapon() {
         updateCharacter();
         updateUI();
         saveGameData();
-        playTone(880, 0.1, 'sine', 0.2);
     }
 }
 
@@ -416,7 +350,6 @@ function upgradeShield() {
         updateCharacter();
         updateUI();
         saveGameData();
-        playTone(659.25, 0.1, 'sine', 0.2);
     }
 }
 
@@ -488,7 +421,6 @@ function nextNote() {
     
     const pool = questionBank[lookupMode] || questionBank['treble'];
     if (!pool || pool.length === 0) {
-        console.warn('⚠️ 題庫為空，使用預設');
         const defaultNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
         const randomNote = defaultNotes[Math.floor(Math.random() * defaultNotes.length)];
         currentNote = randomNote;
@@ -508,8 +440,6 @@ function nextNote() {
 }
 
 function answer(n) {
-    initAudio();
-
     timeLeft = Math.min(timeLeft + 2, MAX_TIME);
     updateTimerDisplay();
 
@@ -524,15 +454,11 @@ function answer(n) {
         if (combo > maxCombo) maxCombo = combo;
         player.gold += Math.floor(10 * multiplier);
 
-        playCorrectSound();
-        if (combo >= 3) playComboSound(combo);
-
         damageMonster(finalDmg);
 
         showComboEffect();
     } else {
         combo = 0;
-        playWrongSound();
         loseLife();
         triggerMonsterHit();
     }
@@ -589,8 +515,6 @@ function executeSpawnNextMonster() {
     player.gold += 10;
     player.exp += 15;
 
-    playDefeatSound();
-
     while (player.exp >= player.level * player.expToNextLevel) {
         levelUp(true);
     }
@@ -620,8 +544,6 @@ function levelUp(silent = false) {
         player.atk += 2;
         player.hp += 10;
         player.maxHp = player.hp;
-
-        playLevelUpSound();
 
         if (!silent) {
             setTimeout(() => {
@@ -689,7 +611,6 @@ function startTimer() {
         updateTimerDisplay();
 
         if (timeLeft <= 0) {
-            playWrongSound();
             loseLife();
             combo = 0;
             updateUI();
@@ -722,12 +643,10 @@ function triggerMonsterHit() {
     const globalMonster = document.getElementById('globalMonster');
     const globalHit = document.getElementById('globalHitEffect');
 
-    // ✅ 隨機選擇一種砍痕 (0-4)
     const slashType = getRandomSlashType();
     
     if (globalMonster) {
         globalMonster.classList.add('damaged');
-        // ✅ 顯示砍痕特效
         applySlashEffect('global', slashType);
     }
     if (globalHit) globalHit.classList.add('animate');
@@ -735,7 +654,6 @@ function triggerMonsterHit() {
     setTimeout(() => {
         if (globalMonster) {
             globalMonster.classList.remove('damaged');
-            // ✅ 清除砍痕
             const slash = document.getElementById('globalSlashEffect');
             if (slash) slash.className = 'slash-effect';
         }
@@ -755,12 +673,9 @@ function handleMonsterClick(e) {
     if (now - lastClickTime < 80) return;
     lastClickTime = now;
 
-    initAudio();
     const isCrit = Math.random() < getTotalCritChance();
     const clickDmg = isCrit ? Math.floor(getWeaponAtk() * player.critMultiplier * 2) : (getWeaponAtk() * 2);
     damageMonster(clickDmg);
-
-    playTone(440, 0.05, 'sine', 0.1);
 }
 
 /* ============================================================
@@ -857,11 +772,7 @@ document.addEventListener("DOMContentLoaded", function() {
     renderClef('treble');
     updateUI();
 
-    // ✅ 史萊姆永遠微笑
     applySlimeExpression('global', 'normal');
 
-    console.log('🎮 音符獵人已啟動！');
-    console.log('✅ 史萊姆置中放大 + 永遠微笑');
-    console.log('✅ 五種砍痕特效：斜劈、反劈、十字斬、弧形斬、爆破斬');
-    console.log('📚 題庫載入狀態:', questionBank ? '✅ 已載入' : '⚠️ 使用備用');
+    console.log('🎮 音符獵人已啟動！(無音效版)');
 });
