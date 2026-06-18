@@ -1,55 +1,78 @@
 :root {
-    --bg-color: #1a1a1a;
     --gold: #d4af37;
-    --crimson: #bc002d;
+    --black: #1a1a1a;
     --paper: #f4f1ea;
+    --crimson: #bc002d;
 }
 
-body {
-    background: #0d0d0d !important;
-    font-family: 'Hiragino Mincho ProN', 'YuMincho', serif;
+body, html {
+    margin: 0; padding: 0;
+    height: 100%;
+    background: #000;
     color: var(--gold);
+    font-family: "Georgia", serif;
+    overflow: hidden; /* 防止滾動條 */
 }
 
-.game-window {
-    border: 8px double var(--gold);
-    width: 100vw; height: 100vh;
-    display: flex; flex-direction: column;
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    border: 6px double var(--gold);
+    box-sizing: border-box;
+}
+
+/* Header 區域 */
+.header {
+    padding: 20px;
+    border-bottom: 2px solid var(--gold);
+    background: #222;
+}
+
+/* 中間戰鬥區域 (關鍵修正) */
+.main-content {
+    flex: 1; /* 撐開所有剩餘空間 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #111;
+}
+
+/* 史萊姆視覺 */
+.slime-container {
+    width: 150px;
+    height: 150px;
+    cursor: pointer;
     position: relative;
+    transition: transform 0.1s;
 }
 
-/* 妖怪容器 - 稍微加上一點陰影 */
-.monster-slime {
-    background: radial-gradient(circle at 30% 30%, #4a4a4a, #000);
+.slime-body {
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at 30% 30%, #555, #000);
     border: 2px solid var(--gold);
-    border-radius: 4px; /* 去除圓潤感 */
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
 }
 
-/* 斬擊特效 - 筆觸感 */
-.slash-effect::after {
-    background: var(--crimson) !important;
-    box-shadow: 0 0 15px var(--crimson);
+.slime-container:active { transform: scale(0.9); }
+
+/* 底部導航 */
+.nav-bar {
+    display: flex;
+    border-top: 2px solid var(--gold);
+    background: #222;
 }
 
-/* 按鈕 - 木札/御守風 */
-button {
-    background: #2d2d2d;
-    border: 1px solid var(--gold);
+.nav-btn {
+    flex: 1;
+    padding: 20px;
+    background: none;
+    border: none;
     color: var(--gold);
-    border-radius: 2px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-right: 1px solid #444;
 }
 
-button:active {
-    background: var(--crimson);
-    color: white;
-}
-
-/* 五線譜 - 卷軸感 */
-.staff-wrapper {
-    background: var(--paper);
-    border: 2px solid var(--gold);
-}
-
-.staff-lines div {
-    background: rgba(0,0,0,0.2);
-}
+.nav-btn:last-child { border-right: none; }
+.nav-btn:hover { background: #333; }
