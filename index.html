@@ -2,35 +2,41 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>音符獵人 - 和風錄</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="game-container">
+        <!-- 頂部資訊欄：加上了裝飾性邊線 -->
         <header class="header">
-            <div class="status-top">
-                <span>修行者</span>
-                <span id="levelDisplay">Lv.1</span>
-                <span>金：<span id="goldDisplay">0</span></span>
-            </div>
-            <div class="hp-bar-container">
-                <div class="monster-name">迷途小鬼</div>
-                <div class="hp-bg">
-                    <div class="hp-fill" id="hpFill" style="width: 100%;"></div>
+            <div class="header-inner">
+                <div class="stats-row">
+                    <span>修行者</span>
+                    <span id="levelDisplay">Lv.1</span>
+                    <span>金：<span id="goldDisplay">0</span></span>
                 </div>
-                <div class="hp-text" id="hpText">100 / 100</div>
+                <div class="hp-bar-wrapper">
+                    <div class="monster-name">迷途小鬼</div>
+                    <div class="hp-bar-bg">
+                        <div class="hp-bar-fill" id="hpFill" style="width: 100%;"></div>
+                    </div>
+                    <div class="hp-text" id="hpText">100 / 100</div>
+                </div>
             </div>
         </header>
 
+        <!-- 中間戰鬥區：確保史萊姆永遠置中 -->
         <main class="main-content">
-            <div class="slime-container" id="slime">
-                <div class="slime-body"></div>
-                <div class="slime-eye"></div>
+            <div class="slime-wrapper" id="slime">
+                <div class="slime-body">
+                    <div class="slime-eye left"></div>
+                    <div class="slime-eye right"></div>
+                </div>
             </div>
         </main>
 
+        <!-- 底部導航：改用更有質感的按鈕樣式 -->
         <nav class="nav-bar">
             <button class="nav-btn">退魔</button>
             <button class="nav-btn">商店</button>
