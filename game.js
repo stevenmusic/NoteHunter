@@ -1,54 +1,38 @@
-/**
- * 和風音符獵人 - 核心邏輯
- */
-
 let isAttacking = false;
-const state = {
+let state = {
     gold: 0,
-    playerDamage: 10,
-    monster: { hp: 100, maxHp: 100 }
+    hp: 100,
+    maxHp: 100
 };
 
-function attackMonster() {
-    if (isAttacking) return; // 防連點鎖定
+const slime = document.getElementById('slime');
+const hpFill = document.getElementById('hpFill');
+const hpText = document.getElementById('hpText');
+const goldDisplay = document.getElementById('goldDisplay');
+
+slime.addEventListener('click', () => {
+    // 防連點機制
+    if (isAttacking) return;
     isAttacking = true;
 
-    // 1. 視覺回饋
-    const monsterEl = document.querySelector('.monster-slime');
-    monsterEl.classList.add('damaged');
-    triggerSlashEffect();
-
-    // 2. 數值計算
-    state.monster.hp -= state.playerDamage;
-    if (state.monster.hp <= 0) {
+    // 邏輯處理
+    state.hp -= 10;
+    if (state.hp <= 0) {
+        state.hp = state.maxHp;
         state.gold += 10;
-        state.monster.hp = state.monster.maxHp;
-        alert("妖怪已被淨化！");
+        goldDisplay.innerText = state.gold;
     }
 
-    // 3. 更新 UI
-    updateUI();
+    // UI 更新
+    const percent = (state.hp / state.maxHp) * 100;
+    hpFill.style.width = percent + '%';
+    hpText.innerText = `${state.hp} / ${state.maxHp}`;
 
-    // 4. 解鎖
+    // 視覺回饋
+    slime.style.filter = "brightness(2)";
+    
     setTimeout(() => {
         isAttacking = false;
-        monsterEl.classList.remove('damaged');
-    }, 250);
-}
-
-function triggerSlashEffect() {
-    const wrapper = document.querySelector('.global-monster-wrapper');
-    const slash = document.createElement('div');
-    slash.className = 'slash-effect slash-1'; // 這裡可隨機選 class
-    wrapper.appendChild(slash);
-    setTimeout(() => slash.remove(), 500);
-}
-
-function updateUI() {
-    document.getElementById('goldDisplay').innerText = state.gold;
-    const hpBar = document.querySelector('.hp-bar-fill');
-    hpBar.style.width = `${(state.monster.hp / state.monster.maxHp) * 100}%`;
-}
-
-// 事件監聽
-document.querySelector('.monster-slime').addEventListener('click', attackMonster);
+        slime.style.filter = "brightness(1)";
+    }, 200);
+});
