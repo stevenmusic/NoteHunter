@@ -5,9 +5,24 @@ const ICON_WEAPON = `<svg viewBox="0 0 64 64" width="44" height="44"><defs><line
 const ICON_SHIELD = `<svg viewBox="0 0 64 64" width="44" height="44"><defs><linearGradient id="s" x1="0" x2="1"><stop offset="0%" stop-color="#e6c280"/><stop offset="100%" stop-color="#aa851c"/></linearGradient></defs><path d="M32 6 C45 6 54 14 54 34 C54 50 32 60 32 60 C32 60 10 50 10 34 C10 14 19 6 32 6 Z" fill="url(#s)" stroke="#1c1b1a" stroke-width="2.5"/><circle cx="32" cy="32" r="10" fill="none" stroke="#bc002d" stroke-width="3"/></svg>`;
 
 /* ============================================================
-   🎵 備用 SVG（圖片載入失敗時使用）
+   🎵 音符位置（僅用於定位，不生成 SVG）
    ============================================================ */
-const WHOLE_NOTE_SVG = `<svg width="30" height="22" viewBox="-15 -11 30 22"><ellipse cx="0" cy="0" rx="12" ry="7.5" fill="none" stroke="#ffd700" stroke-width="3.5"/></svg>`;
+const notePositions = {
+    treble: [
+        { note: "C", top: 150 }, { note: "D", top: 140 }, { note: "E", top: 130 },
+        { note: "F", top: 120 }, { note: "G", top: 110 }, { note: "A", top: 100 },
+        { note: "B", top: 90 }, { note: "C", top: 80 }, { note: "D", top: 70 },
+        { note: "E", top: 60 }, { note: "F", top: 50 }, { note: "G", top: 40 },
+        { note: "A", top: 30 }, { note: "B", top: 20 }, { note: "C", top: 12 }
+    ],
+    bass: [
+        { note: "C", top: 168 }, { note: "D", top: 158 }, { note: "E", top: 148 },
+        { note: "F", top: 138 }, { note: "G", top: 130 }, { note: "A", top: 120 },
+        { note: "B", top: 110 }, { note: "C", top: 100 }, { note: "D", top: 90 },
+        { note: "E", top: 80 }, { note: "F", top: 70 }, { note: "G", top: 60 },
+        { note: "A", top: 50 }, { note: "B", top: 40 }, { note: "C", top: 30 }
+    ]
+};
 
 /* ============================================================
    🎯 音效引擎
@@ -56,6 +71,13 @@ function playDefeatSound() {
     playTone(523.25, 0.15, 'sine', 0.2);
     setTimeout(() => playTone(659.25, 0.15, 'sine', 0.2), 150);
     setTimeout(() => playTone(783.99, 0.2, 'sine', 0.2), 300);
+}
+
+function playLevelUpSound() {
+    playTone(523.25, 0.1, 'sine', 0.2);
+    setTimeout(() => playTone(659.25, 0.1, 'sine', 0.2), 100);
+    setTimeout(() => playTone(783.99, 0.1, 'sine', 0.2), 200);
+    setTimeout(() => playTone(1046.5, 0.2, 'sine', 0.2), 300);
 }
 
 /* ============================================================
@@ -122,165 +144,95 @@ function getComboMultiplier() {
     return 1;
 }
 
-/* 😊 史萊姆表情 */
+/* ============================================================
+   😊 史萊姆五種表情（修正版）
+   ============================================================ */
 const SLIME_EXPRESSIONS = ['normal', 'happy', 'surprised', 'angry', 'crying'];
-const SLASH_TYPES = ['type1', 'type2', 'type3', 'type4', 'type5'];
 
 function getRandomExpression() {
     return SLIME_EXPRESSIONS[Math.floor(Math.random() * SLIME_EXPRESSIONS.length)];
-}
-
-function getRandomSlash() {
-    return SLASH_TYPES[Math.floor(Math.random() * SLASH_TYPES.length)];
 }
 
 function applySlimeExpression(monsterId, expression) {
     const face = document.getElementById(monsterId + 'SlimeFace');
     if (!face) return;
 
+    // 獲取嘴巴和眼睛元素
     const mouth = face.querySelector('.slime-mouth');
+    const leftEye = face.querySelector('.slime-eye.left');
+    const rightEye = face.querySelector('.slime-eye.right');
+
+    // 重置嘴巴 - 移除所有表情類別
     if (mouth) {
         mouth.className = 'slime-mouth';
+        // 添加新的表情類別
         mouth.classList.add(expression);
     }
 
-    const eyes = face.querySelectorAll('.slime-eye');
-    eyes.forEach(eye => {
-        eye.className = 'slime-eye';
-        if (expression === 'happy') eye.classList.add('happy');
-        else if (expression === 'surprised') eye.classList.add('surprised');
-        else if (expression === 'angry') eye.classList.add('angry');
-        else if (expression === 'crying') eye.classList.add('crying');
-    });
+    // 重置眼睛
+    if (leftEye) {
+        leftEye.className = 'slime-eye left';
+        if (expression === 'happy') leftEye.classList.add('happy');
+        else if (expression === 'surprised') leftEye.classList.add('surprised');
+        else if (expression === 'angry') leftEye.classList.add('angry');
+        else if (expression === 'crying') leftEye.classList.add('crying');
+    }
+
+    if (rightEye) {
+        rightEye.className = 'slime-eye right';
+        if (expression === 'happy') rightEye.classList.add('happy');
+        else if (expression === 'surprised') rightEye.classList.add('surprised');
+        else if (expression === 'angry') rightEye.classList.add('angry');
+        else if (expression === 'crying') rightEye.classList.add('crying');
+    }
 }
 
-function applySlashEffect(monsterId, slashType) {
+/* ============================================================
+   🗡️ 五種角度/力度的砍痕
+   ============================================================ */
+const SLASH_STYLES = [
+    { id: 'slash1', label: '輕斬', rotation: -25, scale: 0.7, color: '#ff6b8a', duration: 0.3 },
+    { id: 'slash2', label: '斜劈', rotation: 15, scale: 1.0, color: '#ff2a6d', duration: 0.35 },
+    { id: 'slash3', label: '重斬', rotation: -45, scale: 1.3, color: '#ff0055', duration: 0.4 },
+    { id: 'slash4', label: '逆襲', rotation: 60, scale: 1.1, color: '#ff4488', duration: 0.3 },
+    { id: 'slash5', label: '絕殺', rotation: -70, scale: 1.5, color: '#ff0044', duration: 0.45 }
+];
+
+function getRandomSlash() {
+    return SLASH_STYLES[Math.floor(Math.random() * SLASH_STYLES.length)];
+}
+
+function applySlashEffect(monsterId, slashStyle) {
     const slash = document.getElementById(monsterId + 'SlashEffect');
     if (!slash) return;
 
-    slash.className = 'slash-effect';
-    slash.classList.add(slashType);
-    slash.classList.add('active');
+    // 重置並設置新樣式
+    slash.className = 'slash-effect active';
+    slash.style.setProperty('--slash-rotation', slashStyle.rotation + 'deg');
+    slash.style.setProperty('--slash-scale', slashStyle.scale);
+    slash.style.setProperty('--slash-color', slashStyle.color);
+    slash.style.setProperty('--slash-duration', slashStyle.duration + 's');
+
+    // 設置砍痕圖標（使用不同符號代表不同力度）
+    const icons = ['⚡', '🗡️', '⚔️', '💥', '🌟'];
+    const iconIndex = SLASH_STYLES.indexOf(slashStyle);
+    slash.textContent = icons[iconIndex % icons.length];
+
+    // 添加動畫
+    slash.style.animation = 'none';
+    // 強制重排
+    void slash.offsetHeight;
+    slash.style.animation = `slashAnim ${slashStyle.duration}s ease-out forwards`;
 
     setTimeout(() => {
         slash.classList.remove('active');
-    }, 400);
-}
-
-/* 🎵 音符位置 */
-const notePositions = {
-    treble: [
-        { note: "C", top: 150 }, { note: "D", top: 140 }, { note: "E", top: 130 },
-        { note: "F", top: 120 }, { note: "G", top: 110 }, { note: "A", top: 100 },
-        { note: "B", top: 90 }, { note: "C", top: 80 }, { note: "D", top: 70 },
-        { note: "E", top: 60 }, { note: "F", top: 50 }, { note: "G", top: 40 },
-        { note: "A", top: 30 }, { note: "B", top: 20 }, { note: "C", top: 12 }
-    ],
-    bass: [
-        { note: "C", top: 168 }, { note: "D", top: 158 }, { note: "E", top: 148 },
-        { note: "F", top: 138 }, { note: "G", top: 130 }, { note: "A", top: 120 },
-        { note: "B", top: 110 }, { note: "C", top: 100 }, { note: "D", top: 90 },
-        { note: "E", top: 80 }, { note: "F", top: 70 }, { note: "G", top: 60 },
-        { note: "A", top: 50 }, { note: "B", top: 40 }, { note: "C", top: 30 }
-    ]
-};
-
-function getWeaponAtk() {
-    return player.atk + (player.weapon.atkBonus || 0);
-}
-
-function getTotalCritChance() {
-    return player.critChance + (player.shield.critBonus || 0);
+        slash.style.animation = '';
+        slash.textContent = '';
+    }, slashStyle.duration * 1000 + 100);
 }
 
 /* ============================================================
-   ❤️ 生命值系統
-   ============================================================ */
-function loseLife() {
-    player.lives--;
-    if (player.lives < 0) player.lives = 0;
-    updateUI();
-
-    if (navigator.vibrate) navigator.vibrate(50);
-
-    if (player.lives <= 0) {
-        gameOver();
-    }
-}
-
-function gameOver() {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-    }
-
-    const finalScore = score;
-    setTimeout(() => {
-        alert(`💀 魂魄消散...\n\n🏆 最終戰功: ${finalScore}\n🔥 最高連擊: ${maxCombo}\n👹 擊敗妖怪: ${monstersDefeated}\n\n返回神社重新修煉吧！`);
-    }, 300);
-
-    // 重置玩家狀態（保留怪物等級）
-    player.lives = player.maxLives;
-    score = 0;
-    combo = 0;
-    maxCombo = 0;
-    monstersDefeated = 0;
-
-    // 怪物保持現有等級，只重置血量
-    monster.currentHp = monster.maxHp;
-
-    updateUI();
-    updateExpUI();
-    applyYokaiVisuals();
-    saveGameData();
-    backHome();
-}
-
-/* ============================================================
-   ⏱️ 計時器
-   ============================================================ */
-function startTimer() {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-    }
-
-    timeLeft = MAX_TIME;
-    updateTimerDisplay();
-
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-
-        if (timeLeft <= 0) {
-            playWrongSound();
-            loseLife();
-            combo = 0;
-            updateUI();
-            triggerMonsterHit();
-            nextNote();
-            timeLeft = MAX_TIME;
-            updateTimerDisplay();
-        }
-    }, 1000);
-}
-
-function updateTimerDisplay() {
-    const timerEl = document.getElementById("timerDisplay");
-    if (timerEl) {
-        timerEl.textContent = `⏱️ ${timeLeft}s`;
-        if (timeLeft <= 3) {
-            timerEl.style.color = "#ff2a6d";
-        } else if (timeLeft <= 5) {
-            timerEl.style.color = "#ffd700";
-        } else {
-            timerEl.style.color = "#00d2ff";
-        }
-    }
-}
-
-/* ============================================================
-   🎨 顯示譜號（使用圖片）
+   🎨 顯示譜號（只使用圖片）
    ============================================================ */
 function renderClef(mode) {
     const clefEl = document.getElementById("staffClef");
@@ -289,15 +241,21 @@ function renderClef(mode) {
     const isTreble = mode === 'treble';
     const imgPath = isTreble ? 'assets/notes/treble.png' : 'assets/notes/bass.png';
 
-    const img = new Image();
-    img.onload = function() {
-        clefEl.innerHTML = `<img src="${imgPath}" alt="${isTreble ? '高音譜號' : '低音譜號'}" style="height:clamp(90px,16vh,130px);width:auto;filter:drop-shadow(0 4px 15px rgba(0,0,0,0.3));">`;
-    };
-    img.onerror = function() {
-        // 圖片載入失敗時顯示文字提示
-        clefEl.innerHTML = `<span style="color:rgba(255,255,255,0.3);font-size:clamp(20px,4vw,40px);font-weight:900;">${isTreble ? '𝄞' : '𝄢'}</span>`;
-    };
-    img.src = imgPath;
+    // 只使用圖片，不生成任何 SVG
+    clefEl.innerHTML = `<img src="${imgPath}" alt="${isTreble ? '高音譜號' : '低音譜號'}" style="height:clamp(90px,16vh,130px);width:auto;filter:drop-shadow(0 4px 15px rgba(0,0,0,0.3));">`;
+}
+
+/* ============================================================
+   🎵 顯示音符（只顯示位置，不生成 SVG 內容）
+   ============================================================ */
+function renderNote(position) {
+    const noteEl = document.getElementById("noteNote");
+    if (!noteEl) return;
+
+    // 使用圖片顯示音符
+    const imgPath = 'assets/notes/note.png';
+    noteEl.innerHTML = `<img src="${imgPath}" alt="音符" style="height:clamp(30px,5vw,40px);width:auto;filter:drop-shadow(0 4px 15px rgba(255,215,0,0.2));">`;
+    noteEl.style.top = position + "px";
 }
 
 /* ============================================================
@@ -329,7 +287,6 @@ function loadGameData() {
     if (!player.lives) player.lives = player.maxLives || 5;
     if (!player.maxLives) player.maxLives = 5;
 
-    // 確保怪物血量有效
     if (monster.currentHp === undefined || monster.currentHp <= 0) {
         monster.currentHp = monster.maxHp;
     }
@@ -343,7 +300,7 @@ function loadGameData() {
     updateUI();
     updateExpUI();
     applyYokaiVisuals();
-    
+
     if (offlineSeconds > 3) simulateOfflineProgress(offlineSeconds);
 }
 
@@ -367,16 +324,15 @@ function simulateOfflineProgress(seconds) {
     player.gold += goldEarned;
     player.exp += slimesDefeated * 15;
 
-    while (player.exp >= player.level * player.expToNextLevel) { 
-        levelUp(true); // 靜默升級
+    while (player.exp >= player.level * player.expToNextLevel) {
+        levelUp(true);
     }
 
     updateUI();
     updateExpUI();
     applyYokaiVisuals();
     saveGameData();
-    
-    // 只顯示一次離線收益總結
+
     if (slimesDefeated > 0) {
         setTimeout(() => {
             alert(`💤 歸陣報告！修練期間自動祓除 ${slimesDefeated} 隻妖怪！獲得 🪙 ${goldEarned} 財貨！`);
@@ -491,11 +447,13 @@ function switchPage(id) {
     if (id === "characterPage") updateCharacter();
     if (id === "homePage") {
         applyYokaiVisuals();
+        // 確保表情恢復正常
+        applySlimeExpression('home', 'normal');
+        applySlimeExpression('game', 'normal');
         if (timerInterval) {
             clearInterval(timerInterval);
             timerInterval = null;
         }
-        // 更新首頁怪物資訊
         updateUI();
     }
 }
@@ -509,6 +467,10 @@ function startGame(mode) {
     nextNote();
     startTimer();
     setTimeout(applyYokaiVisuals, 50);
+    // 確保表情正常
+    setTimeout(() => {
+        applySlimeExpression('game', 'normal');
+    }, 100);
 }
 
 /* ============================================================
@@ -520,11 +482,8 @@ function nextNote() {
     const q = pool[Math.floor(Math.random() * pool.length)];
     currentNote = q.note;
 
-    const noteEl = document.getElementById("noteNote");
-    if (noteEl) {
-        noteEl.innerHTML = WHOLE_NOTE_SVG;
-        noteEl.style.top = q.top + "px";
-    }
+    // 只顯示音符位置，使用圖片
+    renderNote(q.top);
 
     timeLeft = MAX_TIME;
     updateTimerDisplay();
@@ -581,6 +540,14 @@ function showComboEffect() {
 /* ============================================================
    👹 怪物相關
    ============================================================ */
+function getWeaponAtk() {
+    return player.atk + (player.weapon.atkBonus || 0);
+}
+
+function getTotalCritChance() {
+    return player.critChance + (player.shield.critBonus || 0);
+}
+
 function damageMonster(amount, skipVisuals = false) {
     monster.currentHp -= amount;
     if (!skipVisuals) triggerMonsterHit();
@@ -606,12 +573,16 @@ function executeSpawnNextMonster() {
 
     playDefeatSound();
 
-    // 靜默升級（不彈窗）
     while (player.exp >= player.level * player.expToNextLevel) {
         levelUp(true);
     }
-    
+
     applyYokaiVisuals();
+    // 確保新怪物表情正常
+    setTimeout(() => {
+        applySlimeExpression('home', 'normal');
+        applySlimeExpression('game', 'normal');
+    }, 50);
 }
 
 function applyYokaiVisuals() {
@@ -650,15 +621,92 @@ function levelUp(silent = false) {
     }
 }
 
-function playLevelUpSound() {
-    playTone(523.25, 0.1, 'sine', 0.2);
-    setTimeout(() => playTone(659.25, 0.1, 'sine', 0.2), 100);
-    setTimeout(() => playTone(783.99, 0.1, 'sine', 0.2), 200);
-    setTimeout(() => playTone(1046.5, 0.2, 'sine', 0.2), 300);
+/* ============================================================
+   ❤️ 生命值系統
+   ============================================================ */
+function loseLife() {
+    player.lives--;
+    if (player.lives < 0) player.lives = 0;
+    updateUI();
+
+    if (navigator.vibrate) navigator.vibrate(50);
+
+    if (player.lives <= 0) {
+        gameOver();
+    }
+}
+
+function gameOver() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    const finalScore = score;
+    setTimeout(() => {
+        alert(`💀 魂魄消散...\n\n🏆 最終戰功: ${finalScore}\n🔥 最高連擊: ${maxCombo}\n👹 擊敗妖怪: ${monstersDefeated}\n\n返回神社重新修煉吧！`);
+    }, 300);
+
+    player.lives = player.maxLives;
+    score = 0;
+    combo = 0;
+    maxCombo = 0;
+    monstersDefeated = 0;
+
+    monster.currentHp = monster.maxHp;
+
+    updateUI();
+    updateExpUI();
+    applyYokaiVisuals();
+    saveGameData();
+    backHome();
 }
 
 /* ============================================================
-   😊 史萊姆受擊動畫
+   ⏱️ 計時器
+   ============================================================ */
+function startTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    timeLeft = MAX_TIME;
+    updateTimerDisplay();
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+
+        if (timeLeft <= 0) {
+            playWrongSound();
+            loseLife();
+            combo = 0;
+            updateUI();
+            triggerMonsterHit();
+            nextNote();
+            timeLeft = MAX_TIME;
+            updateTimerDisplay();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const timerEl = document.getElementById("timerDisplay");
+    if (timerEl) {
+        timerEl.textContent = `⏱️ ${timeLeft}s`;
+        if (timeLeft <= 3) {
+            timerEl.style.color = "#ff2a6d";
+        } else if (timeLeft <= 5) {
+            timerEl.style.color = "#ffd700";
+        } else {
+            timerEl.style.color = "#00d2ff";
+        }
+    }
+}
+
+/* ============================================================
+   😊 史萊姆受擊動畫（修正版）
    ============================================================ */
 function triggerMonsterHit() {
     const hMonster = document.getElementById('homeMonster');
@@ -667,21 +715,23 @@ function triggerMonsterHit() {
     const gHit = document.getElementById('gameHitEffect');
 
     const expression = getRandomExpression();
-    const slashType = getRandomSlash();
+    const slashStyle = getRandomSlash();
 
+    // 應用表情到 home 和 game
     if (hMonster) {
         hMonster.classList.add('damaged');
         applySlimeExpression('home', expression);
-        applySlashEffect('home', slashType);
+        applySlashEffect('home', slashStyle);
     }
     if (gMonster) {
         gMonster.classList.add('damaged');
         applySlimeExpression('game', expression);
-        applySlashEffect('game', slashType);
+        applySlashEffect('game', slashStyle);
     }
     if (hHit) hHit.classList.add('animate');
     if (gHit) gHit.classList.add('animate');
 
+    // 恢復正常
     setTimeout(() => {
         if (hMonster) {
             hMonster.classList.remove('damaged');
@@ -693,7 +743,7 @@ function triggerMonsterHit() {
         }
         if (hHit) hHit.classList.remove('animate');
         if (gHit) gHit.classList.remove('animate');
-    }, 400);
+    }, 500);
 }
 
 /* ============================================================
@@ -755,7 +805,6 @@ function updateUI() {
         el.style.width = ((displayHp / monster.maxHp) * 100) + "%";
     });
 
-    // 更新怪物名稱（確保兩邊同步）
     const homeName = document.getElementById('monsterName');
     const gameName = document.getElementById('gameMonsterName');
     if (homeName) homeName.innerText = `Lv.${monster.level} ${currentYokai.name}`;
@@ -800,17 +849,22 @@ setInterval(() => {
 }, 1000);
 
 /* ============================================================
-   🚀 初始化 - 綁定事件
+   🚀 初始化
    ============================================================ */
 document.addEventListener("DOMContentLoaded", function() {
-    // 綁定點擊事件
     const homeWrapper = document.getElementById("homeMonsterWrapper");
     const battleBox = document.getElementById("monsterBattleBox");
-    
+
     if (homeWrapper) homeWrapper.addEventListener("click", handleMonsterClick);
     if (battleBox) battleBox.addEventListener("click", handleMonsterClick);
 
     loadGameData();
     renderClef('treble');
     updateUI();
+
+    // 確保初始表情正常
+    setTimeout(() => {
+        applySlimeExpression('home', 'normal');
+        applySlimeExpression('game', 'normal');
+    }, 100);
 });
