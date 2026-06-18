@@ -147,7 +147,6 @@ function resetAttackCount() {
 function canAttack() {
     if (attackCount >= 8) return false;
     attackCount++;
-    // 重置計時器
     if (attackResetTimer) clearTimeout(attackResetTimer);
     attackResetTimer = setTimeout(resetAttackCount, 1000);
     return true;
@@ -162,7 +161,7 @@ function getComboMultiplier() {
 }
 
 /* ============================================================
-   😊 史萊姆表情（全域版 - 修正定位）
+   ✅ 修正 1: 史萊姆表情（全域版 - 確保顯示）
    ============================================================ */
 const SLIME_EXPRESSIONS = ['normal', 'happy', 'surprised', 'angry', 'crying'];
 
@@ -202,14 +201,14 @@ function applySlimeExpression(monsterId, expression) {
 }
 
 /* ============================================================
-   🗡️ 五種角度/力度的砍痕
+   ✅ 修正 2: 五種砍痕（確保顯示在 DOM 中）
    ============================================================ */
 const SLASH_STYLES = [
-    { id: 'slash1', label: '輕斬', rotation: -25, scale: 0.7, color: '#ff6b8a', duration: 0.3, icon: '⚡' },
+    { id: 'slash1', label: '輕斬', rotation: -25, scale: 0.7, color: '#ff6b8a', duration: 0.3, icon: '⚔️' },
     { id: 'slash2', label: '斜劈', rotation: 15, scale: 1.0, color: '#ff2a6d', duration: 0.35, icon: '🗡️' },
-    { id: 'slash3', label: '重斬', rotation: -45, scale: 1.3, color: '#ff0055', duration: 0.4, icon: '⚔️' },
-    { id: 'slash4', label: '逆襲', rotation: 60, scale: 1.1, color: '#ff4488', duration: 0.3, icon: '💥' },
-    { id: 'slash5', label: '絕殺', rotation: -70, scale: 1.5, color: '#ff0044', duration: 0.45, icon: '🌟' }
+    { id: 'slash3', label: '重斬', rotation: -45, scale: 1.3, color: '#ff0055', duration: 0.4, icon: '💢' },
+    { id: 'slash4', label: '逆襲', rotation: 60, scale: 1.1, color: '#ff4488', duration: 0.3, icon: '🔥' },
+    { id: 'slash5', label: '絕殺', rotation: -70, scale: 1.5, color: '#ff0044', duration: 0.45, icon: '💥' }
 ];
 
 function getRandomSlash() {
@@ -237,6 +236,39 @@ function applySlashEffect(monsterId, slashStyle) {
         slash.style.animation = '';
         slash.textContent = '';
     }, slashStyle.duration * 1000 + 100);
+}
+
+/* ============================================================
+   ✅ 修正 3: 顯示五種砍痕和表情在頁面上
+   ============================================================ */
+function renderSlashMarks() {
+    // 砍痕容器
+    const slashContainer = document.getElementById('slashContainer');
+    if (slashContainer) {
+        slashContainer.innerHTML = '';
+        const slashIcons = ['⚔️', '🗡️', '💢', '🔥', '💥'];
+        slashIcons.forEach((icon, index) => {
+            const span = document.createElement('span');
+            span.className = 'slash-mark';
+            span.textContent = icon;
+            span.dataset.slash = index + 1;
+            span.title = ['輕斬', '斜劈', '重斬', '逆襲', '絕殺'][index];
+            slashContainer.appendChild(span);
+        });
+    }
+
+    // 表情容器
+    const faceContainer = document.getElementById('faceContainer');
+    if (faceContainer) {
+        faceContainer.innerHTML = '';
+        const faces = ['😊', '😮', '😡', '😢', '😈'];
+        faces.forEach((emoji) => {
+            const span = document.createElement('span');
+            span.className = 'face-mark';
+            span.textContent = emoji;
+            faceContainer.appendChild(span);
+        });
+    }
 }
 
 /* ============================================================
@@ -430,16 +462,14 @@ function updateCharacter() {
 }
 
 /* ============================================================
-   🎵 分頁控管 + 底部導航
+   ✅ 修正 4: 分頁控管 + 底部導航（無三角形）
    ============================================================ */
 let navCollapsed = false;
 
+// ✅ 移除 toggleNav 中的三角形邏輯
 function toggleNav() {
-    navCollapsed = !navCollapsed;
-    const menu = document.getElementById('navMenu');
-    const icon = document.getElementById('navToggleIcon');
-    if (menu) menu.classList.toggle('collapsed', navCollapsed);
-    if (icon) icon.classList.toggle('collapsed', navCollapsed);
+    // 此功能已停用 - 導航永遠展開
+    console.log('導航固定顯示，無需切換');
 }
 
 function switchPage(id) {
@@ -589,13 +619,11 @@ function executeSpawnNextMonster() {
 function applyYokaiVisuals() {
     const currentYokai = YOKAI_DATABASE[monster.typeIndex] || YOKAI_DATABASE[0];
     
-    // 更新全域史萊姆
     const globalMonster = document.getElementById('globalMonster');
     const globalIcon = document.getElementById('globalMonsterIcon');
     if (globalMonster) globalMonster.style.background = currentYokai.bg;
     if (globalIcon) globalIcon.innerText = currentYokai.icon;
 
-    // 更新名稱
     const globalName = document.getElementById('globalMonsterName');
     if (globalName) globalName.innerText = `Lv.${monster.level} ${currentYokai.name}`;
 }
@@ -734,7 +762,6 @@ function triggerMonsterHit() {
 function handleMonsterClick(e) {
     e.stopPropagation();
     
-    // 攻擊冷卻檢查 - 每秒最多 8 次
     if (!canAttack()) return;
     
     const now = Date.now();
@@ -778,7 +805,6 @@ function updateUI() {
         livesEl.innerText = hearts;
     }
 
-    // 更新全域血條
     const currentYokai = YOKAI_DATABASE[monster.typeIndex] || YOKAI_DATABASE[0];
     const displayHp = Math.max(0, Math.ceil(monster.currentHp));
 
@@ -792,7 +818,6 @@ function updateUI() {
         el.style.width = ((displayHp / monster.maxHp) * 100) + "%";
     });
 
-    // 更新全域名稱
     const globalName = document.getElementById('globalMonsterName');
     if (globalName) globalName.innerText = `Lv.${monster.level} ${currentYokai.name}`;
 }
@@ -835,11 +860,14 @@ setInterval(() => {
 }, 1000);
 
 /* ============================================================
-   🚀 初始化
+   ✅ 修正 5: 初始化 - 確保砍痕和表情顯示
    ============================================================ */
 document.addEventListener("DOMContentLoaded", function() {
     const globalWrapper = document.getElementById("globalMonsterWrapper");
     if (globalWrapper) globalWrapper.addEventListener("click", handleMonsterClick);
+
+    // ✅ 渲染砍痕和表情
+    renderSlashMarks();
 
     loadGameData();
     renderClef('treble');
@@ -848,4 +876,7 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => {
         applySlimeExpression('global', 'normal');
     }, 100);
+
+    console.log('🎮 音符獵人已啟動！');
+    console.log('✅ 修正：史萊姆不擋等級、導航固定、無三角形、恢復砍痕/表情');
 });
