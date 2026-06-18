@@ -10,8 +10,11 @@
 
   <div class="game-window">
     
-    <!-- 👑 上方全域永久置頂：人物資訊面板 -->
+    <!-- ============================================================
+         👑 上方全域：玩家狀態 + 史萊姆（永不刷新）
+         ============================================================ -->
     <div class="global-header">
+      <!-- 玩家資訊 -->
       <div class="header-top-row">
         <div id="playerName" class="player-name-badge">⚔️ 武者 · 樂之勇士</div>
         <div id="levelText" class="lv-badge">段位.1</div>
@@ -23,134 +26,119 @@
           <div id="expText" class="exp-bar-text">魂魄 0 / 100</div>
         </div>
       </div>
-    </div>
 
-    <!-- ==================== 主頁基地 ==================== -->
-    <div id="homePage" class="page active">
-      <div class="lobby-container">
-        <div class="section-card">
-          <h2>🏯 驅魔結界</h2>
-          
-          <!-- 妖怪展示區 -->
-          <div class="battle-box">
-            <div class="monster-info-row">
-              <div id="monsterName" class="monster-name">Lv.1 糰子暮泥</div>
-              <div class="hp-bar-container">
-                <div id="monsterHpFill" class="hp-bar-fill"></div>
-                <div id="monsterHpText" class="hp-bar-text">體力: 50 / 50</div>
-              </div>
-            </div>
-            <div class="monster-wrapper" id="homeMonsterWrapper">
-              <div id="homeMonster" class="monster-slime">
-                <div id="homeMonsterIcon" class="monster-yokai-icon">💧</div>
-                <div id="homeSlimeFace" class="slime-face">
-                  <div class="slime-eye left"></div>
-                  <div class="slime-eye right"></div>
-                  <div class="slime-mouth normal"></div>
-                </div>
-                <div id="homeSlashEffect" class="slash-effect"></div>
-              </div>
-              <div id="homeHitEffect" class="hit-effect">💥</div>
-            </div>
+      <!-- 史萊姆（全域顯示，獨立於頁面） -->
+      <div class="global-monster-wrapper" id="globalMonsterWrapper">
+        <div id="globalMonster" class="monster-slime">
+          <div id="globalMonsterIcon" class="monster-yokai-icon">💧</div>
+          <div id="globalSlimeFace" class="slime-face">
+            <div class="slime-eye left"></div>
+            <div class="slime-eye right"></div>
+            <div class="slime-mouth normal"></div>
           </div>
-
-          <!-- 模式選擇 -->
-          <div class="menu-box">
-            <h3>🏮 進入百鬼夜行</h3>
-            <div class="btn-group">
-              <button class="btn btn-treble" onclick="startGame('treble')">🎵 高音譜 · 斬妖卷</button>
-              <button class="btn btn-bass" onclick="startGame('bass')">🎵 低音譜 · 鎮魔卷</button>
-            </div>
-          </div>
+          <div id="globalSlashEffect" class="slash-effect"></div>
         </div>
+        <div id="globalHitEffect" class="hit-effect">💥</div>
+      </div>
 
-        <!-- 導覽底欄 -->
-        <div class="nav-bar">
-          <button id="navHomeBtn" class="nav-btn active" onclick="switchPage('homePage')">🏠 首頁</button>
-          <button id="navCharBtn" class="nav-btn" onclick="switchPage('characterPage')">⚔️ 裝備</button>
+      <!-- 怪物資訊（名字 + 血條） -->
+      <div class="global-monster-info">
+        <div id="globalMonsterName" class="monster-name">Lv.1 糰子暮泥</div>
+        <div class="hp-bar-container">
+          <div id="globalMonsterHpFill" class="hp-bar-fill"></div>
+          <div id="globalMonsterHpText" class="hp-bar-text">體力: 50 / 50</div>
         </div>
       </div>
     </div>
 
-    <!-- ==================== 遊戲戰鬥頁 ==================== -->
-    <div id="gamePage" class="page">
-      <div class="game-container">
-        <div class="section-card">
-          <div class="game-header">
-            <span id="score">🏆 戰功: 0</span>
-            <span id="combo">🔥 連擊: 0</span>
-            <span id="livesDisplay">❤️❤️❤️❤️❤️</span>
-            <span id="timerDisplay">⏱️ 10s</span>
-            <button class="btn-back" onclick="backHome()">🏮 歸陣</button>
-          </div>
-
-          <!-- 戰鬥區妖怪 -->
-          <div class="battle-box" id="monsterBattleBox">
-            <div class="monster-info-row">
-              <div id="gameMonsterName" class="monster-name">Lv.1 糰子暮泥</div>
-              <div class="hp-bar-container">
-                <div id="gameMonsterHpFill" class="hp-bar-fill"></div>
-                <div id="gameMonsterHpText" class="hp-bar-text">體力: 50 / 50</div>
+    <!-- ============================================================
+         📄 頁面內容區（會被切換）
+         ============================================================ -->
+    <div class="page-container">
+      
+      <!-- 主頁基地 -->
+      <div id="homePage" class="page active">
+        <div class="lobby-container">
+          <div class="section-card">
+            <h2>🏯 驅魔結界</h2>
+            
+            <!-- 模式選擇 -->
+            <div class="menu-box">
+              <h3>🏮 進入百鬼夜行</h3>
+              <div class="btn-group">
+                <button class="btn btn-treble" onclick="startGame('treble')">🎵 高音譜 · 斬妖卷</button>
+                <button class="btn btn-bass" onclick="startGame('bass')">🎵 低音譜 · 鎮魔卷</button>
               </div>
             </div>
-            <div class="monster-wrapper">
-              <div id="gameMonster" class="monster-slime">
-                <div id="gameMonsterIcon" class="monster-yokai-icon">💧</div>
-                <div id="gameSlimeFace" class="slime-face">
-                  <div class="slime-eye left"></div>
-                  <div class="slime-eye right"></div>
-                  <div class="slime-mouth normal"></div>
-                </div>
-                <div id="gameSlashEffect" class="slash-effect"></div>
-              </div>
-              <div id="gameHitEffect" class="hit-effect">💥</div>
-            </div>
-          </div>
-
-          <!-- 五線譜顯示區 -->
-          <div class="staff-wrapper">
-            <div class="staff-lines">
-              <div></div><div></div><div></div><div></div><div></div>
-            </div>
-            <div id="staffClef" class="staff-clef"></div>
-            <div id="noteNote" class="note-display"></div>
-          </div>
-
-          <!-- 答題按鈕 -->
-          <div class="answer-keyboard">
-            <button class="key-btn" onclick="answer('C')">C</button>
-            <button class="key-btn" onclick="answer('D')">D</button>
-            <button class="key-btn" onclick="answer('E')">E</button>
-            <button class="key-btn" onclick="answer('F')">F</button>
-            <button class="key-btn" onclick="answer('G')">G</button>
-            <button class="key-btn" onclick="answer('A')">A</button>
-            <button class="key-btn" onclick="answer('B')">B</button>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ==================== 角色裝備頁 ==================== -->
-    <div id="characterPage" class="page">
-      <div class="character-container">
-        <div class="section-card">
-          <h2>👤 武者狀態</h2>
-          <div id="stats"></div>
-        </div>
+      <!-- 遊戲戰鬥頁 -->
+      <div id="gamePage" class="page">
+        <div class="game-container">
+          <div class="section-card">
+            <div class="game-header">
+              <span id="score">🏆 戰功: 0</span>
+              <span id="combo">🔥 連擊: 0</span>
+              <span id="livesDisplay">❤️❤️❤️❤️❤️</span>
+              <span id="timerDisplay">⏱️ 10s</span>
+              <button class="btn-back" onclick="backHome()">🏮 歸陣</button>
+            </div>
 
-        <div class="section-card">
-          <h2>🗡️ 御道具</h2>
-          <div class="equipment-list">
-            <div id="weapon"></div>
-            <div id="shield"></div>
+            <!-- 五線譜顯示區 -->
+            <div class="staff-wrapper">
+              <div class="staff-lines">
+                <div></div><div></div><div></div><div></div><div></div>
+              </div>
+              <div id="staffClef" class="staff-clef"></div>
+              <div id="noteNote" class="note-display"></div>
+            </div>
+
+            <!-- 答題按鈕 -->
+            <div class="answer-keyboard">
+              <button class="key-btn" onclick="answer('C')">C</button>
+              <button class="key-btn" onclick="answer('D')">D</button>
+              <button class="key-btn" onclick="answer('E')">E</button>
+              <button class="key-btn" onclick="answer('F')">F</button>
+              <button class="key-btn" onclick="answer('G')">G</button>
+              <button class="key-btn" onclick="answer('A')">A</button>
+              <button class="key-btn" onclick="answer('B')">B</button>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- 導覽底欄 -->
-        <div class="nav-bar">
-          <button id="navHomeBtnChar" class="nav-btn" onclick="switchPage('homePage')">🏠 首頁</button>
-          <button id="navCharBtnChar" class="nav-btn active" onclick="switchPage('characterPage')">⚔️ 裝備</button>
+      <!-- 角色裝備頁 -->
+      <div id="characterPage" class="page">
+        <div class="character-container">
+          <div class="section-card">
+            <h2>👤 武者狀態</h2>
+            <div id="stats"></div>
+          </div>
+
+          <div class="section-card">
+            <h2>🗡️ 御道具</h2>
+            <div class="equipment-list">
+              <div id="weapon"></div>
+              <div id="shield"></div>
+            </div>
+          </div>
         </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================
+         📱 底部導航（展開/收合）
+         ============================================================ -->
+    <div class="bottom-nav" id="bottomNav">
+      <button class="nav-toggle" onclick="toggleNav()">
+        <span id="navToggleIcon">▲</span>
+      </button>
+      <div class="nav-menu" id="navMenu">
+        <button id="navHomeBtn" class="nav-btn active" onclick="switchPage('homePage')">🏠 首頁</button>
+        <button id="navCharBtn" class="nav-btn" onclick="switchPage('characterPage')">⚔️ 裝備</button>
       </div>
     </div>
 
