@@ -1,79 +1,55 @@
-/* ============================================================
-   👘 1. 和風全域變數 (Variables)
-   ============================================================ */
 :root {
-    --bg-color: #1a1a1a;        /* 漆黑 */
-    --paper-color: #f4f1ea;     /* 和紙米色 */
-    --crimson: #bc002d;        /* 和風朱紅 */
-    --gold: #d4af37;           /* 金箔金 */
-    --ink-black: #2d2d2d;      /* 墨色 */
-    --font-serif: "Crimson Text", "Georgia", "YuMincho", "Hiragino Mincho ProN", serif;
+    --bg-color: #1a1a1a;
+    --gold: #d4af37;
+    --crimson: #bc002d;
+    --paper: #f4f1ea;
 }
 
 body {
-    background: #1a1a1a !important; /* 背景改為深色漆 */
-    background-image: radial-gradient(circle at 50% 50%, #2a2a2a 0%, #1a1a1a 100%);
-    font-family: var(--font-serif);
+    background: #0d0d0d !important;
+    font-family: 'Hiragino Mincho ProN', 'YuMincho', serif;
+    color: var(--gold);
 }
 
-/* ============================================================
-   🎎 2. 頁面裝飾 (容器改為卷軸/框線感)
-   ============================================================ */
 .game-window {
-    border: 8px double var(--gold); /* 加上雙重金色邊框 */
-    margin: 10px;
-    background: #1a1a1a !important;
+    border: 8px double var(--gold);
+    width: 100vw; height: 100vh;
+    display: flex; flex-direction: column;
+    position: relative;
 }
 
-/* 頂部 Header 改為書卷風格 */
-.global-header {
-    background: rgba(26, 26, 26, 0.9) !important;
-    border-bottom: 2px solid var(--crimson);
+/* 妖怪容器 - 稍微加上一點陰影 */
+.monster-slime {
+    background: radial-gradient(circle at 30% 30%, #4a4a4a, #000);
+    border: 2px solid var(--gold);
+    border-radius: 4px; /* 去除圓潤感 */
 }
 
-/* ============================================================
-   🗡️ 斬擊特效 (改為「筆觸」與「血斬」)
-   ============================================================ */
-/* 將原本的 neon 光束改為更像劍氣的筆觸 */
+/* 斬擊特效 - 筆觸感 */
 .slash-effect::after {
     background: var(--crimson) !important;
-    box-shadow: 0 0 10px rgba(188, 0, 45, 0.5) !important;
-    border-radius: 0 !important; /* 去掉圓角，變鋒利 */
-    transform-origin: center;
+    box-shadow: 0 0 15px var(--crimson);
 }
 
-/* 斬擊 5 (爆破) 改為「櫻花飛舞」或「符咒爆破」風格 */
-.slash-effect.slash-5::before {
-    content: '祓' !important; /* 加上驅魔漢字 */
-    color: var(--gold) !important;
-    font-size: 40px !important;
-}
-
-/* ============================================================
-   🎨  UI 按鈕 (改為「御守」或「木札」質感)
-   ============================================================ */
+/* 按鈕 - 木札/御守風 */
 button {
-    background: #2d2d2d !important;
-    border: 1px solid var(--gold) !important;
-    color: var(--gold) !important;
-    border-radius: 4px !important; /* 減少圓角，改為硬邊 */
-    text-shadow: 1px 1px 1px #000;
+    background: #2d2d2d;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    border-radius: 2px;
 }
 
 button:active {
-    background: var(--crimson) !important;
-    color: #fff !important;
-    transform: scale(0.98) !important;
+    background: var(--crimson);
+    color: white;
 }
 
-/* ============================================================
-   🎼 五線譜 (改為「卷軸」質感)
-   ============================================================ */
+/* 五線譜 - 卷軸感 */
 .staff-wrapper {
-    background: #fdfaf6 !important; /* 改為紙張背景 */
-    border: 2px solid #d4af37 !important;
+    background: var(--paper);
+    border: 2px solid var(--gold);
 }
 
 .staff-lines div {
-    background: rgba(0, 0, 0, 0.3) !important; /* 墨線 */
+    background: rgba(0,0,0,0.2);
 }
