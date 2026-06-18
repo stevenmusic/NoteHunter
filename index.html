@@ -11,10 +11,9 @@
   <div class="game-window">
     
     <!-- ============================================================
-         👑 上方全域：玩家狀態 + 史萊姆（永不刷新）
+         👑 上方全域：玩家狀態 + 史萊姆
          ============================================================ -->
     <div class="global-header">
-      <!-- 玩家資訊 -->
       <div class="header-top-row">
         <div id="playerName" class="player-name-badge">⚔️ 武者 · 樂之勇士</div>
         <div id="levelText" class="lv-badge">段位.1</div>
@@ -27,7 +26,7 @@
         </div>
       </div>
 
-      <!-- 史萊姆（全域顯示，獨立於頁面） -->
+      <!-- 史萊姆置中 -->
       <div class="global-monster-wrapper" id="globalMonsterWrapper">
         <div id="globalMonster" class="monster-slime">
           <div id="globalMonsterIcon" class="monster-yokai-icon">💧</div>
@@ -36,18 +35,13 @@
             <div class="slime-eye right"></div>
             <div class="slime-mouth normal"></div>
           </div>
+          <!-- ✅ 砍痕特效顯示在這裡 -->
           <div id="globalSlashEffect" class="slash-effect"></div>
         </div>
         <div id="globalHitEffect" class="hit-effect">💥</div>
-
-        <!-- ✅ 砍痕容器 (五種砍痕) - 由 JS 動態生成 -->
-        <div class="slash-container" id="slashContainer"></div>
-
-        <!-- ✅ 表情容器 (五種表情) - 由 JS 動態生成 -->
-        <div class="face-container" id="faceContainer"></div>
       </div>
 
-      <!-- 怪物資訊（名字 + 血條） -->
+      <!-- 怪物資訊 -->
       <div class="global-monster-info">
         <div id="globalMonsterName" class="monster-name">Lv.1 糰子暮泥</div>
         <div class="hp-bar-container">
@@ -58,17 +52,17 @@
     </div>
 
     <!-- ============================================================
-         📄 頁面內容區（會被切換）
+         📄 頁面內容區
          ============================================================ -->
     <div class="page-container">
       
-      <!-- 主頁基地 -->
+      <!-- 主頁 -->
       <div id="homePage" class="page active">
         <div class="lobby-container">
-          <div class="section-card">
+          
+          <!-- 驅魔結界 -->
+          <div class="section-card结界">
             <h2>🏯 驅魔結界</h2>
-            
-            <!-- 模式選擇 -->
             <div class="menu-box">
               <h3>🏮 進入百鬼夜行</h3>
               <div class="btn-group">
@@ -77,6 +71,7 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -92,7 +87,6 @@
               <button class="btn-back" onclick="backHome()">🏮 歸陣</button>
             </div>
 
-            <!-- 五線譜顯示區 -->
             <div class="staff-wrapper">
               <div class="staff-lines">
                 <div></div><div></div><div></div><div></div><div></div>
@@ -101,7 +95,6 @@
               <div id="noteNote" class="note-display"></div>
             </div>
 
-            <!-- 答題按鈕 -->
             <div class="answer-keyboard">
               <button class="key-btn" onclick="answer('C')">C</button>
               <button class="key-btn" onclick="answer('D')">D</button>
@@ -122,7 +115,6 @@
             <h2>👤 武者狀態</h2>
             <div id="stats"></div>
           </div>
-
           <div class="section-card">
             <h2>🗡️ 御道具</h2>
             <div class="equipment-list">
@@ -136,10 +128,9 @@
     </div>
 
     <!-- ============================================================
-         📱 底部導航（固定顯示，無三角形）
+         📱 底部導航
          ============================================================ -->
     <div class="bottom-nav" id="bottomNav">
-      <!-- ✅ 三角形按鈕已完全移除 -->
       <div class="nav-menu" id="navMenu">
         <button id="navHomeBtn" class="nav-btn active" onclick="switchPage('homePage')">🏠 首頁</button>
         <button id="navCharBtn" class="nav-btn" onclick="switchPage('characterPage')">⚔️ 裝備</button>
@@ -148,9 +139,6 @@
 
   </div>
 
-  <!-- ============================================================
-       📥 載入 JavaScript
-       ============================================================ -->
   <script src="questions.js"></script>
   <script src="game.js"></script>
 </body>
