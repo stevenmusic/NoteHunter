@@ -39,6 +39,12 @@
           <div id="globalSlashEffect" class="slash-effect"></div>
         </div>
         <div id="globalHitEffect" class="hit-effect">💥</div>
+
+        <!-- ✅ 砍痕容器 (五種砍痕) - 由 JS 動態生成 -->
+        <div class="slash-container" id="slashContainer"></div>
+
+        <!-- ✅ 表情容器 (五種表情) - 由 JS 動態生成 -->
+        <div class="face-container" id="faceContainer"></div>
       </div>
 
       <!-- 怪物資訊（名字 + 血條） -->
@@ -130,12 +136,10 @@
     </div>
 
     <!-- ============================================================
-         📱 底部導航（展開/收合）
+         📱 底部導航（固定顯示，無三角形）
          ============================================================ -->
     <div class="bottom-nav" id="bottomNav">
-      <button class="nav-toggle" onclick="toggleNav()">
-        <span id="navToggleIcon">▲</span>
-      </button>
+      <!-- ✅ 三角形按鈕已完全移除 -->
       <div class="nav-menu" id="navMenu">
         <button id="navHomeBtn" class="nav-btn active" onclick="switchPage('homePage')">🏠 首頁</button>
         <button id="navCharBtn" class="nav-btn" onclick="switchPage('characterPage')">⚔️ 裝備</button>
