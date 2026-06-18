@@ -2,57 +2,38 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>音符獵人 - 和風錄</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="game-window">
-        <header class="global-header">
-            <div class="header-top-row">
-                <span class="player-name-badge">修行者</span>
-                <span id="levelDisplay" class="lv-badge">Lv.1</span>
-                <span class="gold-badge">金 <span id="goldDisplay">0</span></span>
+    <div class="game-container">
+        <header class="header">
+            <div class="status-top">
+                <span>修行者</span>
+                <span id="levelDisplay">Lv.1</span>
+                <span>金：<span id="goldDisplay">0</span></span>
             </div>
-            <div class="exp-bar-container">
-                <div class="exp-bar-fill"></div>
+            <div class="hp-bar-container">
+                <div class="monster-name">迷途小鬼</div>
+                <div class="hp-bg">
+                    <div class="hp-fill" id="hpFill" style="width: 100%;"></div>
+                </div>
+                <div class="hp-text" id="hpText">100 / 100</div>
             </div>
         </header>
 
-        <div class="global-monster-wrapper">
-            <div class="monster-slime">
-                <div class="slime-face">
-                    <div class="slime-eye left"></div>
-                    <div class="slime-eye right"></div>
-                    <div class="slime-mouth normal"></div>
-                </div>
+        <main class="main-content">
+            <div class="slime-container" id="slime">
+                <div class="slime-body"></div>
+                <div class="slime-eye"></div>
             </div>
-            <div class="global-monster-info">
-                <span class="monster-name">迷途小鬼</span>
-                <div class="hp-bar-container">
-                    <div class="hp-bar-fill" style="width: 100%;"></div>
-                    <span class="hp-bar-text">100 / 100</span>
-                </div>
-            </div>
-        </div>
+        </main>
 
-        <div class="page-container">
-            <div id="combatPage" class="page active">
-                <div class="section-card">
-                    <div class="staff-wrapper">
-                        </div>
-                </div>
-                <div class="answer-keyboard" id="keyboard">
-                    </div>
-            </div>
-        </div>
-
-        <nav class="bottom-nav">
-            <div class="nav-menu">
-                <button class="nav-btn active" data-page="combatPage">退魔</button>
-                <button class="nav-btn" data-page="shopPage">商店</button>
-            </div>
+        <nav class="nav-bar">
+            <button class="nav-btn">退魔</button>
+            <button class="nav-btn">商店</button>
         </nav>
     </div>
 
